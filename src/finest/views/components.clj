@@ -36,11 +36,15 @@
   [:span.type-badge {:class (name type)} (str/capitalize (name type))])
 
 (defn post-card
-  [{:keys [slug title date type tags rating]}]
+  [{:keys [slug title date type tags rating cover]}]
   [:article.post-card
-   [:h2 [:a {:href (str "/posts/" slug)} title]]
-   [:div.post-meta
-    [:span.post-date (str date)]
-    (type-badge type)
-    (when (= type :review) (rating-stars rating))]
-   [:div.post-tags (map tag-pill tags)]])
+   [:div.post-card-body
+    [:h2 [:a {:href (str "/posts/" slug)} title]]
+    [:div.post-meta
+     [:span.post-date (str date)]
+     (type-badge type)
+     (when (= type :review) (rating-stars rating))]
+    [:div.post-tags (map tag-pill tags)]]
+   (when cover
+     [:a.cover-thumb-link {:href (str "/posts/" slug)}
+      [:img.cover-thumb {:src cover :alt title :loading "lazy"}]])])

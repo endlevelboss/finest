@@ -3,8 +3,9 @@
             [finest.views.components :as c]))
 
 (defn post-page
-  [{:keys [title date type tags rating html]}]
+  [{:keys [title date type tags rating html cover]}]
   [:article.post
+   (when cover [:img.cover-hero {:src cover :alt title}])
    [:h1 title]
    [:div.post-meta
     [:span.post-date (str date)]
