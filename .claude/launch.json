@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "finest-server",
+      "runtimeExecutable": "clj",
+      "runtimeArgs": ["-M", "-m", "finest.core"],
+      "port": 3000
+    }
+  ]
+}
