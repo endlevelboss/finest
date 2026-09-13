@@ -8,7 +8,8 @@
     [["/" {:get h/index}]
      ["/news" {:get h/news-list}]
      ["/reviews" {:get h/reviews-list}]
-     ["/comics" {:get h/comics-list}]
+     ["/collections" {:get h/collections-list}]
+     ["/creators" {:get h/creators-list}]
      ["/tags" {:get h/tag-index}]
      ["/tags/:tag" {:get h/tag-list}]
      ["/posts/:slug" {:get h/post-page}]]))

@@ -3,7 +3,7 @@ title: "New Omnibus Announced for Saga"
 date: 2026-02-03
 tags: [image, saga, omnibus]
 type: news
-comics: [saga]
+collections: [saga]
 ---
 
 Image Comics announced a new omnibus collecting the next arc of *Saga*,

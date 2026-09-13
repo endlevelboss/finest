@@ -27,9 +27,13 @@
   [_request]
   (listing-response "Reviews" (store/by-type :review)))
 
-(defn comics-list
+(defn collections-list
   [_request]
-  (listing-response "Comics" (store/by-type :comic)))
+  (listing-response "Collections" (store/by-type :collection)))
+
+(defn creators-list
+  [_request]
+  (listing-response "Creators" (store/by-type :creator)))
 
 (defn tag-index
   [_request]
@@ -48,11 +52,20 @@
   (let [tag (get-in request [:path-params :tag])]
     (listing-response (str "Tag: " tag) (store/by-tag tag))))
 
+(defn- creator-role-on
+  [collection creator-slug]
+  (some #(when (= creator-slug (:slug %)) (:role %)) (:creators collection)))
+
 (defn- enrich
-  [{:keys [type slug comics] :as post}]
+  [{:keys [type slug collections creators] :as post}]
   (cond-> post
-    (seq comics)    (assoc :referenced-comics (keep store/by-slug comics))
-    (= type :comic) (assoc :related (store/referencing slug))))
+    (seq collections)     (assoc :referenced-collections (keep store/by-slug collections))
+    (= type :collection)  (assoc :related (store/referencing slug)
+                                  :creator-credits (keep (fn [{:keys [slug role]}]
+                                                            (some-> (store/by-slug slug) (assoc :role role)))
+                                                          creators))
+    (= type :creator)     (assoc :credited-collections
+                                  (map #(assoc % :role (creator-role-on % slug)) (store/credited-on slug)))))
 
 (defn post-page
   [request]

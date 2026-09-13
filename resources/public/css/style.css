@@ -8,7 +8,8 @@
   --star: #d8a11e;
   --news: #2c5f6d;
   --review: #a3271a;
-  --comic: #5b4a8a;
+  --collection: #5b4a8a;
+  --creator: #4a7a5b;
   --max-width: 700px;
 }
 
@@ -98,7 +99,8 @@ img.cover-thumb {
 }
 .type-badge.news { background: var(--news); }
 .type-badge.review { background: var(--review); }
-.type-badge.comic { background: var(--comic); }
+.type-badge.collection { background: var(--collection); }
+.type-badge.creator { background: var(--creator); }
 
 .rating { display: inline-flex; align-items: center; gap: 0.1em; }
 .star { color: var(--border); }
@@ -145,10 +147,22 @@ img.cover-thumb {
 }
 .post-comics-label { font-weight: 600; }
 
+.creator-credits {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
 .related {
   margin-top: 2rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border);
+}
+
+.credited-role {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: -0.75rem 0 0.75rem;
 }
 
 .empty { color: var(--muted); font-style: italic; }

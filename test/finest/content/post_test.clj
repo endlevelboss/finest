@@ -48,19 +48,31 @@
                          :source-file "2026-01-15-x.md" :last-modified 0})]
     (is (= "custom-slug" (:slug p)))))
 
-(deftest builds-valid-comic-post-without-rating
-  (let [p (post/->post {:meta (assoc (base-meta) :type "comic")
+(deftest builds-valid-collection-post-without-rating
+  (let [p (post/->post {:meta (assoc (base-meta) :type "collection")
                          :html "<p>hi</p>" :source-file "2026-01-15-x.md" :last-modified 0})]
-    (is (= :comic (:type p)))
+    (is (= :collection (:type p)))
     (is (not (contains? p :rating)))))
 
-(deftest comics-field-parses-into-vector
+(deftest collections-field-parses-into-vector
   (let [without (post/->post {:meta (base-meta) :html ""
                                :source-file "2026-01-15-x.md" :last-modified 0})
-        with    (post/->post {:meta (assoc (base-meta) :comics ["a" "b"]) :html ""
+        with    (post/->post {:meta (assoc (base-meta) :collections ["a" "b"]) :html ""
                                :source-file "2026-01-15-x.md" :last-modified 0})]
-    (is (not (contains? without :comics)))
-    (is (= ["a" "b"] (:comics with)))))
+    (is (not (contains? without :collections)))
+    (is (= ["a" "b"] (:collections with)))))
+
+(deftest builds-valid-creator-post-without-date
+  (let [p (post/->post {:meta {:title "Some Creator" :type "creator"} :html "<p>bio</p>"
+                         :source-file "some-creator.md" :last-modified 0})]
+    (is (= :creator (:type p)))
+    (is (not (contains? p :date)))))
+
+(deftest creators-field-parses-into-vector-of-maps
+  (let [p (post/->post {:meta (assoc (base-meta) :type "collection"
+                                      :creators [{:slug "a" :role "Writer"}])
+                         :html "" :source-file "2026-01-15-x.md" :last-modified 0})]
+    (is (= [{:slug "a" :role "Writer"}] (:creators p)))))
 
 (deftest cover-field-is-optional
   (let [without-cover (post/->post {:meta (base-meta) :html ""

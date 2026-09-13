@@ -7,7 +7,8 @@
    [:a {:href "/"} "Comic Blog"]
    [:a {:href "/news"} "News"]
    [:a {:href "/reviews"} "Reviews"]
-   [:a {:href "/comics"} "Comics"]
+   [:a {:href "/collections"} "Collections"]
+   [:a {:href "/creators"} "Creators"]
    [:a {:href "/tags"} "Tags"]])
 
 (defn tag-pill
@@ -42,7 +43,7 @@
    [:div.post-card-body
     [:h2 [:a {:href (str "/posts/" slug)} title]]
     [:div.post-meta
-     [:span.post-date (str date)]
+     (when date [:span.post-date (str date)])
      (type-badge type)
      (when (= type :review) (rating-stars rating))]
     [:div.post-tags (map tag-pill tags)]]
