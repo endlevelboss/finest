@@ -8,6 +8,11 @@ descriptions of the collections (trades/omnibi) themselves live under
 franchise/character lines (Batman, Superman, etc.) live under
 `content/lines/`.
 
+`type:` is inferred from which of these folders a file lives in, so it
+only needs to be written explicitly under `content/posts/`, where it
+distinguishes `news` from `review`. An explicit `type:` elsewhere still
+wins over the inferred one, if you ever need it.
+
 ## Development
 
 ```sh
@@ -62,7 +67,6 @@ title: "Collection Title"
 slug: some-collection
 date: "1986-1987"  # freeform — a year, a range, or "Jan 1990 - Aug 1990"
 tags: [tag-a, tag-b]
-type: collection
 line: some-franchise   # optional — links to a line (see below)
 creators:
   - slug: some-writer
@@ -98,7 +102,6 @@ Add a Markdown file under `content/creators/`, e.g.
 title: "Creator Name"
 slug: some-writer
 tags: [writer]
-type: creator
 ---
 
 Body in Markdown — biography.
@@ -119,7 +122,6 @@ Add a Markdown file under `content/lines/`, e.g.
 title: "Franchise Name"
 slug: some-franchise
 tags: [tag-a]
-type: line
 ---
 
 Body in Markdown — what this franchise/character line is about.

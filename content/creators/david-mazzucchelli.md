@@ -2,7 +2,6 @@
 title: "David Mazzucchelli"
 slug: david-mazzucchelli
 tags: [artist]
-type: creator
 ---
 
 David Mazzucchelli is an American artist best known for illustrating

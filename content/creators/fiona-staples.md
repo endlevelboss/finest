@@ -2,7 +2,6 @@
 title: "Fiona Staples"
 slug: fiona-staples
 tags: [artist]
-type: creator
 ---
 
 Fiona Staples is a Canadian comic book artist and co-creator of *Saga*,

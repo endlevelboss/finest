@@ -3,7 +3,6 @@ title: "Batman: Year One"
 slug: batman-year-one
 date: "1987"
 tags: [dc, batman, classic]
-type: collection
 line: batman
 creators:
   - slug: frank-miller

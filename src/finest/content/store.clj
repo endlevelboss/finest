@@ -17,11 +17,25 @@
   [^java.io.File f]
   (and (.isFile f) (str/ends-with? (.getName f) ".md")))
 
+(def ^:private dir->type
+  "Content living under content/posts/ mixes news and review, so its type
+   can't be inferred from the directory alone -- everywhere else, the
+   directory *is* the type, so an explicit `type:` field in frontmatter
+   would just repeat what the folder already says."
+  {"collections" "collection"
+   "creators"    "creator"
+   "lines"       "line"})
+
+(defn- inferred-type
+  [^java.io.File f]
+  (get dir->type (.getName (.getParentFile f))))
+
 (defn- load-file->post
   [^java.io.File f]
-  (let [raw               (slurp f)
+  (let [raw                 (slurp f)
         {:keys [meta body]} (frontmatter/parse raw)
-        html              (markdown/render body)]
+        html                (markdown/render body)
+        meta                (update meta :type #(or % (inferred-type f)))]
     (post/->post {:meta          meta
                   :html          html
                   :source-file   (.getName f)

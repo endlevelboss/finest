@@ -2,7 +2,6 @@
 title: "Frank Miller"
 slug: frank-miller
 tags: [writer, artist]
-type: creator
 ---
 
 Frank Miller is an American writer and artist known for reshaping Batman

@@ -2,7 +2,6 @@
 title: "Brian K. Vaughan"
 slug: brian-k-vaughan
 tags: [writer]
-type: creator
 ---
 
 Brian K. Vaughan is an American comic book writer known for series such as

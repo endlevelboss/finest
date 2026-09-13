@@ -3,7 +3,6 @@ title: "Saga"
 slug: saga
 date: "2012-present"
 tags: [image, saga]
-type: collection
 creators:
   - slug: brian-k-vaughan
     role: Writer

@@ -2,7 +2,6 @@
 title: "Alan Moore"
 slug: alan-moore
 tags: [writer]
-type: creator
 ---
 
 Alan Moore is an English writer known for his influential work in comics,

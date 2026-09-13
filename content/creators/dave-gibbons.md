@@ -2,7 +2,6 @@
 title: "Dave Gibbons"
 slug: dave-gibbons
 tags: [artist]
-type: creator
 ---
 
 Dave Gibbons is an English comic book artist, best known for illustrating

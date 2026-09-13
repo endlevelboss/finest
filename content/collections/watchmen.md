@@ -3,7 +3,6 @@ title: "Watchmen"
 slug: watchmen
 date: "Sep 1986 - Oct 1987"
 tags: [dc, alan-moore, classic]
-type: collection
 cover: /images/watchmen-cover.svg
 creators:
   - slug: alan-moore
