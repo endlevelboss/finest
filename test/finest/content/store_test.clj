@@ -6,19 +6,20 @@
 
 (deftest load-all-skips-malformed-and-sorts-by-date-desc
   (let [posts (store/load-all! fixture-dir)]
-    (is (= 6 (count posts)))
-    (is (= ["second" "first" "hero-collection"] (take 3 (map :slug posts))))
-    (is (= #{"hero-creator" "hero-line" "explicit-override"} (set (drop 3 (map :slug posts)))))))
+    (is (= 8 (count posts)))
+    (is (= ["second" "first" "dangling-line-collection" "hero-collection" "hero-collection-early"]
+           (take 5 (map :slug posts))))
+    (is (= #{"hero-creator" "hero-line" "explicit-override"} (set (drop 5 (map :slug posts)))))))
 
 (deftest queries-after-load
   (store/load-all! fixture-dir)
   (is (= "second" (:slug (first (store/by-tag "beta")))))
-  (is (= 4 (count (store/by-tag "alpha"))))
+  (is (= 5 (count (store/by-tag "alpha"))))
   (is (= 1 (count (store/by-type :review))))
   (is (some? (store/by-slug "first")))
   (is (nil? (store/by-slug "broken")))
   (is (nil? (store/by-slug "no-type")))
-  (is (= #{"alpha" "beta" "gamma" "delta"} (store/all-tags))))
+  (is (= #{"alpha" "beta" "gamma" "delta" "zeta"} (store/all-tags))))
 
 (deftest articles-excludes-collections-creators-and-lines
   (store/load-all! fixture-dir)
@@ -34,9 +35,9 @@
   (is (= ["hero-collection"] (map :slug (store/credited-on "hero-creator"))))
   (is (= [] (store/credited-on "no-such-creator"))))
 
-(deftest under-line-finds-collections-in-a-line
+(deftest under-line-finds-collections-in-a-line-oldest-first
   (store/load-all! fixture-dir)
-  (is (= ["hero-collection"] (map :slug (store/under-line "hero-line"))))
+  (is (= ["hero-collection-early" "hero-collection"] (map :slug (store/under-line "hero-line"))))
   (is (= [] (store/under-line "no-such-line"))))
 
 (deftest type-is-inferred-from-directory-when-frontmatter-omits-it
@@ -52,3 +53,15 @@
 (deftest type-still-required-outside-inferred-directories
   (store/load-all! fixture-dir)
   (is (nil? (store/by-slug "no-type"))))
+
+(deftest collection-gets-line-title-attached
+  (store/load-all! fixture-dir)
+  (is (= "Hero Line" (:line-title (store/by-slug "hero-collection")))))
+
+(deftest collection-without-a-line-has-no-line-title
+  (store/load-all! fixture-dir)
+  (is (not (contains? (store/by-slug "first") :line-title))))
+
+(deftest collection-with-dangling-line-has-no-line-title
+  (store/load-all! fixture-dir)
+  (is (not (contains? (store/by-slug "dangling-line-collection") :line-title))))

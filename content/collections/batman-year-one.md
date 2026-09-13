@@ -1,5 +1,5 @@
 ---
-title: "Batman: Year One"
+title: "Year One"
 slug: batman-year-one
 date: "1987"
 tags: [dc, batman, classic]

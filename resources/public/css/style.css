@@ -47,6 +47,15 @@ main {
 h1 { font-size: 1.9rem; margin: 0.2em 0 0.4em; }
 h2 { font-size: 1.35rem; margin: 0 0 0.3em; }
 
+.post-heading { margin: 0.2em 0 0.4em; }
+.post-heading h1 { margin: 0; }
+.post-heading h1 a { color: inherit; }
+.post-subtitle {
+  font-size: 1.2rem;
+  color: var(--muted);
+  margin: 0.1em 0 0;
+}
+
 .post-card {
   display: flex;
   gap: 1rem;

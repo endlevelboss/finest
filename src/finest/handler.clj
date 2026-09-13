@@ -2,7 +2,8 @@
   (:require [finest.content.store :as store]
             [finest.views.layout :as layout]
             [finest.views.index :as index-view]
-            [finest.views.post :as post-view]))
+            [finest.views.post :as post-view]
+            [finest.views.components :as components]))
 
 (defn- html-response
   [status body]
@@ -61,14 +62,13 @@
   (some #(when (= creator-slug (:slug %)) (:role %)) (:creators collection)))
 
 (defn- enrich
-  [{:keys [type slug collections creators line] :as post}]
+  [{:keys [type slug collections creators] :as post}]
   (cond-> post
     (seq collections)     (assoc :referenced-collections (keep store/by-slug collections))
     (= type :collection)  (assoc :related (store/referencing slug)
                                   :creator-credits (keep (fn [{:keys [slug role]}]
                                                             (some-> (store/by-slug slug) (assoc :role role)))
                                                           creators))
-    (and (= type :collection) line) (assoc :line-ref (store/by-slug line))
     (= type :creator)     (assoc :credited-collections
                                   (map #(assoc % :role (creator-role-on % slug)) (store/credited-on slug)))
     (= type :line)        (assoc :line-collections (store/under-line slug))))
@@ -78,7 +78,9 @@
   (let [slug (get-in request [:path-params :slug])
         post (store/by-slug slug)]
     (if post
-      (html-response 200 (layout/page {:title (:title post) :body (post-view/post-page (enrich post))}))
+      (let [enriched (enrich post)]
+        (html-response 200 (layout/page {:title (components/display-title enriched)
+                                          :body  (post-view/post-page enriched)})))
       (html-response 404 (layout/page {:title "Not Found" :body [:p "Post not found."]})))))
 
 (defn not-found

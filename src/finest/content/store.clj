@@ -45,21 +45,33 @@
   [content-dir]
   (reduce max 0 (map #(.lastModified ^java.io.File %) (filter md-file? (file-seq (io/file content-dir))))))
 
+(defn- attach-line-title
+  "A collection's own title is just its distinguishing name (\"Year One\");
+   the umbrella name (\"Batman\") comes from the line it belongs to. Denormalize
+   that here, once, so every listing (cards, tag pages, etc.) can render the
+   combined heading without each call site re-resolving the line."
+  [by-slug post]
+  (if-let [line (and (= :collection (:type post)) (:line post) (get by-slug (:line post)))]
+    (assoc post :line-title (:title line))
+    post))
+
 (defn load-all!
   "Loads all .md files under content-dir into the in-memory store."
   [content-dir]
-  (let [dir   (io/file content-dir)
-        posts (->> (file-seq dir)
-                   (filter md-file?)
-                   (keep (fn [f]
-                           (try
-                             (load-file->post f)
-                             (catch Exception e
-                               (warn (ex-message e) (merge {:file (.getName f)} (ex-data e)))
-                               nil))))
-                   (sort-by :date)
-                   reverse
-                   vec)]
+  (let [dir        (io/file content-dir)
+        raw-posts  (->> (file-seq dir)
+                        (filter md-file?)
+                        (keep (fn [f]
+                                (try
+                                  (load-file->post f)
+                                  (catch Exception e
+                                    (warn (ex-message e) (merge {:file (.getName f)} (ex-data e)))
+                                    nil))))
+                        (sort-by :date)
+                        reverse
+                        vec)
+        by-slug    (into {} (map (juxt :slug identity)) raw-posts)
+        posts      (mapv (partial attach-line-title by-slug) raw-posts)]
     (reset! state {:posts     posts
                     :by-slug   (into {} (map (juxt :slug identity)) posts)
                     :loaded-at (System/currentTimeMillis)})
@@ -81,4 +93,8 @@
 (defn articles [] (filterv #(not (#{:collection :creator :line} (:type %))) (all-posts)))
 (defn referencing [collection-slug] (filterv #(some #{collection-slug} (:collections %)) (all-posts)))
 (defn credited-on [creator-slug] (filterv (fn [p] (some #(= creator-slug (:slug %)) (:creators p))) (all-posts)))
-(defn under-line [line-slug] (filterv #(= line-slug (:line %)) (all-posts)))
+(defn under-line
+  "Collections in a line, oldest publication first -- a reading order,
+   not the reverse-chronological order the rest of the site uses."
+  [line-slug]
+  (vec (sort-by :date (filterv #(= line-slug (:line %)) (all-posts)))))

@@ -63,11 +63,11 @@ Add a Markdown file under `content/collections/`, e.g.
 
 ```markdown
 ---
-title: "Collection Title"
+title: "Year One"
 slug: some-collection
 date: "1986-1987"  # freeform — a year, a range, or "Jan 1990 - Aug 1990"
 tags: [tag-a, tag-b]
-line: some-franchise   # optional — links to a line (see below)
+line: batman   # optional — links to a line (see below)
 creators:
   - slug: some-writer
     role: Writer
@@ -90,9 +90,16 @@ on the post and lists the post under "Reviews & News" on the collection's
 page. The `creators:` field links a collection to creator profiles (see
 below) and renders as "Name — Role" credits on the collection's page.
 `role:` is optional per creator — a bare `creators: [some-writer, some-artist]`
-list of slugs works too, and just renders without a role. The
-`line:` field links a collection to a single franchise/character page
-(see below) and renders as a "Part of:" link.
+list of slugs works too, and just renders without a role.
+
+The `line:` field links a collection to a single franchise/character page
+(see below). When present, `title:` should be just this collection's own
+distinguishing name ("Year One"), not the full name — the line supplies the
+umbrella name ("Batman"). The collection's page then shows the line's name
+as the big linked title with the collection's own title as a subtitle
+underneath, and anywhere the collection appears as a card (listings, tag
+pages, related sections) shows the combined "Batman: Year One" heading.
+Collections with no `line:` just show their own `title:` as-is.
 
 ## Writing a creator profile
 

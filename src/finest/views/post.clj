@@ -16,11 +16,16 @@
    (interpose ", " (for [{:keys [slug title role]} creators]
                       [:span [:a {:href (str "/posts/" slug)} title] (when role (str " — " role))]))])
 
-(defn- line-ref-block
-  [{:keys [slug title]}]
-  [:div.post-comics
-   [:span.post-comics-label "Part of: "]
-   [:a {:href (str "/posts/" slug)} title]])
+(defn- post-heading
+  "A plain <h1> for most posts. Collections that belong to a line lead with
+   the line's name as the big title, linked to the line's own page, and show
+   their own distinguishing name as a subtitle underneath."
+  [{:keys [title line line-title]}]
+  (if line-title
+    [:div.post-heading
+     [:h1 [:a {:href (str "/posts/" line)} line-title]]
+     [:p.post-subtitle title]]
+    [:h1 title]))
 
 (defn- listing-section
   [heading posts]
@@ -42,15 +47,14 @@
 (defn post-page
   [{:keys [title date-display type tags rating html cover
            referenced-collections related creator-credits credited-collections
-           line-ref line-collections]}]
+           line-collections] :as post}]
   [:article.post
    (when cover [:img.cover-hero {:src cover :alt title}])
-   [:h1 title]
+   (post-heading post)
    [:div.post-meta
     (when date-display [:span.post-date date-display])
     (when (#{:news :review} type) (c/type-badge type))
     (when (= type :review) (c/rating-stars rating))]
-   (when line-ref (line-ref-block line-ref))
    (when (seq referenced-collections) (collection-refs referenced-collections))
    (when (seq creator-credits) (creator-credits-block creator-credits))
    [:div.post-tags (map c/tag-pill tags)]

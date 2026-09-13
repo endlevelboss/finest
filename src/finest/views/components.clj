@@ -38,11 +38,18 @@
   [type]
   [:span.type-badge {:class (name type)} (str/capitalize (name type))])
 
+(defn display-title
+  "A collection's own title is just its distinguishing name (\"Year One\");
+   when it belongs to a line, the combined heading leads with the line's
+   name (\"Batman: Year One\")."
+  [{:keys [title line-title]}]
+  (if line-title (str line-title ": " title) title))
+
 (defn post-card
-  [{:keys [slug title date-display type tags rating cover]}]
+  [{:keys [slug title date-display type tags rating cover] :as post}]
   [:article.post-card
    [:div.post-card-body
-    [:h2 [:a {:href (str "/posts/" slug)} title]]
+    [:h2 [:a {:href (str "/posts/" slug)} (display-title post)]]
     [:div.post-meta
      (when date-display [:span.post-date date-display])
      (when (#{:news :review} type) (type-badge type))
