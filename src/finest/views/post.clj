@@ -41,7 +41,7 @@
    [:h1 title]
    [:div.post-meta
     (when date [:span.post-date (str date)])
-    (c/type-badge type)
+    (when (#{:news :review} type) (c/type-badge type))
     (when (= type :review) (c/rating-stars rating))]
    (when (seq referenced-collections) (collection-refs referenced-collections))
    (when (seq creator-credits) (creator-credits-block creator-credits))

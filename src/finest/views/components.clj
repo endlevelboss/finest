@@ -44,7 +44,7 @@
     [:h2 [:a {:href (str "/posts/" slug)} title]]
     [:div.post-meta
      (when date [:span.post-date (str date)])
-     (type-badge type)
+     (when (#{:news :review} type) (type-badge type))
      (when (= type :review) (rating-stars rating))]
     [:div.post-tags (map tag-pill tags)]]
    (when cover
