@@ -6,11 +6,13 @@
 
 (deftest load-all-skips-malformed-and-sorts-by-date-desc
   (let [posts (store/load-all! fixture-dir)]
-    (is (= 10 (count posts)))
+    (is (= 13 (count posts)))
     (is (= ["second" "first" "dangling-line-collection" "collection-with-missing-creator"
             "hero-collection" "hero-collection-early"]
            (take 6 (map :slug posts))))
-    (is (= #{"hero-creator" "hero-line" "explicit-override" "jane-q-public"} (set (drop 6 (map :slug posts)))))))
+    (is (= #{"hero-creator" "hero-line" "explicit-override" "jane-q-public"
+             "fragment-a" "fragment-b" "issue-only-creator"}
+           (set (drop 6 (map :slug posts)))))))
 
 (deftest queries-after-load
   (store/load-all! fixture-dir)
@@ -20,7 +22,7 @@
   (is (some? (store/by-slug "first")))
   (is (nil? (store/by-slug "broken")))
   (is (nil? (store/by-slug "no-type")))
-  (is (= #{"alpha" "beta" "gamma" "delta" "zeta" "eta"} (store/all-tags))))
+  (is (= #{"alpha" "beta" "gamma" "delta" "zeta" "eta" "theta"} (store/all-tags))))
 
 (deftest articles-excludes-collections-creators-and-lines
   (store/load-all! fixture-dir)
@@ -81,3 +83,21 @@
 (deftest real-creator-file-is-not-treated-as-generated
   (store/load-all! fixture-dir)
   (is (not (contains? (store/by-slug "hero-creator") :generated?))))
+
+(deftest credited-on-finds-issue-only-creators
+  (store/load-all! fixture-dir)
+  (is (= ["fragment-a"] (map :slug (store/credited-on "issue-only-creator")))))
+
+(deftest issue-only-creator-gets-an-auto-generated-page
+  (store/load-all! fixture-dir)
+  (is (= "Issue Only Creator" (:title (store/by-slug "issue-only-creator")))))
+
+(deftest issues-sharing-an-original-id-resolve-each-other-as-siblings
+  (store/load-all! fixture-dir)
+  (let [a-issues (:issues (store/by-slug "fragment-a"))
+        b-issues (:issues (store/by-slug "fragment-b"))]
+    (is (= [{:slug "fragment-b" :title "Fragment B" :number 256}]
+           (:siblings (first a-issues))))
+    (is (= [{:slug "fragment-a" :title "Fragment A" :number 256}]
+           (:siblings (first b-issues))))
+    (is (not (contains? (second a-issues) :siblings)))))

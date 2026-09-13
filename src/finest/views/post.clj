@@ -1,5 +1,6 @@
 (ns finest.views.post
-  (:require [hiccup2.core :as h]
+  (:require [clojure.string :as str]
+            [hiccup2.core :as h]
             [finest.views.components :as c]))
 
 (defn- collection-refs
@@ -44,10 +45,36 @@
         (c/post-card collection)
         (when role [:p.credited-role role])])]))
 
+(defn- issue-creators-text
+  [creators]
+  (str/join ", " (map (fn [{:keys [title role]}] (if role (str title " — " role) title)) creators)))
+
+(defn- issue-siblings-block
+  [siblings]
+  [:div.issue-siblings
+   [:span.post-comics-label "Also collected in: "]
+   (interpose ", " (for [s siblings]
+                      [:a {:href (str "/posts/" (:slug s))} (c/display-title s)]))])
+
+(defn- issue-entry
+  [{:keys [number date creators siblings]}]
+  [:li.issue-entry
+   [:span.issue-number (str number)]
+   (when date [:span.issue-date (str " — " date)])
+   (when (seq creators) [:span.issue-creators (str " (" (issue-creators-text creators) ")")])
+   (when (seq siblings) (issue-siblings-block siblings))])
+
+(defn- issue-list
+  [issues]
+  (when (seq issues)
+    [:section.related
+     [:h2 "Issues"]
+     [:ol.issue-list (map issue-entry issues)]]))
+
 (defn post-page
   [{:keys [title date-display type tags rating html cover
            referenced-collections related creator-credits credited-collections
-           line-collections] :as post}]
+           line-collections issues] :as post}]
   [:article.post
    (when cover [:img.cover-hero {:src cover :alt title}])
    (post-heading post)
@@ -59,6 +86,7 @@
    (when (seq creator-credits) (creator-credits-block creator-credits))
    [:div.post-tags (map c/tag-pill tags)]
    [:div.post-body (h/raw html)]
+   (issue-list issues)
    (listing-section "Reviews & News" related)
    (credited-collections-block credited-collections)
    (listing-section "Collections" line-collections)])

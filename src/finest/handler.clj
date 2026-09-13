@@ -61,14 +61,24 @@
   [collection creator-slug]
   (some #(when (= creator-slug (:slug %)) (:role %)) (:creators collection)))
 
+(defn- resolve-creators
+  [creators]
+  (keep (fn [{:keys [slug role]}] (some-> (store/by-slug slug) (assoc :role role))) creators))
+
+(defn- resolve-issue-creators
+  [issues]
+  (map (fn [issue]
+         (cond-> issue
+           (seq (:creators issue)) (assoc :creators (resolve-creators (:creators issue)))))
+       issues))
+
 (defn- enrich
-  [{:keys [type slug collections creators] :as post}]
+  [{:keys [type slug collections creators issues] :as post}]
   (cond-> post
     (seq collections)     (assoc :referenced-collections (keep store/by-slug collections))
     (= type :collection)  (assoc :related (store/referencing slug)
-                                  :creator-credits (keep (fn [{:keys [slug role]}]
-                                                            (some-> (store/by-slug slug) (assoc :role role)))
-                                                          creators))
+                                  :creator-credits (resolve-creators creators))
+    (seq issues)          (assoc :issues (resolve-issue-creators issues))
     (= type :creator)     (assoc :credited-collections
                                   (map #(assoc % :role (creator-role-on % slug)) (store/credited-on slug)))
     (= type :line)        (assoc :line-collections (store/under-line slug))))

@@ -174,6 +174,26 @@ img.cover-thumb {
   margin: -0.75rem 0 0.75rem;
 }
 
+.issue-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.issue-entry {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.issue-entry:last-child { border-bottom: none; }
+.issue-date, .issue-creators {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.issue-siblings {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+}
+
 .empty { color: var(--muted); font-style: italic; }
 
 .site-footer {

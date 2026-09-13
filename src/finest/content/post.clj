@@ -64,11 +64,22 @@
     (select-keys c [:slug :role])
     {:slug c}))
 
+(defn- normalize-issue
+  "An issue entry: :number plus whatever optional fields were given --
+   :date (freeform display text), :creators (overrides the collection's
+   cover credits for just this issue), :original (a shared id linking this
+   issue to its other fragments across different collections/lines)."
+  [{:keys [number date original creators]}]
+  (cond-> {:number number}
+    date           (assoc :date date)
+    original       (assoc :original original)
+    (seq creators) (assoc :creators (mapv normalize-creator creators))))
+
 (defn ->post
   "Builds and validates a post map from parsed frontmatter, rendered HTML body,
    and file metadata. Throws ex-info on invalid/missing required fields."
   [{:keys [meta html source-file last-modified]}]
-  (let [{:keys [title date slug tags type rating cover collections creators line]} meta
+  (let [{:keys [title date slug tags type rating cover collections creators line issues]} meta
         post-type      (some-> type name keyword)
         freeform-date? (= post-type :collection)
         sort-d         (when date (sort-date freeform-date? date))]
@@ -94,4 +105,5 @@
       cover                 (assoc :cover cover)
       (seq collections)     (assoc :collections (vec collections))
       (seq creators)        (assoc :creators (mapv normalize-creator creators))
+      (seq issues)          (assoc :issues (mapv normalize-issue issues))
       line                  (assoc :line line))))

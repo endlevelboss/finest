@@ -117,6 +117,22 @@
                          :html "" :source-file "2026-01-15-x.md" :last-modified 0})]
     (is (= [{:slug "a"} {:slug "b"}] (:creators p)))))
 
+(deftest issues-field-parses-only-present-fields
+  (let [p (post/->post {:meta (assoc (base-meta) :type "collection"
+                                      :issues [{:number 404}
+                                               {:number 405 :date "Mar 1987" :original "action-comics-256"
+                                                :creators [{:slug "a" :role "Writer"} "b"]}])
+                         :html "" :source-file "2026-01-15-x.md" :last-modified 0})]
+    (is (= [{:number 404}
+            {:number 405 :date "Mar 1987" :original "action-comics-256"
+             :creators [{:slug "a" :role "Writer"} {:slug "b"}]}]
+           (:issues p)))))
+
+(deftest issues-field-is-optional
+  (let [p (post/->post {:meta (assoc (base-meta) :type "collection") :html ""
+                         :source-file "2026-01-15-x.md" :last-modified 0})]
+    (is (not (contains? p :issues)))))
+
 (deftest cover-field-is-optional
   (let [without-cover (post/->post {:meta (base-meta) :html ""
                                      :source-file "2026-01-15-x.md" :last-modified 0})

@@ -55,9 +55,15 @@
     (assoc post :line-title (:title line))
     post))
 
+(defn- creators-of
+  "A post's full creator credits: the cover creators: plus any per-issue
+   overrides -- a creator only credited on one issue still counts."
+  [post]
+  (concat (:creators post) (mapcat :creators (:issues post))))
+
 (defn- credited-creator-slugs
   [posts]
-  (into #{} (comp (filter #(= :collection (:type %))) (mapcat :creators) (map :slug)) posts))
+  (into #{} (comp (filter #(= :collection (:type %))) (mapcat creators-of) (map :slug)) posts))
 
 (defn- generated-creator
   "A stand-in page for a creator credited on a collection but with no
@@ -70,6 +76,41 @@
    :tags        #{}
    :html        "<p><em>No profile written yet.</em></p>"
    :generated?  true})
+
+(defn- issue-fragments
+  "Every (collection, issue) pair across the site that has an :original id,
+   grouped by that id. Each fragment carries just enough about its parent
+   collection to render a link and a combined heading (shaped to match
+   components/display-title's input) plus its own issue number."
+  [posts]
+  (->> posts
+       (filter #(= :collection (:type %)))
+       (mapcat (fn [c]
+                 (for [issue (:issues c) :when (:original issue)]
+                   {:original   (:original issue)
+                    :collection (cond-> {:slug (:slug c) :title (:title c)}
+                                  (:line-title c) (assoc :line-title (:line-title c)))
+                    :number     (:number issue)})))
+       (group-by :original)))
+
+(defn- attach-issue-siblings
+  "For each issue with an :original id, assoc :siblings -- the other
+   fragments (in other collections) sharing that id, so a reader can hop
+   between them to reconstruct the original historical issue. Issues with
+   no :original, or no siblings, are left untouched."
+  [fragments-by-original post]
+  (if (= :collection (:type post))
+    (update post :issues
+            (fn [issues]
+              (mapv (fn [issue]
+                      (if-let [orig (:original issue)]
+                        (let [siblings (->> (get fragments-by-original orig)
+                                             (remove #(= (:slug (:collection %)) (:slug post)))
+                                             (mapv #(assoc (:collection %) :number (:number %))))]
+                          (cond-> issue (seq siblings) (assoc :siblings siblings)))
+                        issue))
+                    issues)))
+    post))
 
 (defn load-all!
   "Loads all .md files under content-dir into the in-memory store."
@@ -87,9 +128,11 @@
                               reverse
                               vec)
         by-slug-raw      (into {} (map (juxt :slug identity)) raw-posts)
-        decorated        (mapv (partial attach-line-title by-slug-raw) raw-posts)
-        missing-creators (remove by-slug-raw (credited-creator-slugs decorated))
-        posts            (into decorated (map generated-creator) missing-creators)]
+        with-line-titles (mapv (partial attach-line-title by-slug-raw) raw-posts)
+        fragments        (issue-fragments with-line-titles)
+        with-siblings    (mapv (partial attach-issue-siblings fragments) with-line-titles)
+        missing-creators (remove by-slug-raw (credited-creator-slugs with-siblings))
+        posts            (into with-siblings (map generated-creator) missing-creators)]
     (reset! state {:posts     posts
                     :by-slug   (into {} (map (juxt :slug identity)) posts)
                     :loaded-at (System/currentTimeMillis)})
@@ -110,7 +153,7 @@
 (defn all-tags [] (into (sorted-set) (mapcat :tags) (all-posts)))
 (defn articles [] (filterv #(not (#{:collection :creator :line} (:type %))) (all-posts)))
 (defn referencing [collection-slug] (filterv #(some #{collection-slug} (:collections %)) (all-posts)))
-(defn credited-on [creator-slug] (filterv (fn [p] (some #(= creator-slug (:slug %)) (:creators p))) (all-posts)))
+(defn credited-on [creator-slug] (filterv (fn [p] (some #(= creator-slug (:slug %)) (creators-of p))) (all-posts)))
 (defn under-line
   "Collections in a line, oldest publication first -- a reading order,
    not the reverse-chronological order the rest of the site uses."

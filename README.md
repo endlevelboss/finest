@@ -101,6 +101,38 @@ underneath, and anywhere the collection appears as a card (listings, tag
 pages, related sections) shows the combined "Batman: Year One" heading.
 Collections with no `line:` just show their own `title:` as-is.
 
+### Listing issues within a collection
+
+Reprints span decades, and the actual creative team can change issue to
+issue within one collection — the `creators:` above is really just the
+cover credit. An optional `issues:` list captures the individual issues:
+
+```yaml
+issues:
+  - number: 404
+    date: "Feb 1987"
+  - number: 405
+    date: "Mar 1987"
+    creators:                # overrides the cover creators for just this issue
+      - slug: some-fill-in-artist
+        role: Artist
+    original: some-shared-id # links this issue to its other fragments (see below)
+```
+
+Every field is optional except `number`. If `creators:` is omitted on an
+issue, it just inherits nothing extra — the cover credits already cover
+it. If given, it feeds the *reverse* lookup too: a creator only credited on
+one issue still shows up under "Collections" on their own page, even
+though they're invisible in the cover `creators:` line.
+
+`original:` handles a DC Finest–specific wrinkle: a single historical issue
+can get split across *different* line collections — e.g. a Superman lead
+story and a Green Arrow backup from the same physical comic, reprinted
+separately under the Superman and Green Arrow lines. Give matching issues
+in different collections the same `original:` id, and each one renders an
+"Also collected in:" link to the other, so a reader can reconstruct the
+original issue from its scattered fragments.
+
 ## Writing a creator profile
 
 Add a Markdown file under `content/creators/`, e.g.
