@@ -101,6 +101,18 @@
                          :html "" :source-file "2026-01-15-x.md" :last-modified 0})]
     (is (= [{:slug "a" :role "Writer"}] (:creators p)))))
 
+(deftest creators-role-is-optional-on-a-map-entry
+  (let [p (post/->post {:meta (assoc (base-meta) :type "collection"
+                                      :creators [{:slug "a"}])
+                         :html "" :source-file "2026-01-15-x.md" :last-modified 0})]
+    (is (= [{:slug "a"}] (:creators p)))))
+
+(deftest creators-field-accepts-bare-slug-strings
+  (let [p (post/->post {:meta (assoc (base-meta) :type "collection"
+                                      :creators ["a" "b"])
+                         :html "" :source-file "2026-01-15-x.md" :last-modified 0})]
+    (is (= [{:slug "a"} {:slug "b"}] (:creators p)))))
+
 (deftest cover-field-is-optional
   (let [without-cover (post/->post {:meta (base-meta) :html ""
                                      :source-file "2026-01-15-x.md" :last-modified 0})

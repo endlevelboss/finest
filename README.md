@@ -88,7 +88,9 @@ home feed. Any review or news post can point back to one or more collections
 with a `collections: [slug, ...]` field, which renders as an "About:" link
 on the post and lists the post under "Reviews & News" on the collection's
 page. The `creators:` field links a collection to creator profiles (see
-below) and renders as "Name — Role" credits on the collection's page. The
+below) and renders as "Name — Role" credits on the collection's page.
+`role:` is optional per creator — a bare `creators: [some-writer, some-artist]`
+list of slugs works too, and just renders without a role. The
 `line:` field links a collection to a single franchise/character page
 (see below) and renders as a "Part of:" link.
 

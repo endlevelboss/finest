@@ -9,6 +9,7 @@ creators:
     role: Writer
   - slug: dave-gibbons
     role: Artist
+  - john-higgins
 ---
 
 *Watchmen* is a 12-issue limited series written by Alan Moore, illustrated

@@ -47,6 +47,15 @@
                       (LocalDate/of (Integer/parseInt y) 1 1))
     :else          (->local-date d)))
 
+(defn- normalize-creator
+  "Accepts either a bare slug string (creators: [alan-moore, dave-gibbons])
+   or a {:slug :role} map with role optional -- always returns a map, so
+   downstream code only has one shape to deal with."
+  [c]
+  (if (map? c)
+    (select-keys c [:slug :role])
+    {:slug c}))
+
 (defn ->post
   "Builds and validates a post map from parsed frontmatter, rendered HTML body,
    and file metadata. Throws ex-info on invalid/missing required fields."
@@ -76,5 +85,5 @@
       (= post-type :review) (assoc :rating (double rating))
       cover                 (assoc :cover cover)
       (seq collections)     (assoc :collections (vec collections))
-      (seq creators)        (assoc :creators (vec creators))
+      (seq creators)        (assoc :creators (mapv normalize-creator creators))
       line                  (assoc :line line))))
