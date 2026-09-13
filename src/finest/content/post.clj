@@ -20,18 +20,47 @@
     (string? d)             (LocalDate/parse d)
     :else                   (throw (ex-info "Unrecognized date value" {:date d}))))
 
+(defn- real-date?
+  [d]
+  (or (instance? LocalDate d) (instance? Date d)))
+
+(defn- display-date
+  "Human-facing date string. Real date/timestamp values are normalized to
+   ISO form; anything else (plain strings, bare-year YAML longs) is shown
+   as authored -- this is how collections get freeform ranges like
+   \"1986-1987\" or \"Jan 1990 - Aug 1990\"."
+  [d]
+  (if (real-date? d)
+    (str (->local-date d))
+    (str d)))
+
+(defn- sort-date
+  "Best-effort chronological sort key. Collections may only be dated to a
+   year or a range, so we fall back to the first 4-digit year found in the
+   display string, anchored to Jan 1 -- good enough for ordering, not for
+   display."
+  [freeform? d]
+  (cond
+    (nil? d)       nil
+    (real-date? d) (->local-date d)
+    freeform?      (when-let [y (re-find #"\d{4}" (str d))]
+                      (LocalDate/of (Integer/parseInt y) 1 1))
+    :else          (->local-date d)))
+
 (defn ->post
   "Builds and validates a post map from parsed frontmatter, rendered HTML body,
    and file metadata. Throws ex-info on invalid/missing required fields."
   [{:keys [meta html source-file last-modified]}]
-  (let [{:keys [title date slug tags type rating cover collections creators]} meta
-        post-type (some-> type name keyword)]
+  (let [{:keys [title date slug tags type rating cover collections creators line]} meta
+        post-type      (some-> type name keyword)
+        freeform-date? (= post-type :collection)
+        sort-d         (when date (sort-date freeform-date? date))]
     (when-not title
       (throw (ex-info "Post is missing :title" {:source-file source-file})))
-    (when-not (#{:news :review :collection :creator} post-type)
-      (throw (ex-info "Post :type must be :news, :review, :collection, or :creator"
+    (when-not (#{:news :review :collection :creator :line} post-type)
+      (throw (ex-info "Post :type must be :news, :review, :collection, :creator, or :line"
                        {:source-file source-file :type type})))
-    (when (and (not= post-type :creator) (nil? date))
+    (when (and (not (#{:creator :line} post-type)) (nil? date))
       (throw (ex-info "Post is missing :date" {:source-file source-file})))
     (when (and (= post-type :review) (nil? rating))
       (throw (ex-info "Reviews require a :rating" {:source-file source-file})))
@@ -42,8 +71,10 @@
              :html          html
              :source-file   source-file
              :last-modified last-modified}
-      date                  (assoc :date (->local-date date))
+      date                  (assoc :date-display (display-date date))
+      sort-d                (assoc :date sort-d)
       (= post-type :review) (assoc :rating (double rating))
       cover                 (assoc :cover cover)
       (seq collections)     (assoc :collections (vec collections))
-      (seq creators)        (assoc :creators (vec creators)))))
+      (seq creators)        (assoc :creators (vec creators))
+      line                  (assoc :line line))))

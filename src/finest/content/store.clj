@@ -64,6 +64,7 @@
 (defn by-tag [tag] (filterv #(contains? (:tags %) tag) (all-posts)))
 (defn by-type [type] (filterv #(= type (:type %)) (all-posts)))
 (defn all-tags [] (into (sorted-set) (mapcat :tags) (all-posts)))
-(defn articles [] (filterv #(not (#{:collection :creator} (:type %))) (all-posts)))
+(defn articles [] (filterv #(not (#{:collection :creator :line} (:type %))) (all-posts)))
 (defn referencing [collection-slug] (filterv #(some #{collection-slug} (:collections %)) (all-posts)))
 (defn credited-on [creator-slug] (filterv (fn [p] (some #(= creator-slug (:slug %)) (:creators p))) (all-posts)))
+(defn under-line [line-slug] (filterv #(= line-slug (:line %)) (all-posts)))

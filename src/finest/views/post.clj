@@ -16,11 +16,17 @@
    (interpose ", " (for [{:keys [slug title role]} creators]
                       [:span [:a {:href (str "/posts/" slug)} title] (when role (str " — " role))]))])
 
-(defn- related-articles
-  [posts]
+(defn- line-ref-block
+  [{:keys [slug title]}]
+  [:div.post-comics
+   [:span.post-comics-label "Part of: "]
+   [:a {:href (str "/posts/" slug)} title]])
+
+(defn- listing-section
+  [heading posts]
   (when (seq posts)
     [:section.related
-     [:h2 "Reviews & News"]
+     [:h2 heading]
      (map c/post-card posts)]))
 
 (defn- credited-collections-block
@@ -34,18 +40,21 @@
         (when role [:p.credited-role role])])]))
 
 (defn post-page
-  [{:keys [title date type tags rating html cover
-           referenced-collections related creator-credits credited-collections]}]
+  [{:keys [title date-display type tags rating html cover
+           referenced-collections related creator-credits credited-collections
+           line-ref line-collections]}]
   [:article.post
    (when cover [:img.cover-hero {:src cover :alt title}])
    [:h1 title]
    [:div.post-meta
-    (when date [:span.post-date (str date)])
+    (when date-display [:span.post-date date-display])
     (when (#{:news :review} type) (c/type-badge type))
     (when (= type :review) (c/rating-stars rating))]
+   (when line-ref (line-ref-block line-ref))
    (when (seq referenced-collections) (collection-refs referenced-collections))
    (when (seq creator-credits) (creator-credits-block creator-credits))
    [:div.post-tags (map c/tag-pill tags)]
    [:div.post-body (h/raw html)]
-   (related-articles related)
-   (credited-collections-block credited-collections)])
+   (listing-section "Reviews & News" related)
+   (credited-collections-block credited-collections)
+   (listing-section "Collections" line-collections)])

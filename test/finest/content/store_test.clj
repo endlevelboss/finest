@@ -6,8 +6,9 @@
 
 (deftest load-all-skips-malformed-and-sorts-by-date-desc
   (let [posts (store/load-all! fixture-dir)]
-    (is (= 4 (count posts)))
-    (is (= ["second" "first" "hero-collection" "hero-creator"] (map :slug posts)))))
+    (is (= 5 (count posts)))
+    (is (= ["second" "first" "hero-collection"] (take 3 (map :slug posts))))
+    (is (= #{"hero-creator" "hero-line"} (set (drop 3 (map :slug posts)))))))
 
 (deftest queries-after-load
   (store/load-all! fixture-dir)
@@ -16,9 +17,9 @@
   (is (= 1 (count (store/by-type :review))))
   (is (some? (store/by-slug "first")))
   (is (nil? (store/by-slug "broken")))
-  (is (= #{"alpha" "beta"} (store/all-tags))))
+  (is (= #{"alpha" "beta" "gamma"} (store/all-tags))))
 
-(deftest articles-excludes-collections-and-creators
+(deftest articles-excludes-collections-creators-and-lines
   (store/load-all! fixture-dir)
   (is (= #{"first" "second"} (set (map :slug (store/articles))))))
 
@@ -31,3 +32,8 @@
   (store/load-all! fixture-dir)
   (is (= ["hero-collection"] (map :slug (store/credited-on "hero-creator"))))
   (is (= [] (store/credited-on "no-such-creator"))))
+
+(deftest under-line-finds-collections-in-a-line
+  (store/load-all! fixture-dir)
+  (is (= ["hero-collection"] (map :slug (store/under-line "hero-line"))))
+  (is (= [] (store/under-line "no-such-line"))))

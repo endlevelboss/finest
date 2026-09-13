@@ -9,6 +9,7 @@
    [:a {:href "/reviews"} "Reviews"]
    [:a {:href "/collections"} "Collections"]
    [:a {:href "/creators"} "Creators"]
+   [:a {:href "/lines"} "Lines"]
    [:a {:href "/tags"} "Tags"]])
 
 (defn tag-pill
@@ -38,12 +39,12 @@
   [:span.type-badge {:class (name type)} (str/capitalize (name type))])
 
 (defn post-card
-  [{:keys [slug title date type tags rating cover]}]
+  [{:keys [slug title date-display type tags rating cover]}]
   [:article.post-card
    [:div.post-card-body
     [:h2 [:a {:href (str "/posts/" slug)} title]]
     [:div.post-meta
-     (when date [:span.post-date (str date)])
+     (when date-display [:span.post-date date-display])
      (when (#{:news :review} type) (type-badge type))
      (when (= type :review) (rating-stars rating))]
     [:div.post-tags (map tag-pill tags)]]

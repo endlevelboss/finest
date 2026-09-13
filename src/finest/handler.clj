@@ -35,6 +35,10 @@
   [_request]
   (listing-response "Creators" (store/by-type :creator)))
 
+(defn lines-list
+  [_request]
+  (listing-response "Lines" (store/by-type :line)))
+
 (defn tag-index
   [_request]
   (let [tags (store/all-tags)]
@@ -57,15 +61,17 @@
   (some #(when (= creator-slug (:slug %)) (:role %)) (:creators collection)))
 
 (defn- enrich
-  [{:keys [type slug collections creators] :as post}]
+  [{:keys [type slug collections creators line] :as post}]
   (cond-> post
     (seq collections)     (assoc :referenced-collections (keep store/by-slug collections))
     (= type :collection)  (assoc :related (store/referencing slug)
                                   :creator-credits (keep (fn [{:keys [slug role]}]
                                                             (some-> (store/by-slug slug) (assoc :role role)))
                                                           creators))
+    (and (= type :collection) line) (assoc :line-ref (store/by-slug line))
     (= type :creator)     (assoc :credited-collections
-                                  (map #(assoc % :role (creator-role-on % slug)) (store/credited-on slug)))))
+                                  (map #(assoc % :role (creator-role-on % slug)) (store/credited-on slug)))
+    (= type :line)        (assoc :line-collections (store/under-line slug))))
 
 (defn post-page
   [request]

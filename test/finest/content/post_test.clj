@@ -62,6 +62,33 @@
     (is (not (contains? without :collections)))
     (is (= ["a" "b"] (:collections with)))))
 
+(deftest collection-date-is-freeform-with-year-extracted-for-sorting
+  (let [p (post/->post {:meta (assoc (base-meta) :type "collection" :date "Sep 1986 - Oct 1987")
+                         :html "" :source-file "2026-01-15-x.md" :last-modified 0})]
+    (is (= "Sep 1986 - Oct 1987" (:date-display p)))
+    (is (= (LocalDate/parse "1986-01-01") (:date p)))))
+
+(deftest collection-date-without-a-year-has-no-sort-date
+  (let [p (post/->post {:meta (assoc (base-meta) :type "collection" :date "ongoing")
+                         :html "" :source-file "2026-01-15-x.md" :last-modified 0})]
+    (is (= "ongoing" (:date-display p)))
+    (is (not (contains? p :date)))))
+
+(deftest line-field-is-optional
+  (let [without (post/->post {:meta (assoc (base-meta) :type "collection") :html ""
+                               :source-file "2026-01-15-x.md" :last-modified 0})
+        with    (post/->post {:meta (assoc (base-meta) :type "collection" :line "batman") :html ""
+                               :source-file "2026-01-15-x.md" :last-modified 0})]
+    (is (not (contains? without :line)))
+    (is (= "batman" (:line with)))))
+
+(deftest builds-valid-line-post-without-date-or-rating
+  (let [p (post/->post {:meta {:title "Some Franchise" :type "line"} :html "<p>bio</p>"
+                         :source-file "some-franchise.md" :last-modified 0})]
+    (is (= :line (:type p)))
+    (is (not (contains? p :date)))
+    (is (not (contains? p :rating)))))
+
 (deftest builds-valid-creator-post-without-date
   (let [p (post/->post {:meta {:title "Some Creator" :type "creator"} :html "<p>bio</p>"
                          :source-file "some-creator.md" :last-modified 0})]

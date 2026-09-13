@@ -4,7 +4,9 @@ A small Clojure blog for comic-book news and reviews. Posts are Markdown
 files with YAML frontmatter under `content/`, loaded into memory — no
 database. News and reviews live under `content/posts/`; standalone
 descriptions of the collections (trades/omnibi) themselves live under
-`content/collections/`; creator biographies live under `content/creators/`.
+`content/collections/`; creator biographies live under `content/creators/`;
+franchise/character lines (Batman, Superman, etc.) live under
+`content/lines/`.
 
 ## Development
 
@@ -58,9 +60,10 @@ Add a Markdown file under `content/collections/`, e.g.
 ---
 title: "Collection Title"
 slug: some-collection
-date: 1986-09-01   # the collection's original publication date, not a post date
+date: "1986-1987"  # freeform — a year, a range, or "Jan 1990 - Aug 1990"
 tags: [tag-a, tag-b]
 type: collection
+line: some-franchise   # optional — links to a line (see below)
 creators:
   - slug: some-writer
     role: Writer
@@ -71,12 +74,19 @@ creators:
 Body in Markdown — series summary, publisher, etc.
 ```
 
+`date` is freeform text, shown exactly as written — quote it if it isn't a
+bare number (YAML would otherwise choke on something like `1986-1987`, which
+looks like a malformed timestamp). Chronological sorting falls back to the
+first 4-digit year found in the string, so it doesn't need to be precise.
+
 Collections get their own `/collections` listing and aren't shown on the
 home feed. Any review or news post can point back to one or more collections
 with a `collections: [slug, ...]` field, which renders as an "About:" link
 on the post and lists the post under "Reviews & News" on the collection's
 page. The `creators:` field links a collection to creator profiles (see
-below) and renders as "Name — Role" credits on the collection's page.
+below) and renders as "Name — Role" credits on the collection's page. The
+`line:` field links a collection to a single franchise/character page
+(see below) and renders as a "Part of:" link.
 
 ## Writing a creator profile
 
@@ -98,6 +108,26 @@ Body in Markdown — biography.
 Creators get their own `/creators` listing and aren't shown on the home
 feed. A creator's page lists every collection that credits them via that
 collection's `creators:` field.
+
+## Writing a line
+
+Add a Markdown file under `content/lines/`, e.g.
+`content/lines/some-franchise.md`:
+
+```markdown
+---
+title: "Franchise Name"
+slug: some-franchise
+tags: [tag-a]
+type: line
+---
+
+Body in Markdown — what this franchise/character line is about.
+```
+
+`date` is optional for lines, same as creators. Lines get their own
+`/lines` listing and aren't shown on the home feed. A line's page lists
+every collection filed under it via that collection's `line:` field.
 
 ## Deployment
 

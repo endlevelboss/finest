@@ -1,7 +1,7 @@
 ---
 title: "Saga"
 slug: saga
-date: 2012-03-14
+date: "2012-present"
 tags: [image, saga]
 type: collection
 creators:
