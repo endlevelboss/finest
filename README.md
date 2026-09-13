@@ -1,8 +1,9 @@
 # Comic Blog
 
 A small Clojure blog for comic-book news and reviews. Posts are Markdown
-files with YAML frontmatter under `content/posts/`, loaded into memory —
-no database.
+files with YAML frontmatter under `content/`, loaded into memory — no
+database. News and reviews live under `content/posts/`; standalone
+descriptions of the comics themselves live under `content/comics/`.
 
 ## Development
 
@@ -19,7 +20,7 @@ At the REPL:
 (reload-content! ) ; force a manual content reload
 ```
 
-While `(go)` is running, editing a file under `content/posts/` and
+While `(go)` is running, editing a file under `content/` and
 refreshing the browser is enough — content is reloaded automatically
 in dev (cheap mtime check per request).
 
@@ -35,8 +36,9 @@ Add a Markdown file under `content/posts/`, e.g.
 title: "Post Title"
 date: 2026-03-01
 tags: [tag-a, tag-b]
-type: news        # or: review
-rating: 4.5       # required when type is review, out of 5
+type: news             # or: review
+rating: 4.5            # required when type is review, out of 5
+comics: [some-comic]   # optional — slugs of comics this post is about
 ---
 
 Body in Markdown.
@@ -45,6 +47,28 @@ Body in Markdown.
 The slug is derived from the filename (date prefix stripped), or set
 explicitly with a `slug:` field. Commit the file — content ships with
 the code.
+
+## Writing a comic description
+
+Add a Markdown file under `content/comics/`, e.g.
+`content/comics/some-comic.md`:
+
+```markdown
+---
+title: "Comic Title"
+slug: some-comic
+date: 1986-09-01   # the comic's original publication date, not a post date
+tags: [tag-a, tag-b]
+type: comic
+---
+
+Body in Markdown — series summary, creators, publisher, etc.
+```
+
+Comics get their own `/comics` listing and aren't shown on the home feed.
+Any review or news post can point back to one or more comics with a
+`comics: [slug, ...]` field, which renders as an "About:" link on the post
+and lists the post under "Reviews & News" on the comic's page.
 
 ## Deployment
 
@@ -60,7 +84,7 @@ This produces `target/finest-standalone.jar`. Copy it, along with
 Run it directly:
 
 ```sh
-PORT=3000 CONTENT_DIR=/opt/finest/content/posts \
+PORT=3000 CONTENT_DIR=/opt/finest/content \
   java -jar /opt/finest/finest-standalone.jar
 ```
 
@@ -76,7 +100,7 @@ After=network.target
 [Service]
 WorkingDirectory=/opt/finest
 Environment=PORT=3000
-Environment=CONTENT_DIR=/opt/finest/content/posts
+Environment=CONTENT_DIR=/opt/finest/content
 ExecStart=/usr/bin/java -jar /opt/finest/finest-standalone.jar
 Restart=on-failure
 User=finest

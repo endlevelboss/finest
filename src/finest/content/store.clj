@@ -64,3 +64,5 @@
 (defn by-tag [tag] (filterv #(contains? (:tags %) tag) (all-posts)))
 (defn by-type [type] (filterv #(= type (:type %)) (all-posts)))
 (defn all-tags [] (into (sorted-set) (mapcat :tags) (all-posts)))
+(defn articles [] (filterv #(not= :comic (:type %)) (all-posts)))
+(defn referencing [comic-slug] (filterv #(some #{comic-slug} (:comics %)) (all-posts)))

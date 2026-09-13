@@ -6,7 +6,7 @@
 
 (tn-repl/set-refresh-dirs "src" "dev")
 
-(def content-dir "content/posts")
+(def content-dir "content")
 
 (defn- wrap-dev-content-reload
   [handler]

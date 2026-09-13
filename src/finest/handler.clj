@@ -17,7 +17,7 @@
 
 (defn index
   [_request]
-  (listing-response "Comic Blog" (store/all-posts)))
+  (listing-response "Comic Blog" (store/articles)))
 
 (defn news-list
   [_request]
@@ -26,6 +26,10 @@
 (defn reviews-list
   [_request]
   (listing-response "Reviews" (store/by-type :review)))
+
+(defn comics-list
+  [_request]
+  (listing-response "Comics" (store/by-type :comic)))
 
 (defn tag-index
   [_request]
@@ -44,12 +48,18 @@
   (let [tag (get-in request [:path-params :tag])]
     (listing-response (str "Tag: " tag) (store/by-tag tag))))
 
+(defn- enrich
+  [{:keys [type slug comics] :as post}]
+  (cond-> post
+    (seq comics)    (assoc :referenced-comics (keep store/by-slug comics))
+    (= type :comic) (assoc :related (store/referencing slug))))
+
 (defn post-page
   [request]
   (let [slug (get-in request [:path-params :slug])
         post (store/by-slug slug)]
     (if post
-      (html-response 200 (layout/page {:title (:title post) :body (post-view/post-page post)}))
+      (html-response 200 (layout/page {:title (:title post) :body (post-view/post-page (enrich post))}))
       (html-response 404 (layout/page {:title "Not Found" :body [:p "Post not found."]})))))
 
 (defn not-found

@@ -5,6 +5,7 @@ tags: [alan-moore, dc, hardcover]
 type: review
 rating: 4.5
 cover: /images/watchmen-cover.svg
+comics: [watchmen]
 ---
 
 *Watchmen* holds up remarkably well in this annotated hardcover. The new

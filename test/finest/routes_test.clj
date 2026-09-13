@@ -14,6 +14,7 @@
     (is (some? (r/match-by-path router "/")))
     (is (some? (r/match-by-path router "/news")))
     (is (some? (r/match-by-path router "/reviews")))
+    (is (some? (r/match-by-path router "/comics")))
     (is (some? (r/match-by-path router "/tags")))
     (is (= {:tag "dc"} (:path-params (r/match-by-path router "/tags/dc"))))
     (is (= {:slug "foo-bar"} (:path-params (r/match-by-path router "/posts/foo-bar"))))))

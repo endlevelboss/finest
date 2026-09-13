@@ -24,14 +24,14 @@
   "Builds and validates a post map from parsed frontmatter, rendered HTML body,
    and file metadata. Throws ex-info on invalid/missing required fields."
   [{:keys [meta html source-file last-modified]}]
-  (let [{:keys [title date slug tags type rating cover]} meta]
+  (let [{:keys [title date slug tags type rating cover comics]} meta]
     (when-not title
       (throw (ex-info "Post is missing :title" {:source-file source-file})))
     (when-not date
       (throw (ex-info "Post is missing :date" {:source-file source-file})))
     (let [post-type (some-> type name keyword)]
-      (when-not (#{:news :review} post-type)
-        (throw (ex-info "Post :type must be :news or :review"
+      (when-not (#{:news :review :comic} post-type)
+        (throw (ex-info "Post :type must be :news, :review, or :comic"
                          {:source-file source-file :type type})))
       (when (and (= post-type :review) (nil? rating))
         (throw (ex-info "Reviews require a :rating" {:source-file source-file})))
@@ -44,4 +44,5 @@
                :source-file   source-file
                :last-modified last-modified}
         (= post-type :review) (assoc :rating (double rating))
-        cover                 (assoc :cover cover)))))
+        cover                 (assoc :cover cover)
+        (seq comics)          (assoc :comics (vec comics))))))

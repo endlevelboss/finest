@@ -48,6 +48,20 @@
                          :source-file "2026-01-15-x.md" :last-modified 0})]
     (is (= "custom-slug" (:slug p)))))
 
+(deftest builds-valid-comic-post-without-rating
+  (let [p (post/->post {:meta (assoc (base-meta) :type "comic")
+                         :html "<p>hi</p>" :source-file "2026-01-15-x.md" :last-modified 0})]
+    (is (= :comic (:type p)))
+    (is (not (contains? p :rating)))))
+
+(deftest comics-field-parses-into-vector
+  (let [without (post/->post {:meta (base-meta) :html ""
+                               :source-file "2026-01-15-x.md" :last-modified 0})
+        with    (post/->post {:meta (assoc (base-meta) :comics ["a" "b"]) :html ""
+                               :source-file "2026-01-15-x.md" :last-modified 0})]
+    (is (not (contains? without :comics)))
+    (is (= ["a" "b"] (:comics with)))))
+
 (deftest cover-field-is-optional
   (let [without-cover (post/->post {:meta (base-meta) :html ""
                                      :source-file "2026-01-15-x.md" :last-modified 0})
