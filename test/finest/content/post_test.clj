@@ -9,6 +9,10 @@
   (is (= "no-date-prefix"
          (post/slug-from-filename "no-date-prefix.md"))))
 
+(deftest humanize-slug-test
+  (is (= "Bill Finger" (post/humanize-slug "bill-finger")))
+  (is (= "Batman" (post/humanize-slug "batman"))))
+
 (defn- base-meta
   []
   {:title "Some Title" :date "2026-01-15" :type "news"})

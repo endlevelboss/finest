@@ -6,10 +6,11 @@
 
 (deftest load-all-skips-malformed-and-sorts-by-date-desc
   (let [posts (store/load-all! fixture-dir)]
-    (is (= 8 (count posts)))
-    (is (= ["second" "first" "dangling-line-collection" "hero-collection" "hero-collection-early"]
-           (take 5 (map :slug posts))))
-    (is (= #{"hero-creator" "hero-line" "explicit-override"} (set (drop 5 (map :slug posts)))))))
+    (is (= 10 (count posts)))
+    (is (= ["second" "first" "dangling-line-collection" "collection-with-missing-creator"
+            "hero-collection" "hero-collection-early"]
+           (take 6 (map :slug posts))))
+    (is (= #{"hero-creator" "hero-line" "explicit-override" "jane-q-public"} (set (drop 6 (map :slug posts)))))))
 
 (deftest queries-after-load
   (store/load-all! fixture-dir)
@@ -19,7 +20,7 @@
   (is (some? (store/by-slug "first")))
   (is (nil? (store/by-slug "broken")))
   (is (nil? (store/by-slug "no-type")))
-  (is (= #{"alpha" "beta" "gamma" "delta" "zeta"} (store/all-tags))))
+  (is (= #{"alpha" "beta" "gamma" "delta" "zeta" "eta"} (store/all-tags))))
 
 (deftest articles-excludes-collections-creators-and-lines
   (store/load-all! fixture-dir)
@@ -65,3 +66,18 @@
 (deftest collection-with-dangling-line-has-no-line-title
   (store/load-all! fixture-dir)
   (is (not (contains? (store/by-slug "dangling-line-collection") :line-title))))
+
+(deftest missing-creator-gets-an-auto-generated-page
+  (store/load-all! fixture-dir)
+  (let [p (store/by-slug "jane-q-public")]
+    (is (= :creator (:type p)))
+    (is (= "Jane Q Public" (:title p)))
+    (is (true? (:generated? p)))))
+
+(deftest auto-generated-creator-lists-their-collections
+  (store/load-all! fixture-dir)
+  (is (= ["collection-with-missing-creator"] (map :slug (store/credited-on "jane-q-public")))))
+
+(deftest real-creator-file-is-not-treated-as-generated
+  (store/load-all! fixture-dir)
+  (is (not (contains? (store/by-slug "hero-creator") :generated?))))

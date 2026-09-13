@@ -12,6 +12,14 @@
       (str/replace #"\.md$" "")
       (str/replace filename-date-prefix "")))
 
+(defn humanize-slug
+  "\"bill-finger\" -> \"Bill Finger\" -- used to give an auto-generated
+   page a readable title when nothing better is available."
+  [slug]
+  (->> (str/split slug #"-")
+       (map str/capitalize)
+       (str/join " ")))
+
 (defn- ->local-date
   [d]
   (cond

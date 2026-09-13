@@ -121,6 +121,12 @@ Creators get their own `/creators` listing and aren't shown on the home
 feed. A creator's page lists every collection that credits them via that
 collection's `creators:` field.
 
+You don't have to write a creator file before crediting someone — a
+`creators:` slug with no matching file gets an auto-generated page (title
+guessed from the slug, e.g. `bill-finger` → "Bill Finger") that still lists
+their collections. Add a real file for that slug later to give them an
+actual bio; it'll replace the generated page automatically.
+
 ## Writing a line
 
 Add a Markdown file under `content/lines/`, e.g.

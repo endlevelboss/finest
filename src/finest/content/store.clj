@@ -55,23 +55,41 @@
     (assoc post :line-title (:title line))
     post))
 
+(defn- credited-creator-slugs
+  [posts]
+  (into #{} (comp (filter #(= :collection (:type %))) (mapcat :creators) (map :slug)) posts))
+
+(defn- generated-creator
+  "A stand-in page for a creator credited on a collection but with no
+   creator file of their own yet -- title is guessed from the slug, and
+   the page still lists everything they're credited on."
+  [slug]
+  {:slug        slug
+   :title       (post/humanize-slug slug)
+   :type        :creator
+   :tags        #{}
+   :html        "<p><em>No profile written yet.</em></p>"
+   :generated?  true})
+
 (defn load-all!
   "Loads all .md files under content-dir into the in-memory store."
   [content-dir]
-  (let [dir        (io/file content-dir)
-        raw-posts  (->> (file-seq dir)
-                        (filter md-file?)
-                        (keep (fn [f]
-                                (try
-                                  (load-file->post f)
-                                  (catch Exception e
-                                    (warn (ex-message e) (merge {:file (.getName f)} (ex-data e)))
-                                    nil))))
-                        (sort-by :date)
-                        reverse
-                        vec)
-        by-slug    (into {} (map (juxt :slug identity)) raw-posts)
-        posts      (mapv (partial attach-line-title by-slug) raw-posts)]
+  (let [dir              (io/file content-dir)
+        raw-posts        (->> (file-seq dir)
+                              (filter md-file?)
+                              (keep (fn [f]
+                                      (try
+                                        (load-file->post f)
+                                        (catch Exception e
+                                          (warn (ex-message e) (merge {:file (.getName f)} (ex-data e)))
+                                          nil))))
+                              (sort-by :date)
+                              reverse
+                              vec)
+        by-slug-raw      (into {} (map (juxt :slug identity)) raw-posts)
+        decorated        (mapv (partial attach-line-title by-slug-raw) raw-posts)
+        missing-creators (remove by-slug-raw (credited-creator-slugs decorated))
+        posts            (into decorated (map generated-creator) missing-creators)]
     (reset! state {:posts     posts
                     :by-slug   (into {} (map (juxt :slug identity)) posts)
                     :loaded-at (System/currentTimeMillis)})
