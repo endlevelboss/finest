@@ -60,7 +60,7 @@
 
 (defn lines-list
   [_request]
-  (listing-response "Lines" (sort-by title-sort-key (store/by-type :line))))
+  (listing-response "Lines" (sort-by title-sort-key (store/by-type :line)) components/line-row))
 
 (defn tag-index
   [_request]

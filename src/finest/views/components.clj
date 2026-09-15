@@ -71,6 +71,14 @@
     [:span.volume-range date-display]]
    (release-date-note post)])
 
+(defn line-row
+  "A compact single-line row for the Lines listing -- just the clickable
+   name, no meta line or tags, since a line carries none of the
+   date/rating/badge info a post-card is built to show."
+  [{:keys [slug] :as post}]
+  [:div.line-row
+   [:a.line-title {:href (str "/posts/" slug)} (display-title post)]])
+
 (defn post-card
   [{:keys [slug title date-display type tags rating cover] :as post}]
   [:article.post-card

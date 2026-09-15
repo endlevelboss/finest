@@ -103,6 +103,14 @@ img.cover-thumb {
   white-space: nowrap;
 }
 
+.line-row {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.line-row:last-child { border-bottom: none; }
+.line-title { font-weight: 600; }
+
 .cover-hero {
   display: block;
   width: 100%;
