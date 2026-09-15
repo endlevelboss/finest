@@ -39,7 +39,7 @@
   [collections]
   (when (seq collections)
     [:section.related
-     [:h2 "Collections"]
+     [:h2 "Volumes"]
      (for [{:keys [role] :as collection} collections]
        [:div.credited-collection
         (c/post-card collection)
@@ -90,4 +90,4 @@
    (issue-list issues)
    (listing-section "Reviews & News" related)
    (credited-collections-block credited-collections)
-   (listing-section "Collections" line-collections)])
+   (listing-section "Volumes" line-collections)])

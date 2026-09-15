@@ -8,7 +8,7 @@
    [:a {:href "/news"} "News"]
    [:a {:href "/reviews"} "Reviews"]
    [:a {:href "/lines"} "DC Finest Lines"]
-   [:a {:href "/collections"} "Collections"]
+   [:a {:href "/collections"} "Volumes"]
    [:a {:href "/creators"} "Creators"]
    [:a {:href "/tags"} "Tags"]])
 

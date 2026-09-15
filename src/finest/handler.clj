@@ -43,7 +43,7 @@
 
 (defn collections-list
   [_request]
-  (listing-response "Collections" (sort by-release-date (store/by-type :collection))))
+  (listing-response "Volumes" (sort by-release-date (store/by-type :collection))))
 
 (defn creators-list
   [_request]
