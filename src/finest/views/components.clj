@@ -45,14 +45,23 @@
   [{:keys [title line-title]}]
   (if line-title (str line-title ": " title) title))
 
+(defn release-date-note
+  "\"Released Nov 5, 2024\" once it's out, \"Releases Jun 1, 2027\" while
+   it's still upcoming -- the class hook lets upcoming releases be styled
+   differently."
+  [{:keys [release-date-display release-upcoming?]}]
+  (when release-date-display
+    [:span.release-date {:class (when release-upcoming? "upcoming")}
+     (str (if release-upcoming? "Releases " "Released ") release-date-display)]))
+
 (defn post-card
-  [{:keys [slug title date-display release-date-display type tags rating cover] :as post}]
+  [{:keys [slug title date-display type tags rating cover] :as post}]
   [:article.post-card
    [:div.post-card-body
     [:h2 [:a {:href (str "/posts/" slug)} (display-title post)]]
     [:div.post-meta
      (when date-display [:span.post-date date-display])
-     (when release-date-display [:span.release-date (str "Released " release-date-display)])
+     (release-date-note post)
      (when (#{:news :review} type) (type-badge type))
      (when (= type :review) (rating-stars rating))]
     [:div.post-tags (map tag-pill tags)]]

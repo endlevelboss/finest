@@ -52,6 +52,13 @@
   [d]
   (.format (->local-date d) release-date-formatter))
 
+(defn- upcoming?
+  "Whether a release date is still in the future as of today, so pages can
+   say \"Releases\" instead of \"Released\" for collections that haven't
+   shipped yet."
+  [d]
+  (.isAfter (->local-date d) (LocalDate/now)))
+
 (defn- sort-date
   "Best-effort chronological sort key. Collections may only be dated to a
    year or a range, so we fall back to the first 4-digit year found in the
@@ -112,7 +119,8 @@
       date                  (assoc :date-display (display-date date))
       sort-d                (assoc :date sort-d)
       release-date          (assoc :release-date (->local-date release-date)
-                                    :release-date-display (display-release-date release-date))
+                                    :release-date-display (display-release-date release-date)
+                                    :release-upcoming? (upcoming? release-date))
       (= post-type :review) (assoc :rating (double rating))
       cover                 (assoc :cover cover)
       (seq collections)     (assoc :collections (vec collections))

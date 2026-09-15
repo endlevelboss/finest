@@ -111,6 +111,8 @@ img.cover-thumb {
 .type-badge.collection { background: var(--collection); }
 .type-badge.creator { background: var(--creator); }
 
+.release-date.upcoming { color: var(--collection); font-style: italic; }
+
 .rating { display: inline-flex; align-items: center; gap: 0.1em; }
 .star { color: var(--border); }
 .star.filled { color: var(--star); }

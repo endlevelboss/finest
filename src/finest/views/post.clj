@@ -72,7 +72,7 @@
      [:ol.issue-list (map issue-entry issues)]]))
 
 (defn post-page
-  [{:keys [title date-display release-date-display type tags rating html cover
+  [{:keys [title date-display type tags rating html cover
            referenced-collections related creator-credits credited-collections
            line-collections issues] :as post}]
   [:article.post
@@ -80,7 +80,7 @@
    (post-heading post)
    [:div.post-meta
     (when date-display [:span.post-date date-display])
-    (when release-date-display [:span.release-date (str "Released " release-date-display)])
+    (c/release-date-note post)
     (when (#{:news :review} type) (c/type-badge type))
     (when (= type :review) (c/rating-stars rating))]
    (when (seq referenced-collections) (collection-refs referenced-collections))
