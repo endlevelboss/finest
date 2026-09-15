@@ -2,6 +2,7 @@
 title: "Year One & Two"
 slug: batman-year-one
 date: "1986 - 1987"
+release-date: 2024-11-05
 tags: [bronze-age-pre-crisis]
 line: batman
 creators:

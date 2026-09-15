@@ -1,7 +1,6 @@
 ---
 title: "Green Arrow"
 slug: green-arrow
-tags: [dc]
 ---
 
 Green Arrow is the DC Comics archer vigilante created by Mort Weisinger

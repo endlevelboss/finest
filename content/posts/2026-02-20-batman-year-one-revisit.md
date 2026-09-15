@@ -1,7 +1,7 @@
 ---
 title: "Revisiting Batman: Year One"
 date: 2026-02-20
-tags: [dc, batman, classic]
+tags: [batman, classic]
 type: review
 rating: 5
 collections: [batman-year-one]

@@ -1,7 +1,7 @@
 ---
 title: "Watchmen: Annotated Edition"
 date: 2026-01-15
-tags: [alan-moore, dc, hardcover]
+tags: [alan-moore, hardcover]
 type: review
 rating: 4.5
 cover: /images/watchmen-cover.svg

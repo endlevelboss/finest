@@ -2,7 +2,7 @@
 title: "The Man of Tomorrow"
 slug: superman-man-of-tomorrow
 date: "1959 - 1960"
-tags: [dc, superman, silver-age]
+tags: [superman, silver-age]
 line: superman
 creators:
   - slug: otto-binder

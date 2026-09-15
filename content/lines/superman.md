@@ -1,7 +1,6 @@
 ---
 title: "Superman"
 slug: superman
-tags: [dc]
 ---
 
 Superman is the DC Comics superhero created by Jerry Siegel and Joe

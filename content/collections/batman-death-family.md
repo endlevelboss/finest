@@ -2,6 +2,7 @@
 title: "A Death in the Family"
 slug: batman-death-family
 date: "Aug 1988 - Dec 1988"
+release-date: 2026-04-21
 tags: [bronze-age-post-crisis]
 line: batman
 creators:

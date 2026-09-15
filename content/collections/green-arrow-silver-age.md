@@ -2,7 +2,7 @@
 title: "The Silver Age Archives"
 slug: green-arrow-silver-age
 date: "1959 - 1960"
-tags: [dc, green-arrow, silver-age]
+tags: [green-arrow, silver-age]
 line: green-arrow
 creators:
   - slug: jack-kirby

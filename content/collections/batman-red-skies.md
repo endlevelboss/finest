@@ -2,6 +2,7 @@
 title: "Red Skies"
 slug: batman-red-skies
 date: "1985-1986"
+release-date: 2025-09-02
 tags: [bronze-age-pre-crisis]
 line: batman
 creators:
