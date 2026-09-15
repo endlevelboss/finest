@@ -34,9 +34,14 @@
         [:span.star {:class (if filled? "filled" "empty") :aria-hidden "true"} "★"]))
     [:span.rating-value (str " " (format-rating rating) "/" max)]]))
 
+(def ^:private badge-labels
+  "The :news type covers more than breaking news -- any non-review writeup,
+   op-eds included -- so its badge reads as the more generic \"Article\"."
+  {:news "Article"})
+
 (defn type-badge
   [type]
-  [:span.type-badge {:class (name type)} (str/capitalize (name type))])
+  [:span.type-badge {:class (name type)} (or (badge-labels type) (str/capitalize (name type)))])
 
 (defn display-title
   "A collection's own title is just its distinguishing name (\"Year One\");
