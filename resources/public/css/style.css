@@ -111,6 +111,12 @@ img.cover-thumb {
 .line-row:last-child { border-bottom: none; }
 .line-title { font-weight: 600; }
 
+.line-columns {
+  columns: 3;
+  column-gap: 1.5rem;
+}
+.line-columns .line-row { break-inside: avoid; }
+
 .cover-hero {
   display: block;
   width: 100%;
@@ -244,4 +250,5 @@ img.cover-thumb {
   .site-nav { gap: 0.9rem; padding: 0.85rem 1rem; }
   main { padding: 1rem 1rem 2rem; }
   h1 { font-size: 1.5rem; }
+  .line-columns { columns: 1; }
 }

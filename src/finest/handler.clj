@@ -13,12 +13,14 @@
    :body    body})
 
 (defn- listing-response
-  ([heading posts] (listing-response heading posts nil))
-  ([heading posts card]
+  ([heading posts] (listing-response heading posts nil nil))
+  ([heading posts card] (listing-response heading posts card nil))
+  ([heading posts card list-class]
    (html-response 200 (layout/page {:title heading
                                      :body  (index-view/listing-page
                                               (cond-> {:heading heading :posts posts}
-                                                card (assoc :card card)))}))))
+                                                card       (assoc :card card)
+                                                list-class (assoc :list-class list-class)))}))))
 
 (defn index
   [_request]
@@ -60,7 +62,7 @@
 
 (defn lines-list
   [_request]
-  (listing-response "Lines" (sort-by title-sort-key (store/by-type :line)) components/line-row))
+  (listing-response "Lines" (sort-by title-sort-key (store/by-type :line)) components/line-row "line-columns"))
 
 (defn tag-index
   [_request]
