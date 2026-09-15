@@ -78,17 +78,28 @@ img.cover-thumb {
 .post-card-body { flex: 1 1 auto; min-width: 0; }
 
 .volume-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 16ch 1fr 10ch;
   align-items: baseline;
-  gap: 0.75rem;
-  padding: 0.6rem 0;
+  column-gap: 0.75rem;
+  padding: 0.5rem 0;
   border-bottom: 1px solid var(--border);
   font-size: 0.9rem;
 }
 .volume-row:last-child { border-bottom: none; }
-.volume-row .release-date { flex: 0 0 auto; color: var(--muted); }
-.volume-title { flex: 1 1 auto; font-weight: 600; }
-.volume-range { flex: 0 0 auto; color: var(--muted); }
+.volume-row .release-date { color: var(--muted); }
+.volume-title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.volume-range { color: var(--muted); text-align: right; }
+
+@media (max-width: 480px) {
+  .volume-row { grid-template-columns: 1fr; row-gap: 0.15rem; padding: 0.6rem 0; }
+  .volume-range { text-align: left; }
+}
 
 .cover-hero {
   display: block;

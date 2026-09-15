@@ -60,14 +60,16 @@
      (str (if release-upcoming? "Releases " "Released ") release-date-display)]))
 
 (defn volume-row
-  "A single-line row for the Volumes listing: release date, the clickable
-   title, then the date range of the comics it collects -- no tags, no
-   cover art, nothing slug-shaped."
+  "A single-line, table-like row for the Volumes listing: release date,
+   the clickable title, then the date range of the comics it collects --
+   no tags, no cover art, nothing slug-shaped. Each cell always renders
+   (even empty) so the three columns line up across every row regardless
+   of which collections have a release date."
   [{:keys [slug date-display] :as post}]
   [:div.volume-row
-   (release-date-note post)
+   (or (release-date-note post) [:span.release-date])
    [:a.volume-title {:href (str "/posts/" slug)} (display-title post)]
-   (when date-display [:span.volume-range date-display])])
+   [:span.volume-range (or date-display "")]])
 
 (defn post-card
   [{:keys [slug title date-display type tags rating cover] :as post}]
