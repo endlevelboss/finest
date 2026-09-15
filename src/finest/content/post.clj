@@ -111,7 +111,8 @@
              :last-modified last-modified}
       date                  (assoc :date-display (display-date date))
       sort-d                (assoc :date sort-d)
-      release-date          (assoc :release-date-display (display-release-date release-date))
+      release-date          (assoc :release-date (->local-date release-date)
+                                    :release-date-display (display-release-date release-date))
       (= post-type :review) (assoc :rating (double rating))
       cover                 (assoc :cover cover)
       (seq collections)     (assoc :collections (vec collections))

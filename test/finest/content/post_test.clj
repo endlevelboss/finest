@@ -139,7 +139,9 @@
         with    (post/->post {:meta (assoc (base-meta) :type "collection" :release-date "2024-11-05")
                                :html "" :source-file "2026-01-15-x.md" :last-modified 0})]
     (is (not (contains? without :release-date-display)))
-    (is (= "Nov 5, 2024" (:release-date-display with)))))
+    (is (not (contains? without :release-date)))
+    (is (= "Nov 5, 2024" (:release-date-display with)))
+    (is (= (LocalDate/parse "2024-11-05") (:release-date with)))))
 
 (deftest cover-field-is-optional
   (let [without-cover (post/->post {:meta (base-meta) :html ""

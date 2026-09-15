@@ -29,9 +29,21 @@
   [_request]
   (listing-response "Reviews" (store/by-type :review)))
 
+(defn- by-release-date
+  "Ascending by release date, oldest first -- collections with no known
+   release date (nothing announced yet) sort after every dated one."
+  [a b]
+  (let [ra (:release-date a)
+        rb (:release-date b)]
+    (cond
+      (and ra rb) (compare ra rb)
+      ra          -1
+      rb          1
+      :else       0)))
+
 (defn collections-list
   [_request]
-  (listing-response "Collections" (store/by-type :collection)))
+  (listing-response "Collections" (sort by-release-date (store/by-type :collection))))
 
 (defn creators-list
   [_request]
