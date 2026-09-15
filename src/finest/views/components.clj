@@ -7,9 +7,9 @@
    [:a {:href "/"} "Comic Blog"]
    [:a {:href "/news"} "News"]
    [:a {:href "/reviews"} "Reviews"]
+   [:a {:href "/lines"} "DC Finest Lines"]
    [:a {:href "/collections"} "Collections"]
    [:a {:href "/creators"} "Creators"]
-   [:a {:href "/lines"} "Lines"]
    [:a {:href "/tags"} "Tags"]])
 
 (defn tag-pill
