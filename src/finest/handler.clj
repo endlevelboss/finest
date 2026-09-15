@@ -1,5 +1,6 @@
 (ns finest.handler
-  (:require [finest.content.store :as store]
+  (:require [clojure.string :as str]
+            [finest.content.store :as store]
             [finest.views.layout :as layout]
             [finest.views.index :as index-view]
             [finest.views.post :as post-view]
@@ -36,9 +37,15 @@
   [_request]
   (listing-response "Creators" (store/by-type :creator)))
 
+(defn- title-sort-key
+  "Alphabetizes on a title while ignoring a leading \"The \", so \"The
+   Flash\" sorts under F rather than T."
+  [{:keys [title]}]
+  (-> title (str/replace #"(?i)^the\s+" "") str/lower-case))
+
 (defn lines-list
   [_request]
-  (listing-response "Lines" (store/by-type :line)))
+  (listing-response "Lines" (sort-by title-sort-key (store/by-type :line))))
 
 (defn tag-index
   [_request]
