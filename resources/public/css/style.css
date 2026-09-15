@@ -79,7 +79,7 @@ img.cover-thumb {
 
 .volume-row {
   display: grid;
-  grid-template-columns: 16ch 1fr 10ch;
+  grid-template-columns: 20ch 1fr 10ch;
   align-items: baseline;
   column-gap: 0.75rem;
   padding: 0.5rem 0;
@@ -87,7 +87,7 @@ img.cover-thumb {
   font-size: 0.9rem;
 }
 .volume-row:last-child { border-bottom: none; }
-.volume-row .release-date { color: var(--muted); }
+.volume-row .release-date { color: var(--muted); white-space: nowrap; }
 .volume-title {
   font-weight: 600;
   overflow: hidden;
