@@ -13,9 +13,12 @@
    :body    body})
 
 (defn- listing-response
-  [heading posts]
-  (html-response 200 (layout/page {:title heading
-                                    :body  (index-view/listing-page {:heading heading :posts posts})})))
+  ([heading posts] (listing-response heading posts nil))
+  ([heading posts card]
+   (html-response 200 (layout/page {:title heading
+                                     :body  (index-view/listing-page
+                                              (cond-> {:heading heading :posts posts}
+                                                card (assoc :card card)))}))))
 
 (defn index
   [_request]
@@ -43,7 +46,7 @@
 
 (defn collections-list
   [_request]
-  (listing-response "Volumes" (sort by-release-date (store/by-type :collection))))
+  (listing-response "Volumes" (sort by-release-date (store/by-type :collection)) components/volume-row))
 
 (defn creators-list
   [_request]

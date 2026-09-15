@@ -77,6 +77,19 @@ img.cover-thumb {
 
 .post-card-body { flex: 1 1 auto; min-width: 0; }
 
+.volume-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.volume-row:last-child { border-bottom: none; }
+.volume-row .release-date { flex: 0 0 auto; color: var(--muted); }
+.volume-title { flex: 1 1 auto; font-weight: 600; }
+.volume-range { flex: 0 0 auto; color: var(--muted); }
+
 .cover-hero {
   display: block;
   width: 100%;

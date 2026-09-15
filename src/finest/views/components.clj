@@ -59,6 +59,16 @@
     [:span.release-date {:class (when release-upcoming? "upcoming")}
      (str (if release-upcoming? "Releases " "Released ") release-date-display)]))
 
+(defn volume-row
+  "A single-line row for the Volumes listing: release date, the clickable
+   title, then the date range of the comics it collects -- no tags, no
+   cover art, nothing slug-shaped."
+  [{:keys [slug date-display] :as post}]
+  [:div.volume-row
+   (release-date-note post)
+   [:a.volume-title {:href (str "/posts/" slug)} (display-title post)]
+   (when date-display [:span.volume-range date-display])])
+
 (defn post-card
   [{:keys [slug title date-display type tags rating cover] :as post}]
   [:article.post-card
