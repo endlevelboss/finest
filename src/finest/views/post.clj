@@ -29,11 +29,12 @@
     [:h1 title]))
 
 (defn- listing-section
-  [heading posts]
-  (when (seq posts)
-    [:section.related
-     [:h2 heading]
-     (map c/post-card posts)]))
+  ([heading posts] (listing-section heading posts c/post-card))
+  ([heading posts card]
+   (when (seq posts)
+     [:section.related
+      [:h2 heading]
+      (map card posts)])))
 
 (defn- credited-collections-block
   [collections]
@@ -90,4 +91,4 @@
    (issue-list issues)
    (listing-section "Reviews & News" related)
    (credited-collections-block credited-collections)
-   (listing-section "Volumes" line-collections)])
+   (listing-section "Volumes" line-collections c/volume-row)])
