@@ -7,7 +7,7 @@
    [:a {:href "/"} "Comic Blog"]
    [:a {:href "/news"} "News"]
    [:a {:href "/reviews"} "Reviews"]
-   [:a {:href "/lines"} "DC Finest Lines"]
+   [:a {:href "/lines"} "Lines"]
    [:a {:href "/collections"} "Volumes"]
    [:a {:href "/creators"} "Creators"]
    [:a {:href "/tags"} "Tags"]])
