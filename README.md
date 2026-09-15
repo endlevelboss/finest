@@ -66,6 +66,7 @@ Add a Markdown file under `content/collections/`, e.g.
 title: "Year One"
 slug: some-collection
 date: "1986-1987"  # freeform — a year, a range, or "Jan 1990 - Aug 1990"
+release-date: 2024-11-05  # optional — the collection's own street date
 tags: [tag-a, tag-b]
 line: batman   # optional — links to a line (see below)
 creators:
@@ -82,6 +83,12 @@ Body in Markdown — series summary, publisher, etc.
 bare number (YAML would otherwise choke on something like `1986-1987`, which
 looks like a malformed timestamp). Chronological sorting falls back to the
 first 4-digit year found in the string, so it doesn't need to be precise.
+
+`release-date` is different — it's the real calendar date the collection
+itself shipped (or is solicited to ship), as opposed to `date`, which
+describes the *original comics'* publication years. It's a real YAML date
+(unquoted `YYYY-MM-DD`), shown on the collection's page as "Released Nov 5,
+2024". Optional — omit it for collections with no announced street date.
 
 Collections get their own `/collections` listing and aren't shown on the
 home feed. Any review or news post can point back to one or more collections

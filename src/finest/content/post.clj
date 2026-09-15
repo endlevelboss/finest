@@ -1,6 +1,7 @@
 (ns finest.content.post
   (:require [clojure.string :as str])
   (:import [java.time LocalDate ZoneOffset]
+           [java.time.format DateTimeFormatter]
            [java.util Date]))
 
 (def ^:private filename-date-prefix
@@ -42,6 +43,15 @@
     (str (->local-date d))
     (str d)))
 
+(def ^:private release-date-formatter
+  (DateTimeFormatter/ofPattern "MMM d, yyyy"))
+
+(defn- display-release-date
+  "A collection's street date is always a real date -- no freeform ranges --
+   so it's always shown in the same human-friendly form, e.g. \"Nov 5, 2024\"."
+  [d]
+  (.format (->local-date d) release-date-formatter))
+
 (defn- sort-date
   "Best-effort chronological sort key. Collections may only be dated to a
    year or a range, so we fall back to the first 4-digit year found in the
@@ -79,7 +89,7 @@
   "Builds and validates a post map from parsed frontmatter, rendered HTML body,
    and file metadata. Throws ex-info on invalid/missing required fields."
   [{:keys [meta html source-file last-modified]}]
-  (let [{:keys [title date slug tags type rating cover collections creators line issues]} meta
+  (let [{:keys [title date slug tags type rating cover collections creators line issues release-date]} meta
         post-type      (some-> type name keyword)
         freeform-date? (= post-type :collection)
         sort-d         (when date (sort-date freeform-date? date))]
@@ -101,6 +111,7 @@
              :last-modified last-modified}
       date                  (assoc :date-display (display-date date))
       sort-d                (assoc :date sort-d)
+      release-date          (assoc :release-date-display (display-release-date release-date))
       (= post-type :review) (assoc :rating (double rating))
       cover                 (assoc :cover cover)
       (seq collections)     (assoc :collections (vec collections))

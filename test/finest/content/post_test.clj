@@ -133,6 +133,14 @@
                          :source-file "2026-01-15-x.md" :last-modified 0})]
     (is (not (contains? p :issues)))))
 
+(deftest release-date-is-optional-and-formatted-for-display
+  (let [without (post/->post {:meta (assoc (base-meta) :type "collection") :html ""
+                               :source-file "2026-01-15-x.md" :last-modified 0})
+        with    (post/->post {:meta (assoc (base-meta) :type "collection" :release-date "2024-11-05")
+                               :html "" :source-file "2026-01-15-x.md" :last-modified 0})]
+    (is (not (contains? without :release-date-display)))
+    (is (= "Nov 5, 2024" (:release-date-display with)))))
+
 (deftest cover-field-is-optional
   (let [without-cover (post/->post {:meta (base-meta) :html ""
                                      :source-file "2026-01-15-x.md" :last-modified 0})
