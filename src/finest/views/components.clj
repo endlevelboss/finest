@@ -46,12 +46,13 @@
   (if line-title (str line-title ": " title) title))
 
 (defn post-card
-  [{:keys [slug title date-display type tags rating cover] :as post}]
+  [{:keys [slug title date-display release-date-display type tags rating cover] :as post}]
   [:article.post-card
    [:div.post-card-body
     [:h2 [:a {:href (str "/posts/" slug)} (display-title post)]]
     [:div.post-meta
      (when date-display [:span.post-date date-display])
+     (when release-date-display [:span.release-date (str "Released " release-date-display)])
      (when (#{:news :review} type) (type-badge type))
      (when (= type :review) (rating-stars rating))]
     [:div.post-tags (map tag-pill tags)]]
