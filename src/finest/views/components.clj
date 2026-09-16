@@ -4,7 +4,6 @@
 (defn nav
   []
   [:nav.site-nav
-   [:a {:href "/"} "Comic Blog"]
    [:a {:href "/news"} "News"]
    [:a {:href "/reviews"} "Reviews"]
    [:a {:href "/lines"} "Lines"]

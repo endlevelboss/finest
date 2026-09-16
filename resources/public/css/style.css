@@ -36,7 +36,6 @@ a:hover { text-decoration: underline; }
   border-bottom: 1px solid var(--border);
   font-weight: 600;
 }
-.site-nav a:first-child { color: var(--text); font-size: 1.1rem; }
 
 main {
   max-width: var(--max-width);

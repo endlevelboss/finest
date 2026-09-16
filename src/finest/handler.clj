@@ -28,7 +28,7 @@
 
 (defn news-list
   [_request]
-  (listing-response "News" (store/by-type :news)))
+  (listing-response "News" (store/articles)))
 
 (defn reviews-list
   [_request]
