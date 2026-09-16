@@ -88,7 +88,7 @@ img.cover-thumb {
 .volume-row:last-child { border-bottom: none; }
 .volume-row-main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 8ch minmax(0, 11rem);
+  grid-template-columns: minmax(0, 1fr) 20ch minmax(0, 11rem);
   align-items: baseline;
   gap: 0.75rem;
 }
@@ -98,7 +98,7 @@ img.cover-thumb {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.volume-range { color: var(--muted); text-align: right; }
+.volume-range { color: var(--muted); text-align: right; white-space: nowrap; }
 .volume-review {
   display: flex;
   flex-direction: column;
