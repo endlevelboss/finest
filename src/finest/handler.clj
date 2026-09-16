@@ -105,7 +105,8 @@
     (seq issues)          (assoc :issues (resolve-issue-creators issues))
     (= type :creator)     (assoc :credited-collections
                                   (map #(assoc % :role (creator-role-on % slug)) (store/credited-on slug)))
-    (= type :line)        (assoc :line-collections (store/under-line slug))))
+    (= type :line)        (assoc :line-collections (store/under-line slug)
+                                  :related (store/line-related slug))))
 
 (defn post-page
   [request]

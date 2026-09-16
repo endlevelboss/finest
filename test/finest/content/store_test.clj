@@ -45,6 +45,11 @@
          (map :slug (store/under-line "hero-line"))))
   (is (= [] (store/under-line "no-such-line"))))
 
+(deftest line-related-finds-posts-referencing-any-collection-in-the-line
+  (store/load-all! fixture-dir)
+  (is (= ["second"] (map :slug (store/line-related "hero-line"))))
+  (is (= [] (store/line-related "no-such-line"))))
+
 (deftest type-is-inferred-from-directory-when-frontmatter-omits-it
   (store/load-all! fixture-dir)
   (is (= :collection (:type (store/by-slug "hero-collection"))))
