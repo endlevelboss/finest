@@ -162,8 +162,22 @@
 (defn articles [] (filterv #(not (#{:collection :creator :line} (:type %))) (all-posts)))
 (defn referencing [collection-slug] (filterv #(some #{collection-slug} (:collections %)) (all-posts)))
 (defn credited-on [creator-slug] (filterv (fn [p] (some #(= creator-slug (:slug %)) (creators-of p))) (all-posts)))
+(defn- by-date-undated-last
+  "Ascending by content date, oldest first -- collections with no
+   extractable year (a freeform \"TBA\" or similar) sort after every
+   dated one, rather than `sort-by`'s default of treating nil as the
+   smallest value and sorting them first."
+  [a b]
+  (let [da (:date a)
+        db (:date b)]
+    (cond
+      (and da db) (compare da db)
+      da          -1
+      db          1
+      :else       0)))
+
 (defn under-line
   "Collections in a line, oldest publication first -- a reading order,
    not the reverse-chronological order the rest of the site uses."
   [line-slug]
-  (vec (sort-by :date (filterv #(= line-slug (:line %)) (all-posts)))))
+  (vec (sort by-date-undated-last (filterv #(= line-slug (:line %)) (all-posts)))))
