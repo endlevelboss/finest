@@ -9,7 +9,6 @@
    [:a {:href "/reviews"} "Reviews"]
    [:a {:href "/lines"} "Lines"]
    [:a {:href "/collections"} "Volumes"]
-   [:a {:href "/creators"} "Creators"]
    [:a {:href "/tags"} "Tags"]])
 
 (defn tag-pill
