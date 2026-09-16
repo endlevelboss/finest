@@ -6,8 +6,7 @@
   [:nav.site-nav
    [:a {:href "/news"} "News"]
    [:a {:href "/lines"} "Lines"]
-   [:a {:href "/collections"} "Volumes"]
-   [:a {:href "/tags"} "Tags"]])
+   [:a {:href "/collections"} "Volumes"]])
 
 (defn tag-pill
   [tag]

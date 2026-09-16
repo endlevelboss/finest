@@ -245,12 +245,15 @@ img.cover-thumb {
 .empty { color: var(--muted); font-style: italic; }
 
 .site-footer {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
   color: var(--muted);
   font-size: 0.85rem;
   padding: 2rem 1rem;
   border-top: 1px solid var(--border);
 }
+.site-footer a { color: var(--muted); }
 
 @media (max-width: 480px) {
   .site-nav { gap: 0.9rem; padding: 0.85rem 1rem; }

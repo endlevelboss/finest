@@ -16,4 +16,6 @@
        [:body
         (c/nav)
         [:main body]
-        [:footer.site-footer "Comic Blog"]]])))
+        [:footer.site-footer
+         [:span "Comic Blog"]
+         [:a {:href "/tags"} "Tags"]]]])))
