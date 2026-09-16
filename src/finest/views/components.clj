@@ -5,7 +5,6 @@
   []
   [:nav.site-nav
    [:a {:href "/news"} "News"]
-   [:a {:href "/reviews"} "Reviews"]
    [:a {:href "/lines"} "Lines"]
    [:a {:href "/collections"} "Volumes"]
    [:a {:href "/tags"} "Tags"]])
