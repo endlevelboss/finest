@@ -11,11 +11,14 @@
                       [:a {:href (str "/posts/" slug)} title]))])
 
 (defn- creator-credits-block
+  "Creator names are plain text for now, not links -- the creator profile
+   pages are a feature we're holding off on surfacing until it's fleshed
+   out further."
   [creators]
   [:div.creator-credits
    [:span.post-comics-label "Creators: "]
-   (interpose ", " (for [{:keys [slug title role]} creators]
-                      [:span [:a {:href (str "/posts/" slug)} title] (when role (str " — " role))]))])
+   (interpose ", " (for [{:keys [title role]} creators]
+                      [:span title (when role (str " — " role))]))])
 
 (defn- post-heading
   "A plain <h1> for most posts. Collections that belong to a line lead with
