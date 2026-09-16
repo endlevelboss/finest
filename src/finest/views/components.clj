@@ -19,10 +19,10 @@
     (if (str/ends-with? s ".0") (subs s 0 (- (count s) 2)) s)))
 
 (defn rating-stars
-  "Renders a rating out of `max` (default 5) as filled/empty stars,
+  "Renders a rating out of `max` (default 3) as filled/empty stars,
    with a textual label for accessibility since partial stars aren't
    conveyed by the glyphs alone."
-  ([rating] (rating-stars rating 5))
+  ([rating] (rating-stars rating 3))
   ([rating max]
    [:span.rating {:aria-label (str rating " out of " max " stars")}
     (for [i (range 1 (inc max))]
