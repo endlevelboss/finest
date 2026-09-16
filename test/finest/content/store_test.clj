@@ -6,12 +6,12 @@
 
 (deftest load-all-skips-malformed-and-sorts-by-date-desc
   (let [posts (store/load-all! fixture-dir)]
-    (is (= 13 (count posts)))
+    (is (= 14 (count posts)))
     (is (= ["second" "first" "dangling-line-collection" "collection-with-missing-creator"
             "hero-collection" "hero-collection-early"]
            (take 6 (map :slug posts))))
     (is (= #{"hero-creator" "hero-line" "explicit-override" "jane-q-public"
-             "fragment-a" "fragment-b" "issue-only-creator"}
+             "fragment-a" "fragment-b" "issue-only-creator" "nested-collection"}
            (set (drop 6 (map :slug posts)))))))
 
 (deftest queries-after-load
@@ -56,6 +56,10 @@
 (deftest type-still-required-outside-inferred-directories
   (store/load-all! fixture-dir)
   (is (nil? (store/by-slug "no-type"))))
+
+(deftest type-is-inferred-through-nested-subfolders
+  (store/load-all! fixture-dir)
+  (is (= :collection (:type (store/by-slug "nested-collection")))))
 
 (deftest collection-gets-line-title-attached
   (store/load-all! fixture-dir)

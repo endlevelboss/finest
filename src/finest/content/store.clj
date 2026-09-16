@@ -27,15 +27,23 @@
    "lines"       "line"})
 
 (defn- inferred-type
-  [^java.io.File f]
-  (get dir->type (.getName (.getParentFile f))))
+  "Walks up from f's parent looking for a directory named collections/
+   creators/lines, so files can be filed into alphabetical subfolders
+   (e.g. content/collections/b/batman-year-one.md) without losing type
+   inference. Stops at root, exclusive, so files sitting directly in
+   content/ (e.g. content/posts/*) still get no inferred type."
+  [^java.io.File f ^java.io.File root]
+  (loop [dir (.getParentFile f)]
+    (when (and dir (not= dir root))
+      (or (get dir->type (.getName dir))
+          (recur (.getParentFile dir))))))
 
 (defn- load-file->post
-  [^java.io.File f]
+  [^java.io.File f ^java.io.File root]
   (let [raw                 (slurp f)
         {:keys [meta body]} (frontmatter/parse raw)
         html                (markdown/render body)
-        meta                (update meta :type #(or % (inferred-type f)))]
+        meta                (update meta :type #(or % (inferred-type f root)))]
     (post/->post {:meta          meta
                   :html          html
                   :source-file   (.getName f)
@@ -120,7 +128,7 @@
                               (filter md-file?)
                               (keep (fn [f]
                                       (try
-                                        (load-file->post f)
+                                        (load-file->post f dir)
                                         (catch Exception e
                                           (warn (ex-message e) (merge {:file (.getName f)} (ex-data e)))
                                           nil))))

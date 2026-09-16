@@ -10,6 +10,13 @@ issues:
   - number: "Catwoman (vol 2) #14"
     date: "Sep 1994"
     original: catwoman2-14
+    creators:
+      - slug: dave-wood
+        role: Writer
+      - slug: jack-kirby
+        role: Artist
+      - slug: jim-balent
+        role: Cover artist
   - number: "Catwoman (vol 2) #0"
     date: "Oct 1994"
 

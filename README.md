@@ -59,7 +59,11 @@ the code.
 ## Writing a collection
 
 Add a Markdown file under `content/collections/`, e.g.
-`content/collections/some-collection.md`:
+`content/collections/some-collection.md`. Files can also be filed into
+subfolders for your own organization — e.g. `content/collections/s/some-collection.md` —
+type inference walks up from the file looking for a `collections`/`creators`/`lines`
+directory by name, so any nesting works as long as one of those three
+eventually shows up as an ancestor.
 
 ```markdown
 ---
