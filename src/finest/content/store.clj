@@ -190,15 +190,3 @@
   [line-slug]
   (vec (sort by-date-undated-last (filterv #(= line-slug (:line %)) (all-posts)))))
 
-(defn line-related
-  "Every review/news post referencing any collection filed under this
-   line -- so a review of one specific volume still surfaces on the
-   line's own page, not just that volume's. Newest first, like every
-   other reverse-chronological listing on the site."
-  [line-slug]
-  (->> (under-line line-slug)
-       (mapcat #(referencing (:slug %)))
-       distinct
-       (sort-by :date)
-       reverse
-       vec))

@@ -101,8 +101,9 @@ img.cover-thumb {
 .volume-range { color: var(--muted); text-align: right; }
 .volume-review {
   display: flex;
-  align-items: baseline;
-  gap: 0.4rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
   min-width: 0;
   font-size: 0.8rem;
 }
