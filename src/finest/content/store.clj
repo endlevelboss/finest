@@ -89,7 +89,9 @@
   "Every (collection, issue) pair across the site that has an :original id,
    grouped by that id. Each fragment carries just enough about its parent
    collection to render a link and a combined heading (shaped to match
-   components/display-title's input) plus its own issue number."
+   components/display-title's input) plus its own issue number. Carrying
+   :line (not just :line-title) lets a collection tell whether a sibling
+   belongs to a genuinely different line, worth surfacing as related."
   [posts]
   (->> posts
        (filter #(= :collection (:type %)))
@@ -97,7 +99,8 @@
                  (for [issue (:issues c) :when (:original issue)]
                    {:original   (:original issue)
                     :collection (cond-> {:slug (:slug c) :title (:title c)}
-                                  (:line-title c) (assoc :line-title (:line-title c)))
+                                  (:line-title c) (assoc :line-title (:line-title c))
+                                  (:line c)       (assoc :line (:line c)))
                     :number     (:number issue)})))
        (group-by :original)))
 

@@ -20,6 +20,17 @@
    (interpose ", " (for [{:keys [title role]} creators]
                       [:span title (when role (str " — " role))]))])
 
+(defn- related-lines-block
+  "Other lines this collection connects to via a shared split issue --
+   e.g. a Catwoman issue also collected in an Events volume."
+  [lines]
+  (when (seq lines)
+    [:div.related-lines
+     [:span.post-comics-label "Related lines: "]
+     (interpose ", " (for [{:keys [line-slug line-title number]} lines]
+                        [:span [:a {:href (str "/posts/" line-slug)} line-title]
+                         [:span.related-lines-via (str " (via " number ")")]]))]))
+
 (defn- post-heading
   "A plain <h1> for most posts. Collections that belong to a line lead with
    the line's name as the big title, linked to the line's own page, and show
@@ -78,7 +89,7 @@
 (defn post-page
   [{:keys [title date-display type tags rating html cover
            referenced-collections related creator-credits credited-collections
-           line-collections issues] :as post}]
+           line-collections issues related-lines] :as post}]
   [:article.post
    (when cover [:img.cover-hero {:src cover :alt title}])
    (post-heading post)
@@ -89,6 +100,7 @@
     (when (= type :review) (c/rating-stars rating))]
    (when (seq referenced-collections) (collection-refs referenced-collections))
    (when (seq creator-credits) (creator-credits-block creator-credits))
+   (related-lines-block related-lines)
    [:div.post-tags (map c/tag-pill tags)]
    [:div.post-body (h/raw html)]
    (issue-list issues)

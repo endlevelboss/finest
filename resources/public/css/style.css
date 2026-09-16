@@ -203,6 +203,9 @@ img.cover-thumb {
   margin-bottom: 0.75rem;
 }
 
+.related-lines { font-size: 0.9rem; margin-bottom: 0.75rem; }
+.related-lines-via { color: var(--muted); font-size: 0.85rem; }
+
 .related {
   margin-top: 2rem;
   padding-top: 1rem;
