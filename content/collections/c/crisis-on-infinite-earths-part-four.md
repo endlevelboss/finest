@@ -1,7 +1,7 @@
 ---
 title: "Crisis on Infinite Earths: Part Four"
 slug: crisis-on-infinite-earths-part-four
-date: "TBA"
+date: "1986"
 release-date: 2027-02-09
 line: events
 ---
