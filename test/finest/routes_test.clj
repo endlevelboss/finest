@@ -13,7 +13,7 @@
   (let [router (routes/router)]
     (is (some? (r/match-by-path router "/")))
     (is (some? (r/match-by-path router "/news")))
-    (is (some? (r/match-by-path router "/reviews")))
+    (is (nil? (r/match-by-path router "/reviews")))
     (is (some? (r/match-by-path router "/collections")))
     (is (some? (r/match-by-path router "/creators")))
     (is (some? (r/match-by-path router "/lines")))

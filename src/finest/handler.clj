@@ -30,10 +30,6 @@
   [_request]
   (listing-response "News" (store/articles)))
 
-(defn reviews-list
-  [_request]
-  (listing-response "Reviews" (store/by-type :review)))
-
 (defn- by-release-date
   "Ascending by release date, oldest first -- collections with no known
    release date (nothing announced yet) sort after every dated one."

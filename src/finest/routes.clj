@@ -7,7 +7,6 @@
   (ring/router
     [["/" {:get h/index}]
      ["/news" {:get h/news-list}]
-     ["/reviews" {:get h/reviews-list}]
      ["/collections" {:get h/collections-list}]
      ["/creators" {:get h/creators-list}]
      ["/lines" {:get h/lines-list}]
