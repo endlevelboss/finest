@@ -42,9 +42,16 @@
       rb          1
       :else       0)))
 
+(defn- attach-review
+  "The review (if any) of this collection, for volume-row's third column."
+  [collection]
+  (if-let [review (store/review-for (:slug collection))]
+    (assoc collection :review review)
+    collection))
+
 (defn collections-list
   [_request]
-  (listing-response "Volumes" (sort by-release-date (store/by-type :collection)) components/volume-row))
+  (listing-response "Volumes" (mapv attach-review (sort by-release-date (store/by-type :collection))) components/volume-row))
 
 (defn creators-list
   [_request]
@@ -114,7 +121,7 @@
     (seq issues)          (assoc :issues (resolve-issue-creators issues))
     (= type :creator)     (assoc :credited-collections
                                   (map #(assoc % :role (creator-role-on % slug)) (store/credited-on slug)))
-    (= type :line)        (assoc :line-collections (store/under-line slug)
+    (= type :line)        (assoc :line-collections (mapv attach-review (store/under-line slug))
                                   :related (store/line-related slug))))
 
 (defn post-page

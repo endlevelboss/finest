@@ -99,6 +99,7 @@ img.cover-thumb {
   white-space: nowrap;
 }
 .volume-range { flex: 0 0 auto; color: var(--muted); }
+.volume-review { flex: 0 0 auto; font-size: 0.8rem; }
 .volume-row .release-date {
   display: block;
   margin-top: 0.15rem;

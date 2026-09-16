@@ -164,6 +164,11 @@
 (defn all-tags [] (into (sorted-set) (mapcat :tags) (all-posts)))
 (defn articles [] (filterv #(not (#{:collection :creator :line} (:type %))) (all-posts)))
 (defn referencing [collection-slug] (filterv #(some #{collection-slug} (:collections %)) (all-posts)))
+(defn review-for
+  "The most recent review referencing this collection, if any -- all-posts
+   is already newest-first, and referencing preserves that order."
+  [collection-slug]
+  (first (filter #(= :review (:type %)) (referencing collection-slug))))
 (defn credited-on [creator-slug] (filterv (fn [p] (some #(= creator-slug (:slug %)) (creators-of p))) (all-posts)))
 (defn- by-date-undated-last
   "Ascending by content date, oldest first -- collections with no
