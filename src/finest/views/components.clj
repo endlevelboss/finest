@@ -56,17 +56,19 @@
      (str (if release-upcoming? "Releases " "Released ") release-date-display)]))
 
 (defn- volume-review
-  "A linked star rating for the volume's review, as a third column --
-   blank (nil, no placeholder) when there isn't one yet."
+  "A dedicated review column: a link with the review's own title plus its
+   star rating -- blank (nil, no placeholder) when there isn't one yet."
   [review]
   (when review
-    [:a.volume-review {:href (str "/posts/" (:slug review))} (rating-stars (:rating review))]))
+    [:a.volume-review {:href (str "/posts/" (:slug review))}
+     [:span.volume-review-title (:title review)]
+     (rating-stars (:rating review))]))
 
 (defn volume-row
-  "A compact, table-like row for the Volumes listing: the clickable title,
-   the date range of the comics it collects, and its review (if any)
-   share the first line, with the release date on a second line below --
-   no tags, no cover art, nothing slug-shaped."
+  "A compact, table-like row for the Volumes listing: title, date range,
+   and review (if any) as three columns on the first line, with the
+   release date on a second line below -- no tags, no cover art, nothing
+   slug-shaped."
   [{:keys [slug date-display review] :as post}]
   [:div.volume-row
    [:div.volume-row-main

@@ -87,19 +87,30 @@ img.cover-thumb {
 }
 .volume-row:last-child { border-bottom: none; }
 .volume-row-main {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 8ch minmax(0, 11rem);
   align-items: baseline;
   gap: 0.75rem;
 }
 .volume-title {
-  flex: 1 1 auto;
   font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.volume-range { flex: 0 0 auto; color: var(--muted); }
-.volume-review { flex: 0 0 auto; font-size: 0.8rem; }
+.volume-range { color: var(--muted); text-align: right; }
+.volume-review {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  min-width: 0;
+  font-size: 0.8rem;
+}
+.volume-review-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .volume-row .release-date {
   display: block;
   margin-top: 0.15rem;
@@ -261,4 +272,6 @@ img.cover-thumb {
   main { padding: 1rem 1rem 2rem; }
   h1 { font-size: 1.5rem; }
   .line-columns { columns: 1; }
+  .volume-row-main { grid-template-columns: 1fr; row-gap: 0.15rem; }
+  .volume-range { text-align: left; }
 }
