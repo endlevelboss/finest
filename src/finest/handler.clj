@@ -4,7 +4,8 @@
             [finest.views.layout :as layout]
             [finest.views.index :as index-view]
             [finest.views.post :as post-view]
-            [finest.views.components :as components]))
+            [finest.views.components :as components])
+  (:import (java.time LocalDate)))
 
 (defn- html-response
   [status body]
@@ -12,11 +13,16 @@
    :headers {"Content-Type" "text/html; charset=utf-8"}
    :body    body})
 
+(defn- page
+  "Every page carries the release sidebar, judged against today's date."
+  [opts]
+  (layout/page (assoc opts :sidebar (store/release-window (LocalDate/now) 3))))
+
 (defn- listing-response
   ([heading posts] (listing-response heading posts nil nil))
   ([heading posts card] (listing-response heading posts card nil))
   ([heading posts card list-class]
-   (html-response 200 (layout/page {:title heading
+   (html-response 200 (page {:title heading
                                      :body  (index-view/listing-page
                                               (cond-> {:heading heading :posts posts}
                                                 card       (assoc :card card)
@@ -24,7 +30,7 @@
 
 (defn index
   [_request]
-  (html-response 200 (layout/page {:body (index-view/listing-page
+  (html-response 200 (page {:body (index-view/listing-page
                                            {:heading "Latest" :posts (store/articles)})})))
 
 (defn news-list
@@ -72,7 +78,7 @@
   [_request]
   (let [tags (store/all-tags)]
     (html-response 200
-      (layout/page
+      (page
         {:title "Tags"
          :body  [:section.listing
                  [:h1 "Tags"]
@@ -130,10 +136,10 @@
         post (store/by-slug slug)]
     (if post
       (let [enriched (enrich post)]
-        (html-response 200 (layout/page {:title (components/display-title enriched)
+        (html-response 200 (page {:title (components/display-title enriched)
                                           :body  (post-view/post-page enriched)})))
-      (html-response 404 (layout/page {:title "Not Found" :body [:p "Post not found."]})))))
+      (html-response 404 (page {:title "Not Found" :body [:p "Post not found."]})))))
 
 (defn not-found
   [_request]
-  (html-response 404 (layout/page {:title "Not Found" :body [:p "Page not found."]})))
+  (html-response 404 (page {:title "Not Found" :body [:p "Page not found."]})))

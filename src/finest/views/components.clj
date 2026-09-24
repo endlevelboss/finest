@@ -73,6 +73,25 @@
     [:span.release-date {:class (when release-upcoming? "upcoming")}
      (str (if release-upcoming? "Releases " "Released ") release-date-display)]))
 
+(defn- release-list
+  [heading volumes upcoming?]
+  (when (seq volumes)
+    [:section.sidebar-box
+     [:h2.sidebar-heading heading]
+     [:ol.release-list
+      (for [{:keys [slug release-date-display] :as v} volumes]
+        [:li
+         [:a.release-title {:href (str "/posts/" slug)} (display-title v)]
+         [:span.release-date {:class (when upcoming? "upcoming")} release-date-display]])]]))
+
+(defn sidebar
+  "The right-hand column: the latest Finest volumes out and the next ones
+   due, each with its street date."
+  [{:keys [recent upcoming]}]
+  [:aside.sidebar
+   (release-list "Just released" recent false)
+   (release-list "Coming soon" upcoming true)])
+
 (defn- volume-review
   "A dedicated review column: a link with the review's own title plus its
    star rating -- blank (nil, no placeholder) when there isn't one yet."

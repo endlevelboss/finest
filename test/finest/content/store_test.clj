@@ -107,3 +107,17 @@
     (is (= [{:slug "fragment-a" :title "Fragment A" :number 256}]
            (:siblings (first b-issues))))
     (is (not (contains? (second a-issues) :siblings)))))
+
+(deftest releases-around-splits-recent-and-upcoming
+  (let [d     #(java.time.LocalDate/parse %)
+        vol   (fn [slug date] {:slug slug :release-date (some-> date d)})
+        today (d "2026-09-24")
+        {:keys [recent upcoming]}
+        (store/releases-around [(vol "old" "2026-01-01") (vol "today" "2026-09-24")
+                                (vol "last-week" "2026-09-17") (vol "summer" "2026-07-01")
+                                (vol "next-week" "2026-10-01") (vol "tba" nil)
+                                (vol "far" "2027-06-01") (vol "soon" "2026-09-25")
+                                (vol "later" "2026-12-01")]
+                               today 3)]
+    (is (= ["today" "last-week" "summer"] (map :slug recent)))
+    (is (= ["soon" "next-week" "later"] (map :slug upcoming)))))

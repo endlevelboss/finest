@@ -190,3 +190,19 @@
   [line-slug]
   (vec (sort by-date-undated-last (filterv #(= line-slug (:line %)) (all-posts)))))
 
+
+(defn releases-around
+  "Splits dated collections around `today`: the `n` most recent already
+   out (newest first; today counts as out) and the `n` next to come
+   (soonest first). Judged against `today` at call time rather than the
+   load-time :release-upcoming? flag, which goes stale on a long-running
+   server."
+  [collections today n]
+  (let [dated (filter :release-date collections)
+        out?  #(not (.isAfter ^java.time.LocalDate (:release-date %) today))]
+    {:recent   (vec (take n (sort-by :release-date #(compare %2 %1) (filter out? dated))))
+     :upcoming (vec (take n (sort-by :release-date (remove out? dated))))}))
+
+(defn release-window
+  [today n]
+  (releases-around (by-type :collection) today n))

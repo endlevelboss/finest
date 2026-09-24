@@ -3,7 +3,7 @@
             [finest.views.components :as c]))
 
 (defn page
-  [{:keys [title body]}]
+  [{:keys [title body sidebar]}]
   (str
     (h/html
       (h/raw "<!DOCTYPE html>\n")
@@ -20,7 +20,9 @@
        [:body
         (c/banner)
         (c/nav)
-        [:main body]
+        [:div.page
+         [:main body]
+         (when sidebar (c/sidebar sidebar))]
         [:footer.site-footer
          [:span.footer-brand c/site-name]
          [:a {:href "/tags"} "Tags"]]]])))
