@@ -63,6 +63,21 @@
     (assoc post :line-title (:title line))
     post))
 
+(defn- attach-review-of
+  "The volumes a review covers, resolved from its `collections:` slugs so
+   every listing can show \"A review of: ...\" without a lookup. Keeps the
+   frontmatter order, drops slugs that aren't loaded collections, and runs
+   after attach-line-title so each volume carries its line's name."
+  [by-slug post]
+  (let [volumes (when (= :review (:type post))
+                  (->> (:collections post)
+                       (keep by-slug)
+                       (filter #(= :collection (:type %)))
+                       (mapv #(select-keys % [:slug :title :line-title]))))]
+    (if (seq volumes)
+      (assoc post :review-of volumes)
+      post)))
+
 (defn- creators-of
   "A post's full creator credits: the cover creators: plus any per-issue
    overrides -- a creator only credited on one issue still counts."
@@ -140,8 +155,10 @@
                               vec)
         by-slug-raw      (into {} (map (juxt :slug identity)) raw-posts)
         with-line-titles (mapv (partial attach-line-title by-slug-raw) raw-posts)
-        fragments        (issue-fragments with-line-titles)
-        with-siblings    (mapv (partial attach-issue-siblings fragments) with-line-titles)
+        line-titled      (into {} (map (juxt :slug identity)) with-line-titles)
+        with-review-of   (mapv (partial attach-review-of line-titled) with-line-titles)
+        fragments        (issue-fragments with-review-of)
+        with-siblings    (mapv (partial attach-issue-siblings fragments) with-review-of)
         missing-creators (remove by-slug-raw (credited-creator-slugs with-siblings))
         posts            (into with-siblings (map generated-creator) missing-creators)]
     (reset! state {:posts     posts

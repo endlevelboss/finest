@@ -15,6 +15,12 @@
              "hero-collection-tba"}
            (set (drop 6 (map :slug posts)))))))
 
+(deftest reviews-carry-the-volumes-they-review
+  (store/load-all! fixture-dir)
+  (is (= [{:slug "hero-collection" :title (:title (store/by-slug "hero-collection"))}]
+         (map #(select-keys % [:slug :title]) (:review-of (store/by-slug "second")))))
+  (is (nil? (:review-of (store/by-slug "first")))))
+
 (deftest queries-after-load
   (store/load-all! fixture-dir)
   (is (= "second" (:slug (first (store/by-tag "beta")))))

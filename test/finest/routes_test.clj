@@ -45,3 +45,9 @@
     (is (not (listed? "/reviews" "first")))
     (is (listed? "/articles" "first"))
     (is (not (listed? "/articles" "second")))))
+
+(deftest review-page-shows-what-it-reviews
+  (let [body (:body ((routes/app) {:request-method :get :uri "/posts/second"}))]
+    (is (.contains ^String body "A review of: "))
+    (is (.contains ^String body "href=\"/posts/hero-collection\""))
+    (is (not (.contains ^String body "About: ")))))

@@ -34,12 +34,21 @@
 (defn- post-heading
   "A plain <h1> for most posts. Collections that belong to a line lead with
    the line's name as the big title, linked to the line's own page, and show
-   their own distinguishing name as a subtitle underneath."
-  [{:keys [title line line-title]}]
-  (if line-title
+   their own distinguishing name as a subtitle underneath. Reviews of a
+   volume get an \"A review of: ...\" kicker above their own title."
+  [{:keys [title line line-title review-of] :as post}]
+  (cond
+    line-title
     [:div.post-heading
      [:h1 [:a {:href (str "/posts/" line)} line-title]]
      [:p.post-subtitle title]]
+
+    (seq review-of)
+    [:div.post-heading
+     (c/review-of-kicker post)
+     [:h1 title]]
+
+    :else
     [:h1 title]))
 
 (defn- listing-section
@@ -89,7 +98,7 @@
 (defn post-page
   [{:keys [title date-display type tags rating html cover
            referenced-collections related creator-credits credited-collections
-           line-collections issues related-lines] :as post}]
+           line-collections issues related-lines review-of] :as post}]
   [:article.post
    (when cover [:img.cover-hero {:src cover :alt title}])
    (post-heading post)
@@ -98,7 +107,9 @@
     (c/release-date-note post)
     (when (#{:news :review} type) (c/type-badge type))
     (when (= type :review) (c/rating-stars rating))]
-   (when (seq referenced-collections) (collection-refs referenced-collections))
+   ;; the review-of kicker already links the volumes a review covers
+   (when (and (seq referenced-collections) (empty? review-of))
+     (collection-refs referenced-collections))
    (when (seq creator-credits) (creator-credits-block creator-credits))
    (related-lines-block related-lines)
    [:div.post-tags (map c/tag-pill tags)]

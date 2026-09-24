@@ -68,6 +68,15 @@
   [{:keys [title line-title]}]
   (if line-title (str line-title ": " title) title))
 
+(defn review-of-kicker
+  "\"A review of: Batman: Year One & Two\" above a review's own title,
+   linking each volume it covers. Nil for anything that isn't one."
+  [{:keys [review-of]}]
+  (when (seq review-of)
+    [:p.review-of "A review of: "
+     (interpose ", " (for [v review-of]
+                        [:a {:href (str "/posts/" (:slug v))} (display-title v)]))]))
+
 (defn release-date-note
   "\"Released Nov 5, 2024\" once it's out, \"Releases Jun 1, 2027\" while
    it's still upcoming -- judged against today at render time, and the
@@ -132,6 +141,7 @@
   [{:keys [slug title date-display type tags rating cover] :as post}]
   [:article.post-card
    [:div.post-card-body
+    (review-of-kicker post)
     [:h2 [:a {:href (str "/posts/" slug)} (display-title post)]]
     [:div.post-meta
      (when date-display [:span.post-date date-display])

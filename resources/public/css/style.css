@@ -209,6 +209,19 @@ h2 {
 }
 
 .post-heading { margin: 0 0 var(--space-4); }
+
+/* "A review of: <volume>" -- a meta kicker above a review's own title */
+.review-of {
+  margin: 0 0 var(--space-1);
+  color: var(--ink-muted);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.review-of a { color: var(--blue); }
 .post-heading h1 { margin: 0; }
 .post-heading h1 a { color: inherit; }
 .post-subtitle {
