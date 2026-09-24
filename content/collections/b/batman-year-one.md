@@ -5,6 +5,7 @@ date: "1986 - 1987"
 release-date: 2024-11-05
 tags: [80s-post-crisis]
 line: batman
+cover: /images/batman-one-two.jpg
 creators:
   - slug: frank-miller
     role: Writer

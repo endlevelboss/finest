@@ -11,5 +11,5 @@ Why: I dunno, to be continued
 
 Who: Just little old me, with a limited knowledge of the DC Universe, but with a great love of the many twists and turns this universe has gone through.
 
-![alt](/images/batman.jpg)
+![alt "Batman"](/images/batman.jpg)
 
