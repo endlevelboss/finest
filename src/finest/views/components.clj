@@ -105,7 +105,7 @@
   [{:keys [recent upcoming]}]
   [:aside.sidebar
    (release-list "Recently released" recent false)
-   (release-list "Coming soon" upcoming true)])
+   (release-list "Next up" upcoming true)])
 
 (defn- volume-review
   "A dedicated review column: a link with the review's own title plus its
