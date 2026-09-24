@@ -2,18 +2,17 @@
    https://claude.ai/artifact/6yeNcLHtSjaQngkousPVnB */
 :root {
   /* color */
-  --paper: #f6f1e7;
-  --paper-deep: #ebe3d3;
+  --paper: #fcfbf8;
+  --paper-deep: #f1efea;
   --ink: #14161f;
   --ink-muted: #545766;
-  --blue-deep: #0b2a6f;
+  --blue-deep: #1646a8;
   --blue: #1a55c4;
   --blue-light: #cfe0ff;
   --red: #d7261e;
   --yellow: #f5c400;
   --on-accent: #ffffff;
-  /* not a system token: hairline rules and empty stars, a darker paper-deep */
-  --rule: #d6ccb7;
+  --rule: #dcd9d2;
 
   /* type */
   --font-display: Anton, "Arial Narrow", Impact, sans-serif;
@@ -50,48 +49,72 @@ a {
 }
 a:hover { text-decoration: underline; }
 
-/* ---------- masthead ---------- */
+/* ---------- banner (every page; scrolls away) ---------- */
 
-.masthead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-8);
-  padding: var(--space-4) var(--space-8);
-  background: var(--blue-deep);
-  color: var(--on-accent);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+/* the design system's cover, as a page banner: title bottom-left,
+   print blocks and a Ben-Day patch anchored to the right edge */
+.banner {
+  position: relative;
+  height: 288px;
+  overflow: hidden;
+  background: var(--paper);
 }
-/* the page's one Ben-Day strip: blue dots on blue-light, 16px pitch */
-.masthead::after {
-  content: "";
+.banner-text {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  height: var(--space-4);
-  background-color: var(--blue-light);
-  background-image: radial-gradient(circle, var(--blue) 3px, transparent 3.5px);
-  background-size: var(--space-4) var(--space-4);
-  background-position: 0 0;
+  left: var(--space-8);
+  bottom: var(--space-8);
+  z-index: 1;
+}
+.banner-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(56px, 8vw, 96px);
+  line-height: 0.95;
+}
+.banner-title a { color: var(--ink); }
+.banner-title a:hover { text-decoration: none; }
+.banner-tagline {
+  margin: 12px 0 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ink-muted);
 }
 
-.brand {
-  font-family: var(--font-display);
-  font-size: 32px;
-  line-height: 38px;
-  color: var(--on-accent);
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
+.banner-art {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 448px;
+  height: 288px;
 }
-.brand:hover { text-decoration: none; }
+.banner-art .block { position: absolute; display: block; }
+.banner-art .tint   { left: 0;     top: 32px;  width: 176px; height: 160px; background: var(--blue-light); }
+.banner-art .yellow { left: 112px; top: 192px; width: 64px;  height: 64px;  background: var(--yellow); }
+.banner-art .deep   { left: 176px; top: 0;     width: 160px; height: 288px; background: var(--blue-deep); }
+.banner-art .blue   { left: 336px; top: 64px;  width: 112px; height: 160px; background: var(--blue); }
+.banner-art .red    { left: 336px; top: 224px; width: 64px;  height: 64px;  background: var(--red); }
+.banner-art .halftone {
+  position: absolute;
+  left: var(--space-4);
+  top: var(--space-4);
+  width: 128px;
+  height: 112px;
+  background-image: radial-gradient(circle, var(--blue) 4px, transparent 4.5px);
+  background-size: var(--space-4) var(--space-4);
+}
+
+/* ---------- menu line (always visible) ---------- */
 
 .site-nav {
   display: flex;
-  gap: var(--space-4);
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  padding: 12px var(--space-8);
+  background: var(--blue-deep);
+  position: sticky;
+  top: 0;
+  z-index: 10;
   font-size: 13px;
   line-height: 18px;
   font-weight: 600;
@@ -99,11 +122,25 @@ a:hover { text-decoration: underline; }
   text-transform: uppercase;
 }
 .site-nav a { color: var(--on-accent); }
+/* the Ben-Day strip rides along under the menu */
+.site-nav::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: var(--space-2);
+  background-color: var(--blue-light);
+  background-image: radial-gradient(circle, var(--blue) 2px, transparent 2.5px);
+  background-size: var(--space-2) var(--space-2);
+}
+
+.site-nav a:hover { text-decoration: underline; }
 
 main {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: calc(var(--space-8) + var(--space-4)) var(--space-4) var(--space-8);
+  padding: calc(var(--space-8) + var(--space-2)) var(--space-4) var(--space-8);
 }
 
 /* ---------- headings ---------- */
@@ -262,7 +299,7 @@ img.cover-thumb {
   color: var(--on-accent);
 }
 .type-badge.news { background: var(--blue); }
-.type-badge.review { background: var(--blue-deep); }
+.type-badge.review { background: var(--ink); }
 .type-badge.collection { background: var(--ink); }
 .type-badge.creator { background: var(--ink-muted); }
 
@@ -413,9 +450,15 @@ img.cover-thumb {
 }
 .site-footer a { color: var(--on-accent); }
 
+@media (max-width: 720px) {
+  .banner { height: 200px; }
+  .banner-text { left: var(--space-4); bottom: var(--space-4); }
+  /* keep just the slab edge and the dot patch peeking in on narrow screens */
+  .banner-art { right: -290px; transform: scale(0.7); transform-origin: top right; }
+}
+
 @media (max-width: 480px) {
-  .masthead { padding: 12px var(--space-4); }
-  .brand { font-size: 26px; line-height: 30px; }
+  .site-nav { padding: 12px var(--space-4); }
   main { padding: calc(var(--space-4) + var(--space-8)) var(--space-4) var(--space-8); }
   h1 { font-size: 40px; line-height: 44px; }
   h2 { font-size: 26px; line-height: 32px; }

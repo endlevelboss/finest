@@ -1,14 +1,30 @@
 (ns finest.views.components
   (:require [clojure.string :as str]))
 
+(def site-name "Transmissions")
+
+(defn banner
+  "The title banner at the top of every page, which scrolls away above the
+   sticky nav. The blocks and dot patch on the right echo the design
+   system's cover."
+  []
+  [:header.banner
+   [:div.banner-text
+    [:p.banner-title [:a {:href "/"} site-name]]
+    [:p.banner-tagline "Reading the DC Finest line, one brick at a time."]]
+   [:div.banner-art {:aria-hidden "true"}
+    [:span.block.tint [:span.halftone]]
+    [:span.block.yellow]
+    [:span.block.deep]
+    [:span.block.blue]
+    [:span.block.red]]])
+
 (defn nav
   []
-  [:header.masthead
-   [:a.brand {:href "/"} "Longbox Blue"]
-   [:nav.site-nav
-    [:a {:href "/news"} "News"]
-    [:a {:href "/lines"} "Lines"]
-    [:a {:href "/collections"} "Volumes"]]])
+  [:nav.site-nav
+   [:a {:href "/news"} "News"]
+   [:a {:href "/lines"} "Lines"]
+   [:a {:href "/collections"} "Volumes"]])
 
 (defn tag-pill
   [tag]

@@ -24,7 +24,8 @@
 
 (defn index
   [_request]
-  (listing-response "Latest" (store/articles)))
+  (html-response 200 (layout/page {:body (index-view/listing-page
+                                           {:heading "Latest" :posts (store/articles)})})))
 
 (defn news-list
   [_request]
