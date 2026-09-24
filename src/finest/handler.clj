@@ -65,9 +65,22 @@
     (assoc collection :review review)
     collection))
 
+(defn- release-year-groups
+  "Volumes already sorted by release date, split into [year volumes]
+   groups -- undated volumes last, under their own heading."
+  [volumes]
+  (for [group (partition-by #(some-> (:release-date %) .getYear) volumes)]
+    [(if-let [d (:release-date (first group))] (str (.getYear ^LocalDate d)) "No release date")
+     group]))
+
 (defn collections-list
   [_request]
-  (listing-response "Volumes" (mapv attach-review (sort by-release-date (store/by-type :collection))) components/volume-row))
+  (let [volumes (mapv attach-review (sort by-release-date (store/by-type :collection)))]
+    (html-response 200 (page {:title "Volumes"
+                              :body  (index-view/grouped-listing-page
+                                       {:heading "Volumes"
+                                        :groups  (release-year-groups volumes)
+                                        :card    components/volume-row})}))))
 
 (defn creators-list
   [_request]

@@ -51,3 +51,13 @@
     (is (.contains ^String body "A review of: "))
     (is (.contains ^String body "href=\"/posts/hero-collection\""))
     (is (not (.contains ^String body "About: ")))))
+
+(deftest volumes-page-groups-by-release-year
+  (let [d      #(java.time.LocalDate/parse %)
+        groups (#'finest.handler/release-year-groups
+                [{:slug "a" :release-date (d "2025-11-04")} {:slug "b" :release-date (d "2026-01-13")}
+                 {:slug "c" :release-date (d "2026-09-01")} {:slug "tba"}])]
+    (is (= [["2025" ["a"]] ["2026" ["b" "c"]] ["No release date" ["tba"]]]
+           (map (fn [[heading vols]] [heading (map :slug vols)]) groups))))
+  (let [body (:body ((routes/app) {:request-method :get :uri "/collections"}))]
+    (is (.contains ^String body "listing-group-heading"))))

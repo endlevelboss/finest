@@ -305,6 +305,13 @@ img.cover-thumb {
   white-space: nowrap;
 }
 
+.listing-group + .listing-group { margin-top: var(--space-8); }
+.listing-group-heading {
+  padding-bottom: var(--space-1);
+  border-bottom: 3px solid var(--ink);
+  margin-bottom: var(--space-1);
+}
+
 .line-row {
   padding: 6px 0;
   border-bottom: 1px solid var(--rule);
