@@ -1,5 +1,7 @@
 (ns finest.views.components
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [finest.content.post :as post])
+  (:import (java.time LocalDate)))
 
 (def site-name "Transmissions")
 
@@ -66,12 +68,14 @@
 
 (defn release-date-note
   "\"Released Nov 5, 2024\" once it's out, \"Releases Jun 1, 2027\" while
-   it's still upcoming -- the class hook lets upcoming releases be styled
-   differently."
-  [{:keys [release-date-display release-upcoming?]}]
-  (when release-date-display
-    [:span.release-date {:class (when release-upcoming? "upcoming")}
-     (str (if release-upcoming? "Releases " "Released ") release-date-display)]))
+   it's still upcoming -- judged against today at render time, and the
+   class hook lets upcoming releases be styled differently."
+  ([post] (release-date-note post (LocalDate/now)))
+  ([{:keys [release-date-display] :as post} today]
+   (when release-date-display
+     (let [upcoming? (post/upcoming? post today)]
+       [:span.release-date {:class (when upcoming? "upcoming")}
+        (str (if upcoming? "Releases " "Released ") release-date-display)]))))
 
 (defn- release-list
   [heading volumes upcoming?]

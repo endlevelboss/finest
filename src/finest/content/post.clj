@@ -52,12 +52,13 @@
   [d]
   (.format (->local-date d) release-date-formatter))
 
-(defn- upcoming?
-  "Whether a release date is still in the future as of today, so pages can
+(defn upcoming?
+  "Whether a collection's release date is still after `today`, so pages can
    say \"Releases\" instead of \"Released\" for collections that haven't
-   shipped yet."
-  [d]
-  (.isAfter (->local-date d) (LocalDate/now)))
+   shipped yet. Asked at render time rather than stored on the post, so a
+   long-running server flips it on release day without a reload."
+  [{:keys [release-date]} ^LocalDate today]
+  (boolean (and release-date (.isAfter ^LocalDate release-date today))))
 
 (defn- sort-date
   "Best-effort chronological sort key. Collections may only be dated to a
@@ -119,8 +120,7 @@
       date                  (assoc :date-display (display-date date))
       sort-d                (assoc :date sort-d)
       release-date          (assoc :release-date (->local-date release-date)
-                                    :release-date-display (display-release-date release-date)
-                                    :release-upcoming? (upcoming? release-date))
+                                    :release-date-display (display-release-date release-date))
       (= post-type :review) (assoc :rating (double rating))
       cover                 (assoc :cover cover)
       (seq collections)     (assoc :collections (vec collections))

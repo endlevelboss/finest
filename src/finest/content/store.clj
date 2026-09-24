@@ -194,12 +194,10 @@
 (defn releases-around
   "Splits dated collections around `today`: the `n` most recent already
    out (newest first; today counts as out) and the `n` next to come
-   (soonest first). Judged against `today` at call time rather than the
-   load-time :release-upcoming? flag, which goes stale on a long-running
-   server."
+   (soonest first)."
   [collections today n]
   (let [dated (filter :release-date collections)
-        out?  #(not (.isAfter ^java.time.LocalDate (:release-date %) today))]
+        out?  #(not (post/upcoming? % today))]
     {:recent   (vec (take n (sort-by :release-date #(compare %2 %1) (filter out? dated))))
      :upcoming (vec (take n (sort-by :release-date (remove out? dated))))}))
 
