@@ -341,6 +341,26 @@ img.cover-thumb {
   box-shadow: var(--shadow-panel);
 }
 
+/* a volume's cover beside its heading: scaled down, true aspect ratio,
+   square panel with the hard shadow */
+.volume-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+}
+.volume-head-text { flex: 1 1 auto; min-width: 0; }
+.volume-cover {
+  flex: 0 0 auto;
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 240px;
+  max-height: 300px;
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-none);
+  box-shadow: var(--shadow-panel);
+}
+
 .post-meta {
   display: flex;
   align-items: center;
@@ -534,4 +554,6 @@ img.cover-thumb {
   .line-columns { columns: 1; }
   .volume-row-main { grid-template-columns: 1fr; row-gap: 2px; }
   .volume-range { text-align: left; }
+  .volume-head { gap: var(--space-4); }
+  .volume-cover { max-width: 120px; max-height: 180px; }
 }

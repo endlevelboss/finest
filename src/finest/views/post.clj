@@ -95,24 +95,34 @@
      [:h2 "Issues"]
      [:ol.issue-list (map issue-entry issues)]]))
 
+(defn- post-head
+  "Heading, meta line, credits and tags. A volume's cover sits beside all
+   that, right-aligned and scaled down; other posts keep a full-width hero
+   above it."
+  [{:keys [title date-display type tags rating cover
+           referenced-collections creator-credits related-lines review-of] :as post}]
+  (let [head [(post-heading post)
+              [:div.post-meta
+               (when date-display [:span.post-date date-display])
+               (c/release-date-note post)
+               (when (#{:news :review} type) (c/type-badge type))
+               (when (= type :review) (c/rating-stars rating))]
+              ;; the review-of kicker already links the volumes a review covers
+              (when (and (seq referenced-collections) (empty? review-of))
+                (collection-refs referenced-collections))
+              (when (seq creator-credits) (creator-credits-block creator-credits))
+              (related-lines-block related-lines)
+              [:div.post-tags (map c/tag-pill tags)]]]
+    (if (and cover (= type :collection))
+      [:header.volume-head
+       (into [:div.volume-head-text] head)
+       [:img.volume-cover {:src cover :alt title}]]
+      (list* (when cover [:img.cover-hero {:src cover :alt title}]) head))))
+
 (defn post-page
-  [{:keys [title date-display type tags rating html cover
-           referenced-collections related creator-credits credited-collections
-           line-collections issues related-lines review-of] :as post}]
+  [{:keys [html related credited-collections line-collections issues] :as post}]
   [:article.post
-   (when cover [:img.cover-hero {:src cover :alt title}])
-   (post-heading post)
-   [:div.post-meta
-    (when date-display [:span.post-date date-display])
-    (c/release-date-note post)
-    (when (#{:news :review} type) (c/type-badge type))
-    (when (= type :review) (c/rating-stars rating))]
-   ;; the review-of kicker already links the volumes a review covers
-   (when (and (seq referenced-collections) (empty? review-of))
-     (collection-refs referenced-collections))
-   (when (seq creator-credits) (creator-credits-block creator-credits))
-   (related-lines-block related-lines)
-   [:div.post-tags (map c/tag-pill tags)]
+   (post-head post)
    [:div.post-body (h/raw html)]
    (issue-list issues)
    (listing-section "Reviews & News" related)
