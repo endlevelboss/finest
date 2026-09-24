@@ -12,7 +12,7 @@
 (deftest route-resolution
   (let [router (routes/router)]
     (is (some? (r/match-by-path router "/")))
-    (is (some? (r/match-by-path router "/news")))
+    (is (nil? (r/match-by-path router "/news")) "the front page lists everything")
     (is (some? (r/match-by-path router "/reviews")))
     (is (some? (r/match-by-path router "/articles")))
     (is (some? (r/match-by-path router "/collections")))

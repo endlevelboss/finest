@@ -24,5 +24,6 @@
          [:main body]
          (when sidebar (c/sidebar sidebar))]
         [:footer.site-footer
-         [:span.footer-brand c/site-name]
+         [:a {:href "/"} c/site-name]
+         [:span.footer-divider {:aria-hidden "true"}]
          [:a {:href "/tags"} "Tags"]]]])))

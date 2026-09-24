@@ -312,6 +312,28 @@ img.cover-thumb {
   margin-bottom: var(--space-1);
 }
 
+/* a line's volume list: tiny cover in front of each row */
+.volume-row.with-thumb {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.volume-thumb {
+  flex: 0 0 64px;
+  display: block;
+}
+.volume-thumb img {
+  display: block;
+  width: 64px;
+  height: auto;
+  max-height: 96px;
+  object-fit: contain;
+  object-position: top;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-none);
+}
+.volume-row-body { flex: 1 1 auto; min-width: 0; }
+
 .line-row {
   padding: 6px 0;
   border-bottom: 1px solid var(--rule);
@@ -520,23 +542,25 @@ img.cover-thumb {
 .site-footer {
   display: flex;
   justify-content: center;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-4);
   padding: var(--space-8) var(--space-4);
   background: var(--blue-deep);
   color: var(--on-accent);
   font-size: 13px;
+  line-height: 18px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.footer-brand {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 20px;
-  letter-spacing: 0.01em;
-}
 .site-footer a { color: var(--on-accent); }
+/* a thin vertical rule between the footer links */
+.footer-divider {
+  align-self: stretch;
+  width: 1px;
+  background: var(--on-accent);
+  opacity: 0.6;
+}
 
 @media (max-width: 720px) {
   .banner { height: 200px; }

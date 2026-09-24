@@ -24,7 +24,7 @@
 (defn nav
   []
   [:nav.site-nav
-   [:a {:href "/news"} "Transmissions"]
+   [:a {:href "/"} "Transmissions"]
    [:a {:href "/reviews"} "Reviews"]
    [:a {:href "/articles"} "Articles"]
    [:a {:href "/lines"} "Lines"]
@@ -128,6 +128,16 @@
     [:span.volume-range date-display]
     (volume-review review)]
    (release-date-note post)])
+
+(defn volume-row-with-thumb
+  "volume-row with a tiny cover thumbnail in front, for a line's own
+   volume listing. Volumes without a cover keep an empty slot of the same
+   width, so every title in the list lines up."
+  [{:keys [slug cover title] :as post}]
+  [:div.volume-row.with-thumb
+   [:a.volume-thumb {:href (str "/posts/" slug) :tabindex "-1" :aria-hidden "true"}
+    (when cover [:img {:src cover :alt title :loading "lazy"}])]
+   (into [:div.volume-row-body] (rest (volume-row post)))])
 
 (defn line-row
   "A compact single-line row for the Lines listing -- just the clickable

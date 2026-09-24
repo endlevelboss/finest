@@ -33,10 +33,6 @@
   (html-response 200 (page {:body (index-view/listing-page
                                            {:heading "Latest" :posts (store/articles)})})))
 
-(defn news-list
-  [_request]
-  (listing-response "News" (store/articles)))
-
 (defn reviews-list
   [_request]
   (listing-response "Reviews" (store/by-type :review)))

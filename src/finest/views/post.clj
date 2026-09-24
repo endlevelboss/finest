@@ -127,4 +127,4 @@
    (issue-list issues)
    (listing-section "Reviews & News" related)
    (credited-collections-block credited-collections)
-   (listing-section "Volumes" line-collections c/volume-row)])
+   (listing-section "Volumes" line-collections c/volume-row-with-thumb)])
