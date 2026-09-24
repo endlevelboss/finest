@@ -125,5 +125,5 @@
                                 (vol "far" "2027-06-01") (vol "soon" "2026-09-25")
                                 (vol "later" "2026-12-01")]
                                today 3)]
-    (is (= ["today" "last-week" "summer"] (map :slug recent)))
+    (is (= ["summer" "last-week" "today"] (map :slug recent)))
     (is (= ["soon" "next-week" "later"] (map :slug upcoming)))))

@@ -210,12 +210,12 @@
 
 (defn releases-around
   "Splits dated collections around `today`: the `n` most recent already
-   out (newest first; today counts as out) and the `n` next to come
-   (soonest first)."
+   out and the `n` next to come (today counts as out). Both lists run in
+   release order, oldest first, so the two read as one timeline."
   [collections today n]
   (let [dated (filter :release-date collections)
         out?  #(not (post/upcoming? % today))]
-    {:recent   (vec (take n (sort-by :release-date #(compare %2 %1) (filter out? dated))))
+    {:recent   (vec (reverse (take n (sort-by :release-date #(compare %2 %1) (filter out? dated)))))
      :upcoming (vec (take n (sort-by :release-date (remove out? dated))))}))
 
 (defn release-window
