@@ -3,10 +3,12 @@
 
 (defn nav
   []
-  [:nav.site-nav
-   [:a {:href "/news"} "News"]
-   [:a {:href "/lines"} "Lines"]
-   [:a {:href "/collections"} "Volumes"]])
+  [:header.masthead
+   [:a.brand {:href "/"} "Longbox Blue"]
+   [:nav.site-nav
+    [:a {:href "/news"} "News"]
+    [:a {:href "/lines"} "Lines"]
+    [:a {:href "/collections"} "Volumes"]]])
 
 (defn tag-pill
   [tag]

@@ -24,7 +24,7 @@
 
 (defn index
   [_request]
-  (listing-response "Comic Blog" (store/articles)))
+  (listing-response "Latest" (store/articles)))
 
 (defn news-list
   [_request]
