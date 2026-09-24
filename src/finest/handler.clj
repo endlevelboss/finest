@@ -37,6 +37,15 @@
   [_request]
   (listing-response "News" (store/articles)))
 
+(defn reviews-list
+  [_request]
+  (listing-response "Reviews" (store/by-type :review)))
+
+(defn articles-list
+  "Every non-review writeup -- the :news type, badged \"Article\"."
+  [_request]
+  (listing-response "Articles" (store/by-type :news)))
+
 (defn- by-release-date
   "Ascending by release date, oldest first -- collections with no known
    release date (nothing announced yet) sort after every dated one."

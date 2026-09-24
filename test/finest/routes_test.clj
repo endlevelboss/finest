@@ -13,7 +13,8 @@
   (let [router (routes/router)]
     (is (some? (r/match-by-path router "/")))
     (is (some? (r/match-by-path router "/news")))
-    (is (nil? (r/match-by-path router "/reviews")))
+    (is (some? (r/match-by-path router "/reviews")))
+    (is (some? (r/match-by-path router "/articles")))
     (is (some? (r/match-by-path router "/collections")))
     (is (some? (r/match-by-path router "/creators")))
     (is (some? (r/match-by-path router "/lines")))
@@ -36,3 +37,11 @@
 (deftest app-returns-404-for-unknown-path
   (let [response ((routes/app) {:request-method :get :uri "/nope"})]
     (is (= 404 (:status response)))))
+
+(deftest reviews-and-articles-list-only-their-own-type
+  (let [body #(:body ((routes/app) {:request-method :get :uri %}))
+        listed? (fn [page slug] (.contains ^String (body page) (str "href=\"/posts/" slug "\"")))]
+    (is (listed? "/reviews" "second"))
+    (is (not (listed? "/reviews" "first")))
+    (is (listed? "/articles" "first"))
+    (is (not (listed? "/articles" "second")))))

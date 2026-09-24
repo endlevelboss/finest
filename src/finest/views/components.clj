@@ -24,7 +24,9 @@
 (defn nav
   []
   [:nav.site-nav
-   [:a {:href "/news"} "News"]
+   [:a {:href "/news"} "Transmissions"]
+   [:a {:href "/reviews"} "Reviews"]
+   [:a {:href "/articles"} "Articles"]
    [:a {:href "/lines"} "Lines"]
    [:a {:href "/collections"} "Volumes"]])
 
