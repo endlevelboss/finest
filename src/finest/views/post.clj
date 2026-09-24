@@ -33,15 +33,15 @@
 
 (defn- post-heading
   "A plain <h1> for most posts. Collections that belong to a line lead with
-   the line's name as the big title, linked to the line's own page, and show
-   their own distinguishing name as a subtitle underneath. Reviews of a
+   their own title as the big heading, with the line's name as a smaller
+   subtitle underneath, linked to the line's own page. Reviews of a
    volume get an \"A review of: ...\" kicker above their own title."
   [{:keys [title line line-title review-of] :as post}]
   (cond
     line-title
     [:div.post-heading
-     [:h1 [:a {:href (str "/posts/" line)} line-title]]
-     [:p.post-subtitle title]]
+     [:h1 title]
+     [:p.post-subtitle [:a {:href (str "/posts/" line)} line-title]]]
 
     (seq review-of)
     [:div.post-heading

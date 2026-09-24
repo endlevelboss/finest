@@ -223,7 +223,7 @@ h2 {
 }
 .review-of a { color: var(--blue); }
 .post-heading h1 { margin: 0; }
-.post-heading h1 a { color: inherit; }
+.post-subtitle a { color: var(--blue); }
 .post-subtitle {
   font-family: var(--font-sans);
   font-size: 20px;
