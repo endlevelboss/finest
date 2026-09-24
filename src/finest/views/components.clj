@@ -89,7 +89,7 @@
    due, each with its street date."
   [{:keys [recent upcoming]}]
   [:aside.sidebar
-   (release-list "Just released" recent false)
+   (release-list "Recently released" recent false)
    (release-list "Coming soon" upcoming true)])
 
 (defn- volume-review
