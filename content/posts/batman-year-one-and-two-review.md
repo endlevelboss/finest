@@ -1,5 +1,5 @@
 ---
-title: "Batman: Year One & Two"
+title: "After the Crisis"
 date: 2026-09-24
 tags: [80s-post-crisis]
 type: review

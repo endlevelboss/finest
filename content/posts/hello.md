@@ -1,5 +1,5 @@
 ---
-title: "Hello there, fellow comic book lover"
+title: "Hello there, fellow comic book lovers"
 date: 2026-09-24
 tags: []
 type: news
