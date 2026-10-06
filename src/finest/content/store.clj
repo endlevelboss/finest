@@ -67,13 +67,14 @@
   "The volumes a review covers, resolved from its `collections:` slugs so
    every listing can show \"A review of: ...\" without a lookup. Keeps the
    frontmatter order, drops slugs that aren't loaded collections, and runs
-   after attach-line-title so each volume carries its line's name."
+   after attach-line-title so each volume carries its line's name (and
+   slug, so the kicker can link the line too)."
   [by-slug post]
   (let [volumes (when (= :review (:type post))
                   (->> (:collections post)
                        (keep by-slug)
                        (filter #(= :collection (:type %)))
-                       (mapv #(select-keys % [:slug :title :line-title]))))]
+                       (mapv #(select-keys % [:slug :title :line :line-title]))))]
     (if (seq volumes)
       (assoc post :review-of volumes)
       post)))

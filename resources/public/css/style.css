@@ -222,6 +222,8 @@ h2 {
   text-transform: uppercase;
 }
 .review-of a { color: var(--blue); }
+/* the grey colon between a line's link and its volume's link */
+.review-of-sep { color: var(--ink-muted); margin: 0 0.35em 0 0.1em; }
 .post-heading h1 { margin: 0; }
 .post-subtitle a { color: var(--blue); }
 .post-subtitle {

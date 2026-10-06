@@ -50,6 +50,7 @@
   (let [body (:body ((routes/app) {:request-method :get :uri "/posts/second"}))]
     (is (.contains ^String body "A review of: "))
     (is (.contains ^String body "href=\"/posts/hero-collection\""))
+    (is (.contains ^String body "href=\"/posts/hero-line\""))
     (is (not (.contains ^String body "About: ")))))
 
 (deftest volumes-page-groups-by-release-year

@@ -68,14 +68,23 @@
   [{:keys [title line-title]}]
   (if line-title (str line-title ": " title) title))
 
+(defn- review-of-volume
+  "One volume in the kicker. A volume in a line links its two halves
+   separately -- the line's name to the line, its own title to itself."
+  [{:keys [slug title line line-title] :as v}]
+  (if (and line line-title)
+    (list [:a {:href (str "/posts/" line)} line-title] [:span.review-of-sep ":"]
+          [:a {:href (str "/posts/" slug)} title])
+    [:a {:href (str "/posts/" slug)} (display-title v)]))
+
 (defn review-of-kicker
   "\"A review of: Batman: Year One & Two\" above a review's own title,
-   linking each volume it covers. Nil for anything that isn't one."
+   linking each volume it covers (and its line). Nil for anything that
+   isn't one."
   [{:keys [review-of]}]
   (when (seq review-of)
     [:p.review-of "A review of: "
-     (interpose ", " (for [v review-of]
-                        [:a {:href (str "/posts/" (:slug v))} (display-title v)]))]))
+     (interpose ", " (map review-of-volume review-of))]))
 
 (defn release-date-note
   "\"Released Nov 5, 2024\" once it's out, \"Releases Jun 1, 2027\" while
