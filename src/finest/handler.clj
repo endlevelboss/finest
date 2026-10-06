@@ -4,6 +4,7 @@
             [finest.views.layout :as layout]
             [finest.views.index :as index-view]
             [finest.views.post :as post-view]
+            [finest.views.embeds :as embeds]
             [finest.views.components :as components])
   (:import (java.time LocalDate)))
 
@@ -138,7 +139,7 @@
 
 (defn- enrich
   [{:keys [type slug line collections creators issues] :as post}]
-  (cond-> post
+  (cond-> (update post :html embeds/expand store/by-slug)
     (seq collections)     (assoc :referenced-collections (keep store/by-slug collections))
     (= type :collection)  (assoc :related (store/referencing slug)
                                   :creator-credits (resolve-creators creators)

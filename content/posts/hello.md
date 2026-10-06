@@ -13,3 +13,8 @@ Who: Just little old me, with a limited knowledge of the DC Universe, but with a
 
 ![Batman](/images/batman.jpg "feature")
 
+
+
+First up: [[batman-year-one-and-two-review]], where Year One shines and Year Two stumbles.
+
+{{review batman-year-one-and-two-review}}

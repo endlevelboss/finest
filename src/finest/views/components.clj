@@ -147,6 +147,22 @@
   [:div.line-row
    [:a.line-title {:href (str "/posts/" slug)} (display-title post)]])
 
+(defn review-embed
+  "A compact review box dropped into an article body with {{review slug}}.
+   The whole box is one link, so the \"A review of:\" volumes are plain
+   text here rather than the kicker's own nested links."
+  [{:keys [slug review-of rating feature-image cover title] :as review}]
+  [:a.review-embed {:href (str "/posts/" slug)}
+   [:span.review-embed-body
+    (when (seq review-of)
+      [:span.review-of (str "A review of: " (str/join ", " (map display-title review-of)))])
+    [:span.review-embed-title (display-title review)]
+    (rating-stars rating)]
+   (cond
+     feature-image [:span.post-card-feature
+                    [:img {:src (:src feature-image) :alt (:alt feature-image) :loading "lazy"}]]
+     cover         [:span.post-card-feature [:img {:src cover :alt title :loading "lazy"}]])])
+
 (defn post-card
   "A listing card. A post with a featured image (marked in its body) shows
    it as a cropped thumbnail on the right, in place of the cover thumb."

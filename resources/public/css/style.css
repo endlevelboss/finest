@@ -502,6 +502,27 @@ img.cover-thumb {
 }
 .post-body blockquote p:last-child { margin-bottom: 0; }
 
+/* [[slug]] -- an inline link to another post, a review's stars after it */
+.post-link .rating { margin-left: 4px; font-size: 0.85em; white-space: nowrap; }
+
+/* {{review slug}} -- a compact review box inside an article */
+.review-embed {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  background: var(--paper-deep);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+.review-embed:hover { text-decoration: none; }
+.review-embed:hover .review-embed-title { color: var(--blue); }
+.review-embed-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.review-embed .review-of { margin: 0; }
+.review-embed-title { font-size: 20px; line-height: 26px; font-weight: 700; }
+.post-body .review-embed img { margin: 0; }
+
 .post-comics,
 .creator-credits,
 .related-lines {

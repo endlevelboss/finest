@@ -63,6 +63,21 @@ It still shows inline in the article as usual, and the listing card
 uses it as a small thumbnail on the right, cropped to fit. If several images are marked,
 the first one is used.
 
+To point at another post from inside an article, use its slug:
+
+```markdown
+As I said in [[batman-year-one-and-two-review]], Year Two is uneven.
+
+{{review batman-year-one-and-two-review}}
+```
+
+`[[slug]]` works mid-sentence for any post (review, article, volume,
+line) and becomes a link titled with that post's title, with the stars
+after it for a review. `{{review slug}}` on a line of its own becomes a
+small review box: what it reviews, the title, the stars and the review's
+featured thumbnail. A slug that doesn't match a post is left as written,
+so typos stay visible.
+
 The slug is derived from the filename (date prefix stripped), or set
 explicitly with a `slug:` field. Commit the file — content ships with
 the code.
