@@ -68,12 +68,13 @@
   [{:keys [title line-title]}]
   (if line-title (str line-title ": " title) title))
 
-(defn- review-of-volume
-  "One volume in the kicker. A volume in a line links its two halves
-   separately -- the line's name to the line, its own title to itself."
+(defn- split-title-links
+  "A volume's combined title with its two halves linked separately -- the
+   line's name to the line, its own title to itself, a grey colon between.
+   A volume outside a line is just one link."
   [{:keys [slug title line line-title] :as v}]
   (if (and line line-title)
-    (list [:a {:href (str "/posts/" line)} line-title] [:span.review-of-sep ":"]
+    (list [:a {:href (str "/posts/" line)} line-title] [:span.title-sep ":"]
           [:a {:href (str "/posts/" slug)} title])
     [:a {:href (str "/posts/" slug)} (display-title v)]))
 
@@ -84,7 +85,7 @@
   [{:keys [review-of]}]
   (when (seq review-of)
     [:p.review-of "A review of: "
-     (interpose ", " (map review-of-volume review-of))]))
+     (interpose ", " (map split-title-links review-of))]))
 
 (defn release-date-note
   "\"Released Nov 5, 2024\" once it's out, \"Releases Jun 1, 2027\" while
@@ -125,28 +126,36 @@
      [:span.volume-review-title (:title review)]
      (rating-stars (:rating review))]))
 
-(defn volume-row
-  "A compact, table-like row for the Volumes listing: title, date range,
-   and review (if any) as three columns on the first line, with the
-   release date on a second line below -- no tags, no cover art, nothing
-   slug-shaped."
-  [{:keys [slug date-display review] :as post}]
+(defn- volume-row*
+  [{:keys [slug date-display review] :as post} link-line?]
   [:div.volume-row
    [:div.volume-row-main
-    [:a.volume-title {:href (str "/posts/" slug)} (display-title post)]
+    (if link-line?
+      [:span.volume-title (split-title-links post)]
+      [:a.volume-title {:href (str "/posts/" slug)} (display-title post)])
     [:span.volume-range date-display]
     (volume-review review)]
    (release-date-note post)])
 
+(defn volume-row
+  "A compact, table-like row for the Volumes listing: title, date range,
+   and review (if any) as three columns on the first line, with the
+   release date on a second line below -- no tags, no cover art, nothing
+   slug-shaped. The line's name links to the line, so the full list can
+   be browsed by line."
+  [post]
+  (volume-row* post true))
+
 (defn volume-row-with-thumb
   "volume-row with a tiny cover thumbnail in front, for a line's own
    volume listing. Volumes without a cover keep an empty slot of the same
-   width, so every title in the list lines up."
+   width, so every title in the list lines up. The title stays one link,
+   since the line it would point to is this very page."
   [{:keys [slug cover title] :as post}]
   [:div.volume-row.with-thumb
    [:a.volume-thumb {:href (str "/posts/" slug) :tabindex "-1" :aria-hidden "true"}
     (when cover [:img {:src cover :alt title :loading "lazy"}])]
-   (into [:div.volume-row-body] (rest (volume-row post)))])
+   (into [:div.volume-row-body] (rest (volume-row* post false)))])
 
 (defn line-row
   "A compact single-line row for the Lines listing -- just the clickable

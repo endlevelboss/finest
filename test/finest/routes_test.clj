@@ -62,3 +62,11 @@
            (map (fn [[heading vols]] [heading (map :slug vols)]) groups))))
   (let [body (:body ((routes/app) {:request-method :get :uri "/collections"}))]
     (is (.contains ^String body "listing-group-heading"))))
+
+(deftest volumes-listing-links-each-volume-to-its-line
+  (let [body (:body ((routes/app) {:request-method :get :uri "/collections"}))]
+    (is (.contains ^String body "href=\"/posts/hero-line\""))
+    (is (.contains ^String body "href=\"/posts/hero-collection\"")))
+  (let [body (:body ((routes/app) {:request-method :get :uri "/posts/hero-line"}))]
+    (is (.contains ^String body "href=\"/posts/hero-collection\""))
+    (is (not (.contains ^String body "title-sep")))))
