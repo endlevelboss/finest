@@ -15,6 +15,6 @@ Who: Just little old me, with a limited knowledge of the DC Universe, but with a
 
 
 
-First up: [[batman-year-one-and-two-review]], where Year One shines and Year Two stumbles.
+First up: [[gl-defeat]], where Green Lantern runs out of steam.
 
-{{review batman-year-one-and-two-review}}
+{{review gl-defeat}}
