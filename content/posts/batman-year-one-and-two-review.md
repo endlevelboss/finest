@@ -1,10 +1,9 @@
 ---
-title: "After the Crisis"
+title: "Post-Crisis \"Batman\""
 date: 2026-09-24
 tags: [80s-post-crisis]
 type: review
 rating: 3
-cover: /images/watchmen-cover.svg
 collections: [batman-year-one]
 ---
 
