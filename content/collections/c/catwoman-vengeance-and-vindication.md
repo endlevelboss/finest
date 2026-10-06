@@ -4,10 +4,9 @@ slug: catwoman-vengeance-and-vindication
 date: "1994-1996"
 release-date: 2025-06-10
 line: catwoman
-issues:
-  - number: "Catwoman (vol 2) #14"
+double-dips:
+  - issue: "Catwoman (vol 2) #14"
     date: "Sep 1994"
-    original: catwoman2-14
     creators:
       - slug: dave-wood
         role: Writer

@@ -3,9 +3,9 @@ title: "Fragment B"
 slug: fragment-b
 date: "1959"
 tags: [theta]
-issues:
-  - number: 256
-    original: shared-issue
+double-dips:
+  - issue: "shared comics  # 256"
+    part: "backup"
 ---
 
 Fragment B body.

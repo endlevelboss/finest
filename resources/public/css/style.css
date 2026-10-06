@@ -526,14 +526,12 @@ img.cover-thumb {
 .post-body .review-embed img { margin: 0; }
 
 .post-comics,
-.creator-credits,
-.related-lines {
+.creator-credits {
   color: var(--ink-muted);
   font-size: 15px;
   margin-bottom: var(--space-2);
 }
 .post-comics-label { font-weight: 700; color: var(--ink); }
-.related-lines-via { color: var(--ink-muted); font-size: 13px; }
 
 .related {
   margin-top: var(--space-8);
@@ -548,6 +546,11 @@ img.cover-thumb {
   margin: calc(-1 * var(--space-2)) 0 var(--space-4);
 }
 
+.section-note {
+  color: var(--ink-muted);
+  font-size: 15px;
+  margin: 0 0 var(--space-2);
+}
 .issue-list {
   list-style: none;
   padding: 0;
@@ -559,7 +562,7 @@ img.cover-thumb {
 }
 .issue-entry:last-child { border-bottom: none; }
 .issue-number { font-weight: 700; }
-.issue-date, .issue-creators {
+.issue-part, .issue-date, .issue-creators {
   color: var(--ink-muted);
   font-size: 15px;
 }

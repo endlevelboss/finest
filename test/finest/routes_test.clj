@@ -70,3 +70,12 @@
   (let [body (:body ((routes/app) {:request-method :get :uri "/posts/hero-line"}))]
     (is (.contains ^String body "href=\"/posts/hero-collection\""))
     (is (not (.contains ^String body "title-sep")))))
+
+(deftest volume-page-lists-its-double-dips
+  (let [body (:body ((routes/app) {:request-method :get :uri "/posts/fragment-a"}))]
+    (is (.contains ^String body "Double-dips"))
+    (is (.contains ^String body "Shared Comics #256"))
+    (is (.contains ^String body "href=\"/posts/fragment-b\""))
+    (is (.contains ^String body "(backup)")))
+  (let [body (:body ((routes/app) {:request-method :get :uri "/posts/hero-collection"}))]
+    (is (not (.contains ^String body "Double-dips")))))

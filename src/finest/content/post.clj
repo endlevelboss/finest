@@ -82,15 +82,26 @@
     (select-keys c [:slug :role])
     {:slug c}))
 
-(defn- normalize-issue
-  "An issue entry: :number plus whatever optional fields were given --
-   :date (freeform display text), :creators (overrides the collection's
-   cover credits for just this issue), :original (a shared id linking this
-   issue to its other fragments across different collections/lines)."
-  [{:keys [number date original creators]}]
-  (cond-> {:number number}
+(defn issue-key
+  "What two volumes' double-dip entries are matched on: the issue name,
+   ignoring case and spacing, so \"Catwoman (vol 2) #14\" and
+   \"catwoman (vol 2)  # 14\" are the same issue."
+  [issue]
+  (-> (str issue)
+      str/lower-case
+      (str/replace #"\s+" " ")
+      (str/replace #"\s*#\s*" "#")
+      str/trim))
+
+(defn- normalize-double-dip
+  "A double-dip entry -- an issue (or part of one) this volume shares with
+   another: :issue plus whatever optional fields were given -- :part (which
+   bit of the issue this volume reprints, e.g. \"Green Arrow backup\"),
+   :date (freeform display text), :creators (credits for just this issue)."
+  [{:keys [issue part date creators]}]
+  (cond-> {:issue (str issue)}
+    part           (assoc :part part)
     date           (assoc :date date)
-    original       (assoc :original original)
     (seq creators) (assoc :creators (mapv normalize-creator creators))))
 
 (def ^:private feature-img-tag
@@ -120,7 +131,7 @@
   "Builds and validates a post map from parsed frontmatter, rendered HTML body,
    and file metadata. Throws ex-info on invalid/missing required fields."
   [{:keys [meta html source-file last-modified]}]
-  (let [{:keys [title date slug tags type rating cover collections creators line issues release-date]} meta
+  (let [{:keys [title date slug tags type rating cover collections creators line double-dips release-date]} meta
         post-type      (some-> type name keyword)
         freeform-date? (= post-type :collection)
         sort-d         (when date (sort-date freeform-date? date))
@@ -150,5 +161,5 @@
       feature-image         (assoc :feature-image feature-image)
       (seq collections)     (assoc :collections (vec collections))
       (seq creators)        (assoc :creators (mapv normalize-creator creators))
-      (seq issues)          (assoc :issues (mapv normalize-issue issues))
+      (seq double-dips)     (assoc :double-dips (mapv normalize-double-dip double-dips))
       line                  (assoc :line line))))

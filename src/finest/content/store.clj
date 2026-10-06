@@ -80,10 +80,10 @@
       post)))
 
 (defn- creators-of
-  "A post's full creator credits: the cover creators: plus any per-issue
-   overrides -- a creator only credited on one issue still counts."
+  "A post's full creator credits: the cover creators: plus any credited on
+   just one double-dipped issue -- they still count."
   [post]
-  (concat (:creators post) (mapcat :creators (:issues post))))
+  (concat (:creators post) (mapcat :creators (:double-dips post))))
 
 (defn- credited-creator-slugs
   [posts]
@@ -101,42 +101,38 @@
    :html        "<p><em>No profile written yet.</em></p>"
    :generated?  true})
 
-(defn- issue-fragments
-  "Every (collection, issue) pair across the site that has an :original id,
-   grouped by that id. Each fragment carries just enough about its parent
-   collection to render a link and a combined heading (shaped to match
-   components/display-title's input) plus its own issue number. Carrying
-   :line (not just :line-title) lets a collection tell whether a sibling
-   belongs to a genuinely different line, worth surfacing as related."
+(defn- double-dip-fragments
+  "Every (collection, double-dip) pair across the site, grouped by the
+   issue it reprints (post/issue-key). Each fragment carries just enough
+   about its parent collection to render a link and a combined heading
+   (shaped to match components/display-title's input) plus which part of
+   the issue it has."
   [posts]
   (->> posts
        (filter #(= :collection (:type %)))
        (mapcat (fn [c]
-                 (for [issue (:issues c) :when (:original issue)]
-                   {:original   (:original issue)
+                 (for [{:keys [issue part]} (:double-dips c)]
+                   {:key        (post/issue-key issue)
                     :collection (cond-> {:slug (:slug c) :title (:title c)}
                                   (:line-title c) (assoc :line-title (:line-title c))
-                                  (:line c)       (assoc :line (:line c)))
-                    :number     (:number issue)})))
-       (group-by :original)))
+                                  part            (assoc :part part))})))
+       (group-by :key)))
 
-(defn- attach-issue-siblings
-  "For each issue with an :original id, assoc :siblings -- the other
-   fragments (in other collections) sharing that id, so a reader can hop
-   between them to reconstruct the original historical issue. Issues with
-   no :original, or no siblings, are left untouched."
-  [fragments-by-original post]
-  (if (= :collection (:type post))
-    (update post :issues
-            (fn [issues]
-              (mapv (fn [issue]
-                      (if-let [orig (:original issue)]
-                        (let [siblings (->> (get fragments-by-original orig)
-                                             (remove #(= (:slug (:collection %)) (:slug post)))
-                                             (mapv #(assoc (:collection %) :number (:number %))))]
-                          (cond-> issue (seq siblings) (assoc :siblings siblings)))
-                        issue))
-                    issues)))
+(defn- attach-double-dip-siblings
+  "For each double-dip, assoc :siblings -- the other volumes reprinting
+   the same issue (or another part of it), so a reader can hop between
+   them. Entries no other volume shares yet are left untouched."
+  [fragments-by-key post]
+  (if (and (= :collection (:type post)) (seq (:double-dips post)))
+    (update post :double-dips
+            (fn [dips]
+              (mapv (fn [{:keys [issue] :as dip}]
+                      (let [siblings (->> (get fragments-by-key (post/issue-key issue))
+                                          (map :collection)
+                                          (remove #(= (:slug %) (:slug post)))
+                                          vec)]
+                        (cond-> dip (seq siblings) (assoc :siblings siblings))))
+                    dips)))
     post))
 
 (defn load-all!
@@ -158,8 +154,8 @@
         with-line-titles (mapv (partial attach-line-title by-slug-raw) raw-posts)
         line-titled      (into {} (map (juxt :slug identity)) with-line-titles)
         with-review-of   (mapv (partial attach-review-of line-titled) with-line-titles)
-        fragments        (issue-fragments with-review-of)
-        with-siblings    (mapv (partial attach-issue-siblings fragments) with-review-of)
+        fragments        (double-dip-fragments with-review-of)
+        with-siblings    (mapv (partial attach-double-dip-siblings fragments) with-review-of)
         missing-creators (remove by-slug-raw (credited-creator-slugs with-siblings))
         posts            (into with-siblings (map generated-creator) missing-creators)]
     (reset! state {:posts     posts

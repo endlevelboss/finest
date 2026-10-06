@@ -104,15 +104,20 @@
   (store/load-all! fixture-dir)
   (is (= "Issue Only Creator" (:title (store/by-slug "issue-only-creator")))))
 
-(deftest issues-sharing-an-original-id-resolve-each-other-as-siblings
+(deftest double-dips-of-the-same-issue-resolve-each-other-as-siblings
+  ;; fragment-b writes the issue with different case and spacing
   (store/load-all! fixture-dir)
-  (let [a-issues (:issues (store/by-slug "fragment-a"))
-        b-issues (:issues (store/by-slug "fragment-b"))]
-    (is (= [{:slug "fragment-b" :title "Fragment B" :number 256}]
-           (:siblings (first a-issues))))
-    (is (= [{:slug "fragment-a" :title "Fragment A" :number 256}]
-           (:siblings (first b-issues))))
-    (is (not (contains? (second a-issues) :siblings)))))
+  (let [a-dips (:double-dips (store/by-slug "fragment-a"))
+        b-dips (:double-dips (store/by-slug "fragment-b"))]
+    (is (= [{:slug "fragment-b" :title "Fragment B" :part "backup"}]
+           (:siblings (first a-dips))))
+    (is (= [{:slug "fragment-a" :title "Fragment A" :part "lead story"}]
+           (:siblings (first b-dips))))
+    (is (not (contains? (second a-dips) :siblings)))))
+
+(deftest volumes-without-double-dips-get-no-double-dips-key
+  (store/load-all! fixture-dir)
+  (is (not (contains? (store/by-slug "hero-collection") :double-dips))))
 
 (deftest releases-around-splits-recent-and-upcoming
   (let [d     #(java.time.LocalDate/parse %)

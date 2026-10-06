@@ -118,33 +118,20 @@
   [creators]
   (keep (fn [{:keys [slug role]}] (some-> (store/by-slug slug) (assoc :role role))) creators))
 
-(defn- resolve-issue-creators
-  [issues]
-  (map (fn [issue]
-         (cond-> issue
-           (seq (:creators issue)) (assoc :creators (resolve-creators (:creators issue)))))
-       issues))
-
-(defn- related-lines
-  "Other lines this collection connects to via a shared split issue --
-   e.g. a Catwoman issue also collected in an Events volume. Only
-   siblings actually filed under a (different) line count; a standalone
-   sibling with no line, or one on this same line, is skipped."
-  [own-line issues]
-  (distinct
-    (for [{:keys [number siblings]} issues
-          {sib-line :line sib-line-title :line-title} siblings
-          :when (and sib-line (not= sib-line own-line))]
-      {:line-slug sib-line :line-title sib-line-title :number number})))
+(defn- resolve-double-dip-creators
+  [dips]
+  (map (fn [dip]
+         (cond-> dip
+           (seq (:creators dip)) (assoc :creators (resolve-creators (:creators dip)))))
+       dips))
 
 (defn- enrich
-  [{:keys [type slug line collections creators issues] :as post}]
+  [{:keys [type slug collections creators double-dips] :as post}]
   (cond-> (update post :html embeds/expand store/by-slug)
     (seq collections)     (assoc :referenced-collections (keep store/by-slug collections))
     (= type :collection)  (assoc :related (store/referencing slug)
-                                  :creator-credits (resolve-creators creators)
-                                  :related-lines (related-lines line issues))
-    (seq issues)          (assoc :issues (resolve-issue-creators issues))
+                                  :creator-credits (resolve-creators creators))
+    (seq double-dips)     (assoc :double-dips (resolve-double-dip-creators double-dips))
     (= type :creator)     (assoc :credited-collections
                                   (map #(assoc % :role (creator-role-on % slug)) (store/credited-on slug)))
     (= type :line)        (assoc :line-collections (mapv attach-review (store/under-line slug)))))

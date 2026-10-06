@@ -138,37 +138,35 @@ underneath, and anywhere the collection appears as a card (listings, tag
 pages, related sections) shows the combined "Batman: Year One" heading.
 Collections with no `line:` just show their own `title:` as-is.
 
-### Listing issues within a collection
+### Double-dips: issues shared between volumes
 
-Reprints span decades, and the actual creative team can change issue to
-issue within one collection — the `creators:` above is really just the
-cover credit. An optional `issues:` list captures the individual issues:
+The full contents of a volume go in its body text ("Collects Batman
+#404–407…"). The optional `double-dips:` list is only for the overlap:
+issues, or parts of issues, that are also reprinted in another volume.
+This is the DC Finest wrinkle where, say, an Action Comics issue's
+Superman lead lands in a Superman volume and its Green Arrow backup in a
+Green Arrow volume.
 
 ```yaml
-issues:
-  - number: 404
-    date: "Feb 1987"
-  - number: 405
-    date: "Mar 1987"
-    creators:                # overrides the cover creators for just this issue
+double-dips:
+  - issue: "Action Comics #256"
+    part: "Superman lead story"   # optional: which bit of the issue this volume has
+    date: "Sep 1959"              # optional
+    creators:                     # optional: credits for just this issue
       - slug: some-fill-in-artist
         role: Artist
-    original: some-shared-id # links this issue to its other fragments (see below)
 ```
 
-Every field is optional except `number`. If `creators:` is omitted on an
-issue, it just inherits nothing extra — the cover credits already cover
-it. If given, it feeds the *reverse* lookup too: a creator only credited on
-one issue still shows up under "Collections" on their own page, even
-though they're invisible in the cover `creators:` line.
+Write the same `issue:` name in every volume that reprints it. Upper and
+lower case and spacing don't matter, so `"Catwoman (vol 2) #14"` and
+`"catwoman (vol 2) # 14"` match. Each volume's page then gets a
+"Double-dips" section listing the issue, with an "Also collected in:"
+link to the other volumes (and their `part:`, if given). An entry no
+other volume shares yet is still listed, just without the links.
 
-`original:` handles a DC Finest–specific wrinkle: a single historical issue
-can get split across *different* line collections — e.g. a Superman lead
-story and a Green Arrow backup from the same physical comic, reprinted
-separately under the Superman and Green Arrow lines. Give matching issues
-in different collections the same `original:` id, and each one renders an
-"Also collected in:" link to the other, so a reader can reconstruct the
-original issue from its scattered fragments.
+Only `issue:` is required. Creators credited on a double-dip also count
+in the reverse lookup: they show up on their own creator page even if
+they're not in the volume's main `creators:` list.
 
 ## Writing a creator profile
 

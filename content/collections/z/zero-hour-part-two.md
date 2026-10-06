@@ -4,13 +4,8 @@ slug: zero-hour-part-two
 date: 1994
 release-date: 2025-05-06
 line: events
-issues:
-  - number: "Robin  #10"
-    date: "Sep 1994"
-  - number: "Catwoman (vol 2) #14"
-    date: "Sep 1994"
-    original: catwoman2-14
-  - number: "Anima #7"
+double-dips:
+  - issue: "Catwoman (vol 2) #14"
     date: "Sep 1994"
 ---
 
