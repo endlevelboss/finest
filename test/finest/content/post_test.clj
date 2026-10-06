@@ -157,3 +157,24 @@
                                      :source-file "2026-01-15-x.md" :last-modified 0})]
     (is (not (contains? without-cover :cover)))
     (is (= "/images/x.jpg" (:cover with-cover)))))
+
+(defn- news-with-html
+  [html]
+  (post/->post {:meta (base-meta) :html html :source-file "2026-01-15-x.md" :last-modified 0}))
+
+(deftest picks-up-marked-feature-image
+  (let [p (news-with-html "<p><img src=\"/images/bat.jpg\" alt=\"Batman\" title=\"feature\" /></p>")]
+    (is (= {:src "/images/bat.jpg" :alt "Batman"} (:feature-image p)))
+    (is (re-find #"class=\"feature-image\"" (:html p)))
+    (is (not (re-find #"title=\"feature\"" (:html p))))))
+
+(deftest no-feature-image-without-marker
+  (let [html "<p><img src=\"/images/bat.jpg\" alt=\"Batman\" /></p>"
+        p    (news-with-html html)]
+    (is (not (contains? p :feature-image)))
+    (is (= html (:html p)))))
+
+(deftest first-marked-feature-image-wins
+  (let [p (news-with-html (str "<img src=\"/a.jpg\" alt=\"A\" title=\"feature\" />"
+                               "<img src=\"/b.jpg\" alt=\"B\" title=\"feature\" />"))]
+    (is (= "/a.jpg" (get-in p [:feature-image :src])))))

@@ -12,6 +12,9 @@ both retold Batman's early career after *Crisis*, and both give the
 Dark Knight his start. Read together, though, they show how rarely a
 story like *Year One* comes along.
 
+
+![Batman](/images/batman.jpg "feature")
+
 ## Year One
 
 Frank Miller and David Mazzucchelli's four issues (*Batman* #404–407)

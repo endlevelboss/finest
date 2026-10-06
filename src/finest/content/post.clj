@@ -93,6 +93,29 @@
     original       (assoc :original original)
     (seq creators) (assoc :creators (mapv normalize-creator creators))))
 
+(def ^:private feature-img-tag
+  "An <img> tag marked as a post's featured image via its markdown title:
+   ![Batman](/images/batman.jpg \"feature\")."
+  #"<img\b[^>]*\btitle=\"feature\"[^>]*>")
+
+(defn- attr
+  [tag attr-name]
+  (second (re-find (re-pattern (str "\\b" attr-name "=\"([^\"]*)\"")) tag)))
+
+(defn- extract-feature-image
+  "The first image in a post body marked \"feature\", as {:src :alt}, for
+   listing cards to reuse -- nil when nothing is marked."
+  [html]
+  (when-let [tag (and html (re-find feature-img-tag html))]
+    {:src (attr tag "src") :alt (attr tag "alt")}))
+
+(defn- mark-feature-image
+  "Swaps the first marked image's title=\"feature\" for a class, so the
+   article doesn't show a \"feature\" tooltip on hover."
+  [html]
+  (str/replace-first html feature-img-tag
+                     #(str/replace-first % "title=\"feature\"" "class=\"feature-image\"")))
+
 (defn ->post
   "Builds and validates a post map from parsed frontmatter, rendered HTML body,
    and file metadata. Throws ex-info on invalid/missing required fields."
@@ -100,7 +123,8 @@
   (let [{:keys [title date slug tags type rating cover collections creators line issues release-date]} meta
         post-type      (some-> type name keyword)
         freeform-date? (= post-type :collection)
-        sort-d         (when date (sort-date freeform-date? date))]
+        sort-d         (when date (sort-date freeform-date? date))
+        feature-image  (extract-feature-image html)]
     (when-not title
       (throw (ex-info "Post is missing :title" {:source-file source-file})))
     (when-not (#{:news :review :collection :creator :line} post-type)
@@ -114,7 +138,7 @@
              :title         title
              :tags          (set tags)
              :type          post-type
-             :html          html
+             :html          (if feature-image (mark-feature-image html) html)
              :source-file   source-file
              :last-modified last-modified}
       date                  (assoc :date-display (display-date date))
@@ -123,6 +147,7 @@
                                     :release-date-display (display-release-date release-date))
       (= post-type :review) (assoc :rating (double rating))
       cover                 (assoc :cover cover)
+      feature-image         (assoc :feature-image feature-image)
       (seq collections)     (assoc :collections (vec collections))
       (seq creators)        (assoc :creators (mapv normalize-creator creators))
       (seq issues)          (assoc :issues (mapv normalize-issue issues))

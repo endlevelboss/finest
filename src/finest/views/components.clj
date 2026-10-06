@@ -148,7 +148,9 @@
    [:a.line-title {:href (str "/posts/" slug)} (display-title post)]])
 
 (defn post-card
-  [{:keys [slug title date-display type tags rating cover] :as post}]
+  "A listing card. A post with a featured image (marked in its body) shows
+   it as a cropped thumbnail on the right, in place of the cover thumb."
+  [{:keys [slug title date-display type tags rating cover feature-image] :as post}]
   [:article.post-card
    [:div.post-card-body
     (review-of-kicker post)
@@ -159,6 +161,9 @@
      (when (#{:news :review} type) (type-badge type))
      (when (= type :review) (rating-stars rating))]
     [:div.post-tags (map tag-pill tags)]]
-   (when cover
+   (when feature-image
+     [:a.post-card-feature {:href (str "/posts/" slug) :tabindex "-1" :aria-hidden "true"}
+      [:img {:src (:src feature-image) :alt (:alt feature-image) :loading "lazy"}]])
+   (when (and cover (not feature-image))
      [:a.cover-thumb-link {:href (str "/posts/" slug)}
       [:img.cover-thumb {:src cover :alt title :loading "lazy"}]])])

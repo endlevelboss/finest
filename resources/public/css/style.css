@@ -265,6 +265,17 @@ img.cover-thumb {
 
 .post-card-body { flex: 1 1 auto; min-width: 0; }
 
+/* a featured image sits beside the card text as a thumbnail, cropped
+   to a fixed shape so every card's thumb lines up whatever the source */
+.post-card-feature { flex: 0 0 auto; }
+.post-card-feature img {
+  display: block;
+  width: 128px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: var(--radius-none);
+}
+
 /* ---------- volume and line listings ---------- */
 
 .volume-row {
@@ -580,4 +591,5 @@ img.cover-thumb {
   .volume-range { text-align: left; }
   .volume-head { gap: var(--space-4); }
   .volume-cover { max-width: 120px; max-height: 180px; }
+  .post-card-feature img { width: 88px; height: 66px; }
 }

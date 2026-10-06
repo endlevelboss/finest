@@ -52,6 +52,17 @@ collections: [some-collection] # optional — slugs of collections this post is 
 Body in Markdown.
 ```
 
+To give a post a featured image on its listing card, mark an image in
+the body with the title `"feature"`:
+
+```markdown
+![Batman](/images/batman.jpg "feature")
+```
+
+It still shows inline in the article as usual, and the listing card
+uses it as a small thumbnail on the right, cropped to fit. If several images are marked,
+the first one is used.
+
 The slug is derived from the filename (date prefix stripped), or set
 explicitly with a `slug:` field. Commit the file — content ships with
 the code.
