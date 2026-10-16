@@ -52,56 +52,18 @@ a:hover { text-decoration: underline; }
 
 /* ---------- banner (every page; scrolls away) ---------- */
 
-/* the design system's cover, as a page banner: title bottom-left,
-   print blocks and a Ben-Day patch anchored to the right edge */
+/* the artwork, anchored left so its Ben-Day dots start at the page edge;
+   the background is the image's own sky blue, so wide screens just get
+   more sky to the right */
 .banner {
-  position: relative;
+  background: #03b3ff;
+  line-height: 0;
+}
+.banner-link { display: inline-block; }
+.banner-image {
+  display: block;
+  width: auto;
   height: 288px;
-  overflow: hidden;
-  background: var(--paper);
-}
-.banner-text {
-  position: absolute;
-  left: var(--space-8);
-  bottom: var(--space-8);
-  z-index: 1;
-}
-.banner-title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(56px, 8vw, 96px);
-  line-height: 0.95;
-}
-.banner-title a { color: var(--ink); }
-.banner-title a:hover { text-decoration: none; }
-.banner-tagline {
-  margin: 12px 0 0;
-  font-size: 14px;
-  line-height: 20px;
-  color: var(--ink-muted);
-}
-
-.banner-art {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 448px;
-  height: 288px;
-}
-.banner-art .block { position: absolute; display: block; }
-.banner-art .tint   { left: 0;     top: 32px;  width: 176px; height: 160px; background: var(--blue-light); }
-.banner-art .yellow { left: 112px; top: 192px; width: 64px;  height: 64px;  background: var(--yellow); }
-.banner-art .deep   { left: 176px; top: 0;     width: 160px; height: 288px; background: var(--blue-deep); }
-.banner-art .blue   { left: 336px; top: 64px;  width: 112px; height: 160px; background: var(--blue); }
-.banner-art .red    { left: 336px; top: 224px; width: 64px;  height: 64px;  background: var(--red); }
-.banner-art .halftone {
-  position: absolute;
-  left: var(--space-4);
-  top: var(--space-4);
-  width: 128px;
-  height: 112px;
-  background-image: radial-gradient(circle, var(--blue) 4px, transparent 4.5px);
-  background-size: var(--space-4) var(--space-4);
 }
 
 /* ---------- menu line (always visible) ---------- */
@@ -600,10 +562,8 @@ img.cover-thumb {
 }
 
 @media (max-width: 720px) {
-  .banner { height: 200px; }
-  .banner-text { left: var(--space-4); bottom: var(--space-4); }
-  /* keep just the slab edge and the dot patch peeking in on narrow screens */
-  .banner-art { right: -290px; transform: scale(0.7); transform-origin: top right; }
+  /* 200px tall, as the old banner was here, or narrower on phones */
+  .banner-image { width: min(100%, 461px); height: auto; }
 }
 
 @media (max-width: 480px) {
