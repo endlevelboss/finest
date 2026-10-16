@@ -6,7 +6,7 @@ Things a blog like this should have, from a review of the site on
 
 ## Should have
 
-- [ ] **Favicon.** `/favicon.ico` doesn't exist, so the browser tab shows
+- [x] **Favicon.** `/favicon.ico` doesn't exist, so the browser tab shows
   a blank icon. The "EARTH Q" lettering or the yellow T from the banner
   could work.
 - [ ] **Page descriptions and link previews.** Pages only set a `<title>`.
