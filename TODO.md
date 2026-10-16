@@ -37,5 +37,5 @@ Things a blog like this should have, from a review of the site on
   the placeholder `contact@example.com` (in `src/finest/views/layout.clj`).
 - [x] **Copyright / trademark line** in the footer: unofficial fan site,
   DC trademarks, cover art shown for review, and © for the writing.
-- [ ] **Paging on the home page.** It lists every post, which is fine
-  with three but will need paging eventually.
+- [x] **Paging.** Latest, Reviews, Articles and tag pages show 10 posts
+  a page (`?page=2`), with Newer/Older links once there's more than one.

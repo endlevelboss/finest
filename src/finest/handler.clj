@@ -31,19 +31,54 @@
                                                 card       (assoc :card card)
                                                 list-class (assoc :list-class list-class)))}))))
 
+(def ^:private page-size 10)
+
+(defn- page-number
+  "The ?page= asked for: 1 when there's none, nil when it isn't a
+   positive whole number."
+  [{:keys [query-string]}]
+  (let [raw (second (re-find #"(?:^|&)page=([^&]*)" (or query-string "")))]
+    (cond
+      (nil? raw)                       1
+      (re-matches #"[1-9]\d{0,5}" raw) (parse-long raw))))
+
+(defn- paginate
+  "One page of `posts` plus what the pager links need, or nil for a
+   page number past the end."
+  [request posts]
+  (let [pages (max 1 (quot (+ (count posts) (dec page-size)) page-size))
+        n     (page-number request)]
+    (when (and n (<= n pages))
+      {:posts (into [] (comp (drop (* (dec n) page-size)) (take page-size)) posts)
+       :pager {:page n :pages pages :path (:uri request)}})))
+
+(declare not-found)
+
+(defn- paged-listing-response
+  "A listing that grows with every post, split into pages. `title` is
+   the browser-tab title (nil for the site name alone); later pages say
+   which page they are."
+  [request {:keys [title heading posts]}]
+  (if-let [{:keys [posts pager]} (paginate request posts)]
+    (html-response 200 (page {:title (if (> (:page pager) 1)
+                                       (str (or title heading) ", page " (:page pager))
+                                       title)
+                              :body  (index-view/listing-page
+                                       {:heading heading :posts posts :pager pager})}))
+    (not-found request)))
+
 (defn index
-  [_request]
-  (html-response 200 (page {:body (index-view/listing-page
-                                           {:heading "Latest" :posts (store/articles)})})))
+  [request]
+  (paged-listing-response request {:heading "Latest" :posts (store/articles)}))
 
 (defn reviews-list
-  [_request]
-  (listing-response "Reviews" (store/by-type :review)))
+  [request]
+  (paged-listing-response request {:title "Reviews" :heading "Reviews" :posts (store/by-type :review)}))
 
 (defn articles-list
   "Every non-review writeup -- the :news type, badged \"Article\"."
-  [_request]
-  (listing-response "Articles" (store/by-type :news)))
+  [request]
+  (paged-listing-response request {:title "Articles" :heading "Articles" :posts (store/by-type :news)}))
 
 (defn- by-release-date-desc
   "Descending by release date, newest first -- collections with no known
@@ -156,8 +191,9 @@
 
 (defn tag-list
   [request]
-  (let [tag (get-in request [:path-params :tag])]
-    (listing-response (str "Tag: " tag) (store/by-tag tag))))
+  (let [tag     (get-in request [:path-params :tag])
+        heading (str "Tag: " tag)]
+    (paged-listing-response request {:title heading :heading heading :posts (store/by-tag tag)})))
 
 (defn- creator-role-on
   [collection creator-slug]

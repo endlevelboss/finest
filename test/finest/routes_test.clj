@@ -91,6 +91,34 @@
     (is (= 304 (:status (app {:request-method :get :uri "/css/style.css"
                               :headers {"if-modified-since" last-modified}}))))))
 
+(defn- get-page [uri query]
+  ((routes/app) {:request-method :get :uri uri :query-string query}))
+
+(deftest listings-are-paged
+  (with-redefs [finest.handler/page-size 1]
+    (let [page-1 (get-page "/" nil)
+          page-2 (get-page "/" "page=2")]
+      (is (= 200 (:status page-1)))
+      (is (.contains ^String (:body page-1) "/posts/second") "newest first")
+      (is (not (.contains ^String (:body page-1) "/posts/first\"")))
+      (is (.contains ^String (:body page-1) "href=\"/?page=2\""))
+      (is (not (.contains ^String (:body page-1) "Newer")) "no Newer link on page 1")
+      (is (.contains ^String (:body page-2) "/posts/first\""))
+      (is (.contains ^String (:body page-2) "href=\"/\" rel=\"prev\"") "page 1 is the plain address")
+      (is (.contains ^String (:body page-2) "Page 2 of 2"))
+      (is (not (.contains ^String (:body page-2) "Older")) "no Older link on the last page")
+      (is (.contains ^String (:body page-2) "<title>Latest, page 2")))
+    (is (.contains ^String (:body (get-page "/tags/alpha" "page=2")) "href=\"/tags/alpha?page=3\""))))
+
+(deftest bad-page-numbers-are-not-found
+  (doseq [q ["page=99" "page=0" "page=-1" "page=abc" "page=" "page=1.5"]]
+    (is (= 404 (:status (get-page "/reviews" q))) q))
+  (is (= 200 (:status (get-page "/reviews" "page=1"))))
+  (is (= 200 (:status (get-page "/reviews" "utm_source=x"))) "other parameters are ignored"))
+
+(deftest short-listings-have-no-pager
+  (is (not (.contains ^String (:body (get-page "/" nil)) "class=\"pager\""))))
+
 (deftest pages-advertise-the-feed
   (let [body (:body ((routes/app) {:request-method :get :uri "/"}))]
     (is (.contains ^String body "type=\"application/atom+xml\""))))
