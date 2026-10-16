@@ -5,6 +5,7 @@
             [finest.views.index :as index-view]
             [finest.views.post :as post-view]
             [finest.views.embeds :as embeds]
+            [finest.views.feed :as feed-view]
             [finest.views.components :as components])
   (:import (java.time LocalDate)))
 
@@ -78,6 +79,24 @@
                                        {:heading "Volumes"
                                         :groups  (release-year-groups volumes)
                                         :card    components/volume-row})}))))
+
+(def ^:private feed-size 20)
+
+(defn- site-url
+  "The site's public base URL, from SITE_URL, without a trailing slash.
+   Falls back to the dev server until the site has a real address."
+  []
+  (str/replace (or (System/getenv "SITE_URL") "http://localhost:3000") #"/+$" ""))
+
+(defn feed
+  "The Atom feed: the newest reviews and articles, as on the front page."
+  [_request]
+  {:status  200
+   :headers {"Content-Type" "application/atom+xml; charset=utf-8"}
+   :body    (feed-view/feed
+              {:base-url (site-url)
+               :posts    (map #(update % :html embeds/expand store/by-slug)
+                              (take feed-size (store/articles)))})})
 
 (defn creators-list
   [_request]

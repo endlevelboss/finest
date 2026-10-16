@@ -227,9 +227,13 @@ This produces `target/finest-standalone.jar`. Copy it, along with
 Run it directly:
 
 ```sh
-PORT=3000 CONTENT_DIR=/opt/finest/content \
+PORT=3000 CONTENT_DIR=/opt/finest/content SITE_URL=https://example.com \
   java -jar /opt/finest/finest-standalone.jar
 ```
+
+`SITE_URL` is the site's public address. The Atom feed at `/feed.xml`
+needs it for its absolute links; without it, the feed points at
+`http://localhost:3000`.
 
 ### systemd unit
 
@@ -244,6 +248,7 @@ After=network.target
 WorkingDirectory=/opt/finest
 Environment=PORT=3000
 Environment=CONTENT_DIR=/opt/finest/content
+Environment=SITE_URL=https://example.com
 ExecStart=/usr/bin/java -jar /opt/finest/finest-standalone.jar
 Restart=on-failure
 User=finest

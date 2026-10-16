@@ -22,6 +22,19 @@
     (is (= {:tag "dc"} (:path-params (r/match-by-path router "/tags/dc"))))
     (is (= {:slug "foo-bar"} (:path-params (r/match-by-path router "/posts/foo-bar"))))))
 
+(deftest feed-lists-reviews-and-articles-newest-first
+  (let [{:keys [status headers body]} ((routes/app) {:request-method :get :uri "/feed.xml"})
+        second-at (.indexOf ^String body "/posts/second</id>")
+        first-at  (.indexOf ^String body "/posts/first</id>")]
+    (is (= 200 status))
+    (is (.startsWith ^String (get headers "Content-Type") "application/atom+xml"))
+    (is (< -1 second-at first-at) "newest entry first")
+    (is (not (.contains ^String body "/posts/hero-collection</id>")) "volumes stay out of the feed")))
+
+(deftest pages-advertise-the-feed
+  (let [body (:body ((routes/app) {:request-method :get :uri "/"}))]
+    (is (.contains ^String body "type=\"application/atom+xml\""))))
+
 (deftest app-returns-200-for-index
   (let [response ((routes/app) {:request-method :get :uri "/"})]
     (is (= 200 (:status response)))))

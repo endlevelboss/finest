@@ -13,7 +13,8 @@
      ["/lines" {:get h/lines-list}]
      ["/tags" {:get h/tag-index}]
      ["/tags/:tag" {:get h/tag-list}]
-     ["/posts/:slug" {:get h/post-page}]]))
+     ["/posts/:slug" {:get h/post-page}]
+     ["/feed.xml" {:get h/feed}]]))
 
 (defn app
   []
