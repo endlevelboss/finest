@@ -43,14 +43,14 @@
   [_request]
   (listing-response "Articles" (store/by-type :news)))
 
-(defn- by-release-date
-  "Ascending by release date, oldest first -- collections with no known
+(defn- by-release-date-desc
+  "Descending by release date, newest first -- collections with no known
    release date (nothing announced yet) sort after every dated one."
   [a b]
   (let [ra (:release-date a)
         rb (:release-date b)]
     (cond
-      (and ra rb) (compare ra rb)
+      (and ra rb) (compare rb ra)
       ra          -1
       rb          1
       :else       0)))
@@ -72,7 +72,7 @@
 
 (defn collections-list
   [_request]
-  (let [volumes (mapv attach-review (sort by-release-date (store/by-type :collection)))]
+  (let [volumes (mapv attach-review (sort by-release-date-desc (store/by-type :collection)))]
     (html-response 200 (page {:title "Volumes"
                               :body  (index-view/grouped-listing-page
                                        {:heading "Volumes"

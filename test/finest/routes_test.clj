@@ -63,6 +63,13 @@
   (let [body (:body ((routes/app) {:request-method :get :uri "/collections"}))]
     (is (.contains ^String body "listing-group-heading"))))
 
+(deftest volumes-page-lists-newest-first
+  (let [d    #(java.time.LocalDate/parse %)
+        vols (sort @#'finest.handler/by-release-date-desc
+                   [{:slug "tba"} {:slug "a" :release-date (d "2025-11-04")}
+                    {:slug "c" :release-date (d "2026-09-01")} {:slug "b" :release-date (d "2026-01-13")}])]
+    (is (= ["c" "b" "a" "tba"] (map :slug vols)))))
+
 (deftest volumes-listing-links-each-volume-to-its-line
   (let [body (:body ((routes/app) {:request-method :get :uri "/collections"}))]
     (is (.contains ^String body "href=\"/posts/hero-line\""))
