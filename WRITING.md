@@ -284,6 +284,63 @@ first one wins.
 
 ---
 
+## Search results and link previews
+
+> **Planned, not built yet.** This describes how it's meant to work, so
+> you can write with it in mind. It's on the to-do list.
+
+Each page will carry a short **description** and a **preview image** in
+its hidden header. Visitors never see them on the page itself. They
+show up in two places:
+
+- **Search results**: the description is the text under the page title.
+  Without one, search engines grab whatever text they find, sometimes
+  the menu or the sidebar.
+- **Link previews**: the card that appears when someone pastes a link
+  into Discord, Slack, Messenger, Facebook, Bluesky and so on, with the
+  title, the description and the image. These are called *Open Graph*
+  tags. Links without them often show as bare text and get far fewer
+  clicks.
+
+Nothing extra to write by default. Each page takes:
+
+| Page                     | Description                      | Image |
+| ------------------------ | -------------------------------- | ----- |
+| Review                   | its first paragraph              | the featured image, else the reviewed volume's cover |
+| Article                  | its first paragraph              | the featured image, else its `cover:` |
+| Volume                   | its first paragraph ("Collects …") | its cover |
+| Line, creator, About     | its first paragraph              | the site's fallback image |
+| Home page and listings   | the site's tagline               | the site's fallback image |
+
+The description is cut to about 150 characters, at a word boundary.
+
+**What this means when writing:**
+
+- **Make the first paragraph count.** It's what people see in search
+  results and shared links. A review that opens with a one-line verdict
+  previews better than one that opens with a joke or an aside.
+- **Override when the opening doesn't fit.** An optional `description:`
+  line in the frontmatter will replace the first paragraph:
+
+  ```yaml
+  description: "Hal Jordan gets a ring that can do anything, and the stories never recover."
+  ```
+
+- **Mark a featured image** (see Images above) on reviews and articles
+  you expect to share. Otherwise the preview falls back to the volume's
+  cover, or the site's general image.
+
+**Good to know:**
+
+- Previews only work once the site is public. The apps fetch the page
+  from their own servers, so they can't see `localhost`.
+- Apps cache previews, sometimes for days. Fix a description *before*
+  sharing a link, not after.
+- Preview images look best at 1200×630 pixels (a 1.91:1 shape). Wider
+  or taller images get their edges cropped.
+
+---
+
 ## Gotchas
 
 - **Volumes need a `date`.** Without one the volume is skipped (the
