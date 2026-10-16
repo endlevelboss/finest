@@ -29,11 +29,17 @@
           [:main body]
           (when sidebar (c/sidebar sidebar))]
          [:footer.site-footer
-          [:a {:href "/"} c/site-name]
-          [:span.footer-divider {:aria-hidden "true"}]
-          [:a {:href "/tags"} "Tags"]
-          [:span.footer-divider {:aria-hidden "true"}]
-          [:a {:href "/about"} "About"]
-          [:span.footer-divider {:aria-hidden "true"}]
-          ;; placeholder address until there's a real inbox
-          [:a {:href "mailto:contact@example.com"} "Contact"]]]]])))
+          [:nav.footer-links
+           [:a {:href "/"} c/site-name]
+           [:span.footer-divider {:aria-hidden "true"}]
+           [:a {:href "/tags"} "Tags"]
+           [:span.footer-divider {:aria-hidden "true"}]
+           [:a {:href "/about"} "About"]
+           [:span.footer-divider {:aria-hidden "true"}]
+           ;; placeholder address until there's a real inbox
+           [:a {:href "mailto:contact@example.com"} "Contact"]]
+          [:p.footer-legal
+           "Transmissions from Earth Q is an unofficial fan site, not affiliated with or endorsed by DC Comics. "
+           "DC characters, titles and related indicia are trademarks of DC Comics. "
+           "Cover art and panels are shown for review and commentary. "
+           "Reviews and articles © " (c/copyright-years) " Transmissions from Earth Q."]]]]])))

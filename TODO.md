@@ -35,7 +35,7 @@ Things a blog like this should have, from a review of the site on
 
 - [ ] **Real contact address.** The footer's Contact link still goes to
   the placeholder `contact@example.com` (in `src/finest/views/layout.clj`).
-- [ ] **Copyright / trademark line** in the footer, e.g. "DC characters
-  are trademarks of DC Comics". Common on fan sites that use cover art.
+- [x] **Copyright / trademark line** in the footer: unofficial fan site,
+  DC trademarks, cover art shown for review, and © for the writing.
 - [ ] **Paging on the home page.** It lists every post, which is fine
   with three but will need paging eventually.

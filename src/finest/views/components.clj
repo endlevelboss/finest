@@ -5,6 +5,14 @@
 
 (def site-name "Transmissions")
 
+(def ^:private first-year 2026)
+
+(defn copyright-years
+  "\"2026\", or \"2026–2028\" once the site has been around a while."
+  []
+  (let [year (.getYear (LocalDate/now))]
+    (if (> year first-year) (str first-year "–" year) (str first-year))))
+
 (defn banner
   "The title banner at the top of every page, which scrolls away above the
    sticky nav. The artwork's sky blue carries on past the image's edge."
