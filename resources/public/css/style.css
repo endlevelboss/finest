@@ -402,6 +402,7 @@ img.cover-thumb {
 .type-badge.review { background: var(--ink); }
 .type-badge.collection { background: var(--ink); }
 .type-badge.creator { background: var(--ink-muted); }
+.type-badge.draft { background: var(--yellow); color: var(--ink); }
 
 .release-date { color: var(--ink-muted); }
 .release-date.upcoming { color: var(--blue); font-style: italic; }

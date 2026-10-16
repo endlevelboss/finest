@@ -14,9 +14,13 @@
     (store/maybe-reload! content-dir)
     (handler request)))
 
+(def content-opts
+  "Dev shows drafts; the production server (finest.core) doesn't."
+  {:drafts? true})
+
 (defn go
   []
-  (store/load-all! content-dir)
+  (store/load-all! content-dir content-opts)
   (server/start! {:handler (wrap-dev-content-reload (routes/app)) :port 3000})
   :ready)
 
@@ -31,4 +35,4 @@
 
 (defn reload-content!
   []
-  (store/load-all! content-dir))
+  (store/load-all! content-dir content-opts))

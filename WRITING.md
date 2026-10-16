@@ -46,6 +46,27 @@ Or set it yourself with a `slug:` line. Slugs are lowercase letters,
 digits and dashes only. **Slugs are how pages point at each other**,
 so once a page is out, avoid renaming its slug.
 
+## Drafts
+
+Add `draft: true` to any page's frontmatter to keep it unpublished:
+
+```markdown
+---
+title: "Half-finished thoughts on Doom Patrol"
+date: 2026-10-20
+type: review
+rating: 2
+draft: true
+---
+```
+
+On your own dev server a draft shows up as normal, with a yellow
+**Draft** badge, so you can see exactly how it will look. On the live
+server it doesn't exist at all: it's not listed anywhere, not in the
+feed, not linked from the volume it reviews, and its address returns
+"not found". Delete the `draft: true` line (or set it to `false`) to
+publish.
+
 ---
 
 ## A review

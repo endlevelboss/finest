@@ -54,6 +54,12 @@
   [type]
   [:span.type-badge {:class (name type)} (or (badge-labels type) (str/capitalize (name type)))])
 
+(defn draft-badge
+  "Marks a draft -- only ever seen in dev, since drafts aren't loaded
+   on the production server."
+  [{:keys [draft]}]
+  (when draft [:span.type-badge.draft "Draft"]))
+
 (defn display-title
   "A collection's own title is just its distinguishing name (\"Year One\");
    when it belongs to a line, the combined heading leads with the line's
@@ -185,6 +191,7 @@
     [:div.post-meta
      (when date-display [:span.post-date date-display])
      (release-date-note post)
+     (draft-badge post)
      (when (#{:news :review} type) (type-badge type))
      (when (= type :review) (rating-stars rating))]
     [:div.post-tags (map tag-pill tags)]]

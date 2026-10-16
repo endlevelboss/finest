@@ -131,7 +131,7 @@
   "Builds and validates a post map from parsed frontmatter, rendered HTML body,
    and file metadata. Throws ex-info on invalid/missing required fields."
   [{:keys [meta html source-file last-modified]}]
-  (let [{:keys [title date slug tags type rating cover collections creators line double-dips release-date]} meta
+  (let [{:keys [title date slug tags type rating cover collections creators line double-dips release-date draft]} meta
         post-type      (some-> type name keyword)
         freeform-date? (= post-type :collection)
         sort-d         (when date (sort-date freeform-date? date))
@@ -162,4 +162,5 @@
       (seq collections)     (assoc :collections (vec collections))
       (seq creators)        (assoc :creators (mapv normalize-creator creators))
       (seq double-dips)     (assoc :double-dips (mapv normalize-double-dip double-dips))
-      line                  (assoc :line line))))
+      line                  (assoc :line line)
+      (true? draft)         (assoc :draft true))))

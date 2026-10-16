@@ -5,7 +5,7 @@
             [finest.content.markdown :as markdown]
             [finest.content.post :as post]))
 
-(defonce ^:private state (atom {:posts [] :by-slug {} :loaded-at nil}))
+(defonce ^:private state (atom {:posts [] :by-slug {} :loaded-at nil :opts {}}))
 (defonce ^:private known-mtime (atom 0))
 
 (defn- warn
@@ -137,40 +137,45 @@
     post))
 
 (defn load-all!
-  "Loads all .md files under content-dir into the in-memory store."
-  [content-dir]
-  (let [dir              (io/file content-dir)
-        raw-posts        (->> (file-seq dir)
-                              (filter md-file?)
-                              (keep (fn [f]
-                                      (try
-                                        (load-file->post f dir)
-                                        (catch Exception e
-                                          (warn (ex-message e) (merge {:file (.getName f)} (ex-data e)))
-                                          nil))))
-                              (sort-by :date)
-                              reverse
-                              vec)
-        by-slug-raw      (into {} (map (juxt :slug identity)) raw-posts)
-        with-line-titles (mapv (partial attach-line-title by-slug-raw) raw-posts)
-        line-titled      (into {} (map (juxt :slug identity)) with-line-titles)
-        with-review-of   (mapv (partial attach-review-of line-titled) with-line-titles)
-        fragments        (double-dip-fragments with-review-of)
-        with-siblings    (mapv (partial attach-double-dip-siblings fragments) with-review-of)
-        missing-creators (remove by-slug-raw (credited-creator-slugs with-siblings))
-        posts            (into with-siblings (map generated-creator) missing-creators)]
-    (reset! state {:posts     posts
-                    :by-slug   (into {} (map (juxt :slug identity)) posts)
-                    :loaded-at (System/currentTimeMillis)})
-    (reset! known-mtime (max-mtime content-dir))
-    posts))
+  "Loads all .md files under content-dir into the in-memory store.
+   Posts marked `draft: true` are dropped before anything links to them,
+   so they leave no trace -- unless `:drafts?` is set, as it is in dev."
+  ([content-dir] (load-all! content-dir {}))
+  ([content-dir {:keys [drafts?] :as opts}]
+   (let [dir              (io/file content-dir)
+         raw-posts        (->> (file-seq dir)
+                               (filter md-file?)
+                               (keep (fn [f]
+                                       (try
+                                         (load-file->post f dir)
+                                         (catch Exception e
+                                           (warn (ex-message e) (merge {:file (.getName f)} (ex-data e)))
+                                           nil))))
+                               (remove #(and (:draft %) (not drafts?)))
+                               (sort-by :date)
+                               reverse
+                               vec)
+         by-slug-raw      (into {} (map (juxt :slug identity)) raw-posts)
+         with-line-titles (mapv (partial attach-line-title by-slug-raw) raw-posts)
+         line-titled      (into {} (map (juxt :slug identity)) with-line-titles)
+         with-review-of   (mapv (partial attach-review-of line-titled) with-line-titles)
+         fragments        (double-dip-fragments with-review-of)
+         with-siblings    (mapv (partial attach-double-dip-siblings fragments) with-review-of)
+         missing-creators (remove by-slug-raw (credited-creator-slugs with-siblings))
+         posts            (into with-siblings (map generated-creator) missing-creators)]
+     (reset! state {:posts     posts
+                     :by-slug   (into {} (map (juxt :slug identity)) posts)
+                     :loaded-at (System/currentTimeMillis)
+                     :opts      opts})
+     (reset! known-mtime (max-mtime content-dir))
+     posts)))
 
 (defn maybe-reload!
   "Reloads content-dir only if a file has been added/changed/removed since
    the last load. Cheap enough to call on every request in dev."
   [content-dir]
   (when (not= (max-mtime content-dir) @known-mtime)
-    (load-all! content-dir)))
+    (load-all! content-dir (:opts @state))))
 
 (defn all-posts [] (:posts @state))
 (defn by-slug [slug] (get (:by-slug @state) slug))

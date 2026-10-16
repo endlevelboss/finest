@@ -20,10 +20,12 @@ Things a blog like this should have, from a review of the site on
 ## Before going public
 
 - [ ] **`robots.txt` and a sitemap.** Neither exists. Not strictly
-  needed, but they help search engines find every review.
-- [ ] **Drafts.** Every file in `content/` is published as soon as it's
-  there. A `draft: true` field would allow working on a review on the
-  live server without it showing up.
+  needed, but they help search engines find every review. Decided:
+  allow every crawler (no AI-training opt-out), with a `Sitemap:` line;
+  drafts need no rule, since the live server never serves them. Wait
+  for a public address, as the sitemap needs `SITE_URL`.
+- [x] **Drafts.** `draft: true` hides a page on the live server; the
+  dev server shows it with a Draft badge.
 - [ ] **Answer HEAD requests.** The server answers them with
   "405 Method Not Allowed". Link checkers, uptime monitors and
   link-preview tools often send one first, and would think the site is

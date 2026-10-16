@@ -40,6 +40,18 @@
   (is (not (.contains ^String (:body ((routes/app) {:request-method :get :uri "/feed.xml"})) "/posts/about"))
       "nor in the feed"))
 
+(deftest drafts-are-not-served
+  (is (= 404 (:status ((routes/app) {:request-method :get :uri "/posts/unfinished"}))))
+  (is (not (.contains ^String (:body ((routes/app) {:request-method :get :uri "/feed.xml"})) "unfinished"))))
+
+(deftest drafts-are-badged-when-shown
+  (store/load-all! "test/resources/fixture-posts" {:drafts? true})
+  (try
+    (let [body (:body ((routes/app) {:request-method :get :uri "/posts/unfinished"}))]
+      (is (.contains ^String body "type-badge draft")))
+    (finally
+      (store/load-all! "test/resources/fixture-posts"))))
+
 (deftest pages-advertise-the-feed
   (let [body (:body ((routes/app) {:request-method :get :uri "/"}))]
     (is (.contains ^String body "type=\"application/atom+xml\""))))

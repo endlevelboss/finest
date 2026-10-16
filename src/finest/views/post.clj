@@ -104,6 +104,7 @@
               [:div.post-meta
                (when date-display [:span.post-date date-display])
                (c/release-date-note post)
+               (c/draft-badge post)
                (when (#{:news :review} type) (c/type-badge type))
                (when (= type :review) (c/rating-stars rating))]
               ;; the review-of kicker already links the volumes a review covers

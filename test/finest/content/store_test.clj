@@ -132,3 +132,13 @@
                                today 3)]
     (is (= ["summer" "last-week" "today"] (map :slug recent)))
     (is (= ["soon" "next-week" "later"] (map :slug upcoming)))))
+
+(deftest drafts-are-left-out-unless-asked-for
+  (store/load-all! fixture-dir)
+  (is (nil? (store/by-slug "unfinished")))
+  (is (not-any? #{"unfinished"} (map :slug (store/referencing "hero-collection")))
+      "a draft leaves no trace on the volume it reviews")
+  (store/load-all! fixture-dir {:drafts? true})
+  (is (:draft (store/by-slug "unfinished")))
+  (is (= "unfinished" (:slug (store/review-for "hero-collection"))))
+  (store/load-all! fixture-dir))
