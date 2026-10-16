@@ -11,7 +11,7 @@
   []
   [:header.banner
    [:a.banner-link {:href "/"}
-    [:img.banner-image {:src "/images/banner.png" :width 1600 :height 694
+    [:img.banner-image {:src "/images/banner.png" :width 1602 :height 624
                         :alt "Transmissions from Earth Q"}]]])
 
 (defn nav

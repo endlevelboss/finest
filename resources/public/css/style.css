@@ -563,7 +563,7 @@ img.cover-thumb {
 
 @media (max-width: 720px) {
   /* 200px tall, as the old banner was here, or narrower on phones */
-  .banner-image { width: min(100%, 461px); height: auto; }
+  .banner-image { width: min(100%, 513px); height: auto; }
 }
 
 @media (max-width: 480px) {
