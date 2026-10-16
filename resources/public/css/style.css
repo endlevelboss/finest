@@ -13,6 +13,7 @@
   --yellow: #f5c400;
   --on-accent: #ffffff;
   --rule: #dcd9d2;
+  --backdrop: #0b0c10;
 
   /* type */
   --font-display: Anton, "Arial Narrow", Impact, sans-serif;
@@ -31,18 +32,32 @@
 
   --max-width: 760px;
   --sidebar-width: 260px;
+  /* main column + gap + sidebar, plus a space-8 margin either side */
+  --frame-width: calc(var(--max-width) + 48px + var(--sidebar-width) + 2 * var(--space-8));
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  background: var(--paper);
+  background: var(--backdrop);
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.5;
 }
+
+/* the whole site sits in one centered column; on wide screens the
+   near-black backdrop shows either side */
+.frame {
+  display: flex;
+  flex-direction: column;
+  max-width: var(--frame-width);
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--paper);
+}
+.frame > .page { flex: 1 0 auto; width: 100%; }
 
 a {
   color: var(--blue);

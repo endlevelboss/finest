@@ -18,12 +18,13 @@
                 :href "https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap"}]
         [:link {:rel "stylesheet" :href "/css/style.css"}]]
        [:body
-        (c/banner)
-        (c/nav)
-        [:div.page
-         [:main body]
-         (when sidebar (c/sidebar sidebar))]
-        [:footer.site-footer
-         [:a {:href "/"} c/site-name]
-         [:span.footer-divider {:aria-hidden "true"}]
-         [:a {:href "/tags"} "Tags"]]]])))
+        [:div.frame
+         (c/banner)
+         (c/nav)
+         [:div.page
+          [:main body]
+          (when sidebar (c/sidebar sidebar))]
+         [:footer.site-footer
+          [:a {:href "/"} c/site-name]
+          [:span.footer-divider {:aria-hidden "true"}]
+          [:a {:href "/tags"} "Tags"]]]]])))
