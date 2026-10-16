@@ -57,9 +57,9 @@ PORT=3000 CONTENT_DIR=/opt/finest/content SITE_URL=https://example.com \
   java -jar /opt/finest/finest-standalone.jar
 ```
 
-`SITE_URL` is the site's public address. The Atom feed at `/feed.xml`
-needs it for its absolute links; without it, the feed points at
-`http://localhost:3000`.
+`SITE_URL` is the site's public address. The Atom feed (`/feed.xml`),
+the sitemap (`/sitemap.xml`) and `robots.txt` need it for their
+absolute links; without it, they point at `http://localhost:3000`.
 
 ### systemd unit
 

@@ -6,6 +6,7 @@
             [finest.views.post :as post-view]
             [finest.views.embeds :as embeds]
             [finest.views.feed :as feed-view]
+            [finest.views.sitemap :as sitemap-view]
             [finest.views.components :as components])
   (:import (java.time LocalDate)))
 
@@ -97,6 +98,35 @@
               {:base-url (site-url)
                :posts    (map #(update % :html embeds/expand store/by-slug)
                               (take feed-size (store/articles)))})})
+
+(def ^:private listing-paths
+  ["/" "/reviews" "/articles" "/collections" "/creators" "/lines" "/tags"])
+
+(defn sitemap
+  "Every public page: the listings, each post (pages have their own
+   addresses, like /about), and each tag."
+  [_request]
+  {:status  200
+   :headers {"Content-Type" "application/xml; charset=utf-8"}
+   :body    (sitemap-view/sitemap
+              {:base-url (site-url)
+               :paths    (concat listing-paths
+                                 (when (= :page (:type (store/by-slug "about"))) ["/about"])
+                                 (for [{:keys [slug type]} (store/all-posts)
+                                       :when (not= :page type)]
+                                   (str "/posts/" slug))
+                                 (for [tag (store/all-tags)]
+                                   (str "/tags/" tag)))})})
+
+(defn robots
+  "Every crawler is welcome; drafts need no rule, since they're never served."
+  [_request]
+  {:status  200
+   :headers {"Content-Type" "text/plain; charset=utf-8"}
+   :body    (str "User-agent: *\n"
+                 "Allow: /\n"
+                 "\n"
+                 "Sitemap: " (site-url) "/sitemap.xml\n")})
 
 (defn creators-list
   [_request]

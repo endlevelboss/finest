@@ -19,11 +19,8 @@ Things a blog like this should have, from a review of the site on
 
 ## Before going public
 
-- [ ] **`robots.txt` and a sitemap.** Neither exists. Not strictly
-  needed, but they help search engines find every review. Decided:
-  allow every crawler (no AI-training opt-out), with a `Sitemap:` line;
-  drafts need no rule, since the live server never serves them. Wait
-  for a public address, as the sitemap needs `SITE_URL`.
+- [x] **`robots.txt` and a sitemap.** `/robots.txt` welcomes every
+  crawler and points at `/sitemap.xml`, which lists every public page.
 - [x] **Drafts.** `draft: true` hides a page on the live server; the
   dev server shows it with a Draft badge.
 - [ ] **Answer HEAD requests.** The server answers them with
@@ -34,8 +31,8 @@ Things a blog like this should have, from a review of the site on
   caching instructions, so returning visitors may download them again.
   It matters most for the banner (285 KB) and `batman.jpg` (190 KB).
 - [ ] **Set `SITE_URL`** on the server once there's a public address,
-  so feed links stop pointing at `http://localhost:3000`. See the
-  README's Deployment section.
+  so the feed, sitemap and `robots.txt` stop pointing at
+  `http://localhost:3000`. See the README's Deployment section.
 
 ## Smaller things
 

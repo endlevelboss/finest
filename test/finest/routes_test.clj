@@ -52,6 +52,23 @@
     (finally
       (store/load-all! "test/resources/fixture-posts"))))
 
+(deftest sitemap-lists-every-public-page-once
+  (let [{:keys [status headers body]} ((routes/app) {:request-method :get :uri "/sitemap.xml"})
+        locs (map second (re-seq #"<loc>https?://[^/<]+(/[^<]*)</loc>" body))]
+    (is (= 200 status))
+    (is (.startsWith ^String (get headers "Content-Type") "application/xml"))
+    (is (every? (set locs) ["/" "/reviews" "/about" "/posts/first" "/posts/hero-collection"
+                            "/posts/hero-creator" "/tags/alpha"]))
+    (is (not-any? #{"/posts/about" "/posts/unfinished"} locs)
+        "the about page only under /about, and no drafts")
+    (is (= (count locs) (count (set locs))))))
+
+(deftest robots-points-at-the-sitemap
+  (let [{:keys [status body]} ((routes/app) {:request-method :get :uri "/robots.txt"})]
+    (is (= 200 status))
+    (is (.contains ^String body "User-agent: *"))
+    (is (re-find #"(?m)^Sitemap: https?://\S+/sitemap\.xml$" body))))
+
 (deftest pages-advertise-the-feed
   (let [body (:body ((routes/app) {:request-method :get :uri "/"}))]
     (is (.contains ^String body "type=\"application/atom+xml\""))))

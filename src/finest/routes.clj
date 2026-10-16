@@ -15,7 +15,9 @@
      ["/tags/:tag" {:get h/tag-list}]
      ["/posts/:slug" {:get h/post-page}]
      ["/feed.xml" {:get h/feed}]
-     ["/about" {:get h/about}]]))
+     ["/about" {:get h/about}]
+     ["/sitemap.xml" {:get h/sitemap}]
+     ["/robots.txt" {:get h/robots}]]))
 
 (defn app
   []
