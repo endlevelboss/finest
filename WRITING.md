@@ -1,0 +1,262 @@
+# Writing for Transmissions
+
+A practical guide to adding content to the site. Every page is a
+Markdown file under `content/`. The folder a file is in decides what
+kind of page it becomes, and the block between the two `---` lines at
+the top (the *frontmatter*) holds its details.
+
+The templates below show **every option** each kind of page supports.
+Copy one, fill it in, and delete the lines you don't need: everything
+marked *optional* can simply be left out.
+
+## The everyday workflow
+
+1. Start the dev server (see the README's Development section) and
+   open <http://localhost:3000>.
+2. Add or edit a file under `content/`.
+3. Refresh the browser. Content reloads on its own, with no restart.
+4. If a page doesn't show up, check the terminal running the server:
+   problems with a file are printed there as a `WARN:` line naming
+   the file.
+5. When you're happy, commit the file. Content ships with the code.
+
+## Which folder?
+
+| You're writing…                     | Put it in            | Shows up on            |
+| ----------------------------------- | -------------------- | ---------------------- |
+| A review of a volume                | `content/posts/`     | Latest, Reviews, feed  |
+| Any other article (news, opinion)   | `content/posts/`     | Latest, Articles, feed |
+| A volume (one DC Finest book)       | `content/collections/` | Volumes, its line    |
+| A creator (writer, artist…)         | `content/creators/`  | Creators, their page   |
+| A line (Batman, Green Lantern…)     | `content/lines/`     | Lines                  |
+
+Inside `collections/`, `creators/` and `lines/` you can make any
+subfolders you like (`content/collections/g/…`); they're only for
+your own tidiness.
+
+## File names and slugs
+
+A page's address is `/posts/<slug>`. The slug comes from the file
+name, minus `.md` and any leading date:
+
+- `content/posts/2026-10-06-gl-first.md` → `/posts/gl-first`
+
+Or set it yourself with a `slug:` line. Slugs are lowercase letters,
+digits and dashes only. **Slugs are how pages point at each other**,
+so once a page is out, avoid renaming its slug.
+
+---
+
+## A review
+
+`content/posts/2026-10-20-doom-patrol-review.md`
+
+```markdown
+---
+title: "Doom Patrol is gloriously weird"
+date: 2026-10-20
+type: review
+rating: 2.5
+collections: [doom-patrol-end-sacrifices-means]
+tags: [silver-age]
+cover: /images/doom-patrol.jpg
+---
+
+The review itself, in Markdown.
+
+![Robotman](/images/robotman.jpg "feature")
+```
+
+| Field          | Required? | What it does |
+| -------------- | --------- | ------------ |
+| `title`        | yes       | The heading. |
+| `date`         | yes       | Publication date, `YYYY-MM-DD`, unquoted. Orders the Latest list and the feed. |
+| `type`         | yes       | `review`. |
+| `rating`       | yes       | **Out of 3 stars.** Halves work (`2.5`); `0` is allowed. |
+| `collections`  | optional  | Slugs of the volume(s) reviewed. Adds the "A review of: …" line above the title, and lists this review on each volume's page and next to it on the Volumes page. |
+| `tags`         | optional  | A list, e.g. `[silver-age, batman]`. Each tag gets its own page under `/tags`. |
+| `cover`        | optional  | An image shown large at the top of the post. |
+
+## An article
+
+`content/posts/2026-10-25-new-solicits.md`
+
+```markdown
+---
+title: "January solicitations are out"
+date: 2026-10-25
+type: news
+collections: [superman-man-of-steel]
+tags: [solicits]
+cover: /images/solicits.jpg
+---
+
+The article, in Markdown.
+```
+
+Same fields as a review, except `type: news` and no `rating`. Articles
+are badged "Article" on the site.
+
+## A volume
+
+`content/collections/s/superman-man-of-steel.md`
+
+```markdown
+---
+title: "The Man of Steel"
+slug: superman-man-of-steel
+line: superman
+date: "1986-1987"
+release-date: 2026-11-10
+cover: /images/superman-man-of-steel.jpg
+tags: [bronze-age-post-crisis]
+creators:
+  - slug: john-byrne
+    role: Writer
+  - slug: dick-giordano
+    role: Inker
+double-dips:
+  - issue: "Action Comics #584"
+    part: "Superman lead story"
+    date: "Jan 1987"
+    creators:
+      - slug: some-fill-in-artist
+        role: Artist
+---
+
+Collects The Man of Steel #1-6, Superman #1-3 and Action Comics #584.
+```
+
+| Field          | Required? | What it does |
+| -------------- | --------- | ------------ |
+| `title`        | yes       | Just the volume's own name ("The Man of Steel"). When `line:` is set, the site shows "Superman: The Man of Steel". |
+| `slug`         | recommended | Reviews and articles point at this. |
+| `line`         | optional  | The slug of a line page. Groups the volume under that line. |
+| `date`         | yes       | When the *original comics* came out, as free text: `"1986-1987"`, `"Jan 1990 - Aug 1990"`, shown exactly as written. Put it in quotes. Only the first year is used for sorting. |
+| `release-date` | optional  | The book's street date, `YYYY-MM-DD`, unquoted. Puts it on the Volumes page by year and in the "Recently released" / "Next up" sidebar. Leave it out if nothing's announced. |
+| `cover`        | optional  | Cover image, shown beside the title and as a thumbnail on the line's page. |
+| `tags`         | optional  | As for posts. |
+| `creators`     | optional  | Who made it. `role` is optional. A plain list of slugs works too: `creators: [john-byrne, dick-giordano]`. |
+| `double-dips`  | optional  | Issues this volume shares with another volume. See below. |
+
+The body is the volume's contents: "Collects …", plus anything else
+worth saying.
+
+### Double-dips
+
+Only list the *overlap*: issues, or parts of issues, that another
+volume also reprints. Write the same `issue:` text in both volumes and
+the site links them up with an "Also collected in" note. Case and
+spacing don't matter (`"Catwoman (vol 2) #14"` matches
+`"catwoman (vol 2) # 14"`). Only `issue:` is required; `part:`,
+`date:` and `creators:` are optional.
+
+## A creator
+
+`content/creators/john-byrne.md`
+
+```markdown
+---
+title: "John Byrne"
+tags: [writer, artist]
+---
+
+A short biography.
+```
+
+Only `title` is required. **You don't have to write creator files at
+all**: anyone named in a volume's `creators:` gets a page automatically,
+with a name guessed from the slug (`john-byrne` → "John Byrne") and a
+list of their volumes. Write a file only when you want to add a bio.
+
+## A line
+
+`content/lines/superman.md`
+
+```markdown
+---
+title: "Superman"
+tags: [superman]
+---
+
+What this line is about.
+```
+
+Only `title` is required. The line's page lists every volume whose
+`line:` points at it, oldest comics first.
+
+---
+
+## Tricks inside the text
+
+### Link to another page by slug
+
+```markdown
+As I said in [[gl-defeat]], the ring can do anything.
+```
+
+`[[slug]]` becomes a link with that page's title, and the stars if
+it's a review. Works for any page: review, article, volume, line or
+creator.
+
+### A review box
+
+```markdown
+{{review gl-defeat}}
+```
+
+On a line of its own, this becomes a small box showing the review's
+volume, title, stars and featured image. Handy for round-up articles.
+
+If a slug in `[[…]]` or `{{review …}}` doesn't match any page, it's
+left as written, so a typo stays visible on the page instead of
+vanishing.
+
+### Images
+
+Put the image file in `resources/public/images/`, then use it in the
+text:
+
+```markdown
+![Hal Jordan](/images/hal-jordan.jpg)
+```
+
+To make an image the post's **featured image** (the thumbnail on the
+Latest list and in review boxes), add `"feature"` after the path:
+
+```markdown
+![Hal Jordan](/images/hal-jordan.jpg "feature")
+```
+
+It still shows in the article as normal. If you mark several, the
+first one wins.
+
+### Everyday Markdown
+
+```markdown
+*italic*  **bold**  [a link](https://example.com)
+
+## A subheading
+
+- a list item
+- another
+
+> A quote
+```
+
+---
+
+## Gotchas
+
+- **Volumes need a `date`.** Without one the volume is skipped (the
+  terminal shows a `WARN: Post is missing :date` line).
+- **Quote free-text dates.** `date: "1986-1987"`. Quotes keep text with
+  colons or other odd characters from confusing the frontmatter.
+- **Don't quote real dates.** `date: 2026-10-06` and
+  `release-date: 2025-06-10` go unquoted.
+- **Ratings are out of 3**, not 5.
+- **Reviews and articles need `type:`** (`review` or `news`). Nothing
+  else does: the folder already says what it is.
+- **Keep files in their folders.** A file loose in `content/` itself
+  has no folder to say what it is, so it won't become a page.
+- **Use spaces, not tabs**, to indent the frontmatter lists.
