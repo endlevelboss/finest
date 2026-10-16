@@ -155,16 +155,27 @@
                                   (map #(assoc % :role (creator-role-on % slug)) (store/credited-on slug)))
     (= type :line)        (assoc :line-collections (mapv attach-review (store/under-line slug)))))
 
+(defn- post-response
+  [post]
+  (let [enriched (enrich post)]
+    (html-response 200 (page {:title (components/display-title enriched)
+                              :body  (post-view/post-page enriched)}))))
+
 (defn post-page
   [request]
-  (let [slug (get-in request [:path-params :slug])
-        post (store/by-slug slug)]
-    (if post
-      (let [enriched (enrich post)]
-        (html-response 200 (page {:title (components/display-title enriched)
-                                          :body  (post-view/post-page enriched)})))
+  (let [slug (get-in request [:path-params :slug])]
+    (if-let [post (store/by-slug slug)]
+      (post-response post)
       (html-response 404 (page {:title "Not Found" :body [:p "Post not found."]})))))
 
 (defn not-found
   [_request]
   (html-response 404 (page {:title "Not Found" :body [:p "Page not found."]})))
+
+(defn about
+  "The about page: content/pages/about.md."
+  [request]
+  (let [post (store/by-slug "about")]
+    (if (= :page (:type post))
+      (post-response post)
+      (not-found request))))

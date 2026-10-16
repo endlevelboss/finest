@@ -24,11 +24,12 @@
    would just repeat what the folder already says."
   {"collections" "collection"
    "creators"    "creator"
-   "lines"       "line"})
+   "lines"       "line"
+   "pages"       "page"})
 
 (defn- inferred-type
   "Walks up from f's parent looking for a directory named collections/
-   creators/lines, so files can be filed into alphabetical subfolders
+   creators/lines/pages, so files can be filed into alphabetical subfolders
    (e.g. content/collections/b/batman-year-one.md) without losing type
    inference. Stops at root, exclusive, so files sitting directly in
    content/ (e.g. content/posts/*) still get no inferred type."
@@ -176,7 +177,7 @@
 (defn by-tag [tag] (filterv #(contains? (:tags %) tag) (all-posts)))
 (defn by-type [type] (filterv #(= type (:type %)) (all-posts)))
 (defn all-tags [] (into (sorted-set) (mapcat :tags) (all-posts)))
-(defn articles [] (filterv #(not (#{:collection :creator :line} (:type %))) (all-posts)))
+(defn articles [] (filterv #(#{:news :review} (:type %)) (all-posts)))
 (defn referencing [collection-slug] (filterv #(some #{collection-slug} (:collections %)) (all-posts)))
 (defn review-for
   "The most recent review referencing this collection, if any -- all-posts

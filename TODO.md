@@ -13,7 +13,7 @@ Things a blog like this should have, from a review of the site on
   Add a meta description for search results, plus Open Graph tags so a
   link shared in a chat or on social media shows a title, summary and
   image instead of bare text. Reviews could use the volume's cover.
-- [ ] **About page.** The "Hello there" post is the only intro, it says
+- [x] **About page.** The "Hello there" post is the only intro, it says
   "to be continued", and it will slide down the list as more posts go
   up. Nothing explains what DC Finest is to someone arriving cold.
 

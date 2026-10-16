@@ -6,13 +6,13 @@
 
 (deftest load-all-skips-malformed-and-sorts-by-date-desc
   (let [posts (store/load-all! fixture-dir)]
-    (is (= 15 (count posts)))
+    (is (= 16 (count posts)))
     (is (= ["second" "first" "dangling-line-collection" "collection-with-missing-creator"
             "hero-collection" "hero-collection-early"]
            (take 6 (map :slug posts))))
     (is (= #{"hero-creator" "hero-line" "explicit-override" "jane-q-public"
              "fragment-a" "fragment-b" "issue-only-creator" "nested-collection"
-             "hero-collection-tba"}
+             "hero-collection-tba" "about"}
            (set (drop 6 (map :slug posts)))))))
 
 (deftest reviews-carry-the-volumes-they-review
@@ -31,7 +31,7 @@
   (is (nil? (store/by-slug "no-type")))
   (is (= #{"alpha" "beta" "gamma" "delta" "zeta" "eta" "theta"} (store/all-tags))))
 
-(deftest articles-excludes-collections-creators-and-lines
+(deftest articles-excludes-collections-creators-lines-and-pages
   (store/load-all! fixture-dir)
   (is (= #{"first" "second"} (set (map :slug (store/articles))))))
 

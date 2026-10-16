@@ -138,10 +138,10 @@
         feature-image  (extract-feature-image html)]
     (when-not title
       (throw (ex-info "Post is missing :title" {:source-file source-file})))
-    (when-not (#{:news :review :collection :creator :line} post-type)
-      (throw (ex-info "Post :type must be :news, :review, :collection, :creator, or :line"
+    (when-not (#{:news :review :collection :creator :line :page} post-type)
+      (throw (ex-info "Post :type must be :news, :review, :collection, :creator, :line, or :page"
                        {:source-file source-file :type type})))
-    (when (and (not (#{:creator :line} post-type)) (nil? date))
+    (when (and (not (#{:creator :line :page} post-type)) (nil? date))
       (throw (ex-info "Post is missing :date" {:source-file source-file})))
     (when (and (= post-type :review) (nil? rating))
       (throw (ex-info "Reviews require a :rating" {:source-file source-file})))

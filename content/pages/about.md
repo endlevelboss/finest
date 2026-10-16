@@ -1,8 +1,5 @@
 ---
-title: "Hello there, fellow comic book lovers"
-date: 2026-09-24
-tags: []
-type: news
+title: "About"
 ---
 
 What: a fan page dedicated to DC Finest 

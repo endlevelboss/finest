@@ -29,6 +29,7 @@ marked *optional* can simply be left out.
 | A volume (one DC Finest book)       | `content/collections/` | Volumes, its line    |
 | A creator (writer, artist…)         | `content/creators/`  | Creators, their page   |
 | A line (Batman, Green Lantern…)     | `content/lines/`     | Lines                  |
+| The About page                      | `content/pages/about.md` | `/about`, footer link |
 
 Inside `collections/`, `creators/` and `lines/` you can make any
 subfolders you like (`content/collections/g/…`); they're only for
@@ -184,6 +185,22 @@ What this line is about.
 
 Only `title` is required. The line's page lists every volume whose
 `line:` points at it, oldest comics first.
+
+## The About page
+
+`content/pages/about.md`
+
+```markdown
+---
+title: "About"
+---
+
+Who's writing, and what the site is for.
+```
+
+Only `title` is required. It's served at `/about` and linked from the
+footer, and it never shows up in the Latest list or the feed.
+Everything under "Tricks inside the text" works here too.
 
 ---
 

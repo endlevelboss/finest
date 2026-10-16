@@ -31,6 +31,15 @@
     (is (< -1 second-at first-at) "newest entry first")
     (is (not (.contains ^String body "/posts/hero-collection</id>")) "volumes stay out of the feed")))
 
+(deftest about-page-is-served-from-content-pages
+  (let [{:keys [status body]} ((routes/app) {:request-method :get :uri "/about"})]
+    (is (= 200 status))
+    (is (.contains ^String body "About this fixture site")))
+  (is (not (.contains ^String (:body ((routes/app) {:request-method :get :uri "/"})) "/posts/about"))
+      "the about page isn't listed among the posts")
+  (is (not (.contains ^String (:body ((routes/app) {:request-method :get :uri "/feed.xml"})) "/posts/about"))
+      "nor in the feed"))
+
 (deftest pages-advertise-the-feed
   (let [body (:body ((routes/app) {:request-method :get :uri "/"}))]
     (is (.contains ^String body "type=\"application/atom+xml\""))))
