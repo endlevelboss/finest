@@ -27,4 +27,7 @@
          [:footer.site-footer
           [:a {:href "/"} c/site-name]
           [:span.footer-divider {:aria-hidden "true"}]
-          [:a {:href "/tags"} "Tags"]]]]])))
+          [:a {:href "/tags"} "Tags"]
+          [:span.footer-divider {:aria-hidden "true"}]
+          ;; placeholder address until there's a real inbox
+          [:a {:href "mailto:contact@example.com"} "Contact"]]]]])))
