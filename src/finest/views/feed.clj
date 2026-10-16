@@ -46,6 +46,7 @@
       (h/raw "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
       [:feed {:xmlns "http://www.w3.org/2005/Atom"}
        [:title c/site-name]
+       [:subtitle c/site-tagline]
        [:link {:rel "self" :type "application/atom+xml" :href (str base-url "/feed.xml")}]
        [:link {:rel "alternate" :type "text/html" :href (str base-url "/")}]
        [:id (str base-url "/")]

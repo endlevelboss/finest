@@ -9,10 +9,11 @@ Things a blog like this should have, from a review of the site on
 - [x] **Favicon.** `/favicon.ico` doesn't exist, so the browser tab shows
   a blank icon. The "EARTH Q" lettering or the yellow T from the banner
   could work.
-- [ ] **Page descriptions and link previews.** Pages only set a `<title>`.
-  Add a meta description for search results, plus Open Graph tags so a
-  link shared in a chat or on social media shows a title, summary and
-  image instead of bare text. Reviews could use the volume's cover.
+- [x] **Page descriptions and link previews.** Every page has a meta
+  description and Open Graph tags; see WRITING.md.
+- [ ] **Write the real tagline.** "Reading the DC Finest line, one brick
+  at a time." is a placeholder. It's `site-tagline` in
+  `src/finest/views/components.clj`.
 - [x] **About page.** The "Hello there" post is the only intro, it says
   "to be continued", and it will slide down the list as more posts go
   up. Nothing explains what DC Finest is to someone arriving cold.

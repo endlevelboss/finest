@@ -7,7 +7,8 @@
             [finest.views.embeds :as embeds]
             [finest.views.feed :as feed-view]
             [finest.views.sitemap :as sitemap-view]
-            [finest.views.components :as components])
+            [finest.views.components :as components]
+            [finest.views.meta :as meta])
   (:import (java.time LocalDate)))
 
 (defn- html-response
@@ -16,22 +17,11 @@
    :headers {"Content-Type" "text/html; charset=utf-8"}
    :body    body})
 
-(defn- page
-  "Every page carries the release sidebar, judged against today's date."
-  [opts]
-  (layout/page (assoc opts :sidebar (store/release-window (LocalDate/now) 3))))
-
-(defn- listing-response
-  ([heading posts] (listing-response heading posts nil nil))
-  ([heading posts card] (listing-response heading posts card nil))
-  ([heading posts card list-class]
-   (html-response 200 (page {:title heading
-                                     :body  (index-view/listing-page
-                                              (cond-> {:heading heading :posts posts}
-                                                card       (assoc :card card)
-                                                list-class (assoc :list-class list-class)))}))))
-
-(def ^:private page-size 10)
+(defn- site-url
+  "The site's public base URL, from SITE_URL, without a trailing slash.
+   Falls back to the dev server until the site has a real address."
+  []
+  (str/replace (or (System/getenv "SITE_URL") "http://localhost:3000") #"/+$" ""))
 
 (defn- page-number
   "The ?page= asked for: 1 when there's none, nil when it isn't a
@@ -41,6 +31,36 @@
     (cond
       (nil? raw)                       1
       (re-matches #"[1-9]\d{0,5}" raw) (parse-long raw))))
+
+(def ^:private fallback-image "/images/banner.png")
+
+(defn- page
+  "Every page carries the release sidebar, judged against today's date,
+   and meta tags for search results and link previews: the site's
+   tagline and banner, unless `meta` has something better for this page."
+  [request {:keys [title meta] :as opts}]
+  (let [base  (site-url)
+        n     (page-number request)
+        tags  (merge {:title       (or title components/site-name)
+                      :description components/site-tagline
+                      :image       fallback-image
+                      :type        "website"
+                      :url         (str base (:uri request) (when (and n (> n 1)) (str "?page=" n)))}
+                     meta)]
+    (layout/page (assoc opts
+                        :meta    (update tags :image #(meta/absolute-url base %))
+                        :sidebar (store/release-window (LocalDate/now) 3)))))
+
+(defn- listing-response
+  ([request heading posts] (listing-response request heading posts nil nil))
+  ([request heading posts card list-class]
+   (html-response 200 (page request {:title heading
+                                    :body  (index-view/listing-page
+                                             (cond-> {:heading heading :posts posts}
+                                               card       (assoc :card card)
+                                               list-class (assoc :list-class list-class)))}))))
+
+(def ^:private page-size 10)
 
 (defn- paginate
   "One page of `posts` plus what the pager links need, or nil for a
@@ -60,11 +80,11 @@
    which page they are."
   [request {:keys [title heading posts]}]
   (if-let [{:keys [posts pager]} (paginate request posts)]
-    (html-response 200 (page {:title (if (> (:page pager) 1)
-                                       (str (or title heading) ", page " (:page pager))
-                                       title)
-                              :body  (index-view/listing-page
-                                       {:heading heading :posts posts :pager pager})}))
+    (html-response 200 (page request {:title (if (> (:page pager) 1)
+                                               (str (or title heading) ", page " (:page pager))
+                                               title)
+                                      :body  (index-view/listing-page
+                                               {:heading heading :posts posts :pager pager})}))
     (not-found request)))
 
 (defn index
@@ -108,21 +128,15 @@
      group]))
 
 (defn collections-list
-  [_request]
+  [request]
   (let [volumes (mapv attach-review (sort by-release-date-desc (store/by-type :collection)))]
-    (html-response 200 (page {:title "Volumes"
-                              :body  (index-view/grouped-listing-page
-                                       {:heading "Volumes"
-                                        :groups  (release-year-groups volumes)
-                                        :card    components/volume-row})}))))
+    (html-response 200 (page request {:title "Volumes"
+                                      :body  (index-view/grouped-listing-page
+                                               {:heading "Volumes"
+                                                :groups  (release-year-groups volumes)
+                                                :card    components/volume-row})}))))
 
 (def ^:private feed-size 20)
-
-(defn- site-url
-  "The site's public base URL, from SITE_URL, without a trailing slash.
-   Falls back to the dev server until the site has a real address."
-  []
-  (str/replace (or (System/getenv "SITE_URL") "http://localhost:3000") #"/+$" ""))
 
 (defn feed
   "The Atom feed: the newest reviews and articles, as on the front page."
@@ -164,8 +178,8 @@
                  "Sitemap: " (site-url) "/sitemap.xml\n")})
 
 (defn creators-list
-  [_request]
-  (listing-response "Creators" (store/by-type :creator)))
+  [request]
+  (listing-response request "Creators" (store/by-type :creator)))
 
 (defn- title-sort-key
   "Alphabetizes on a title while ignoring a leading \"The \", so \"The
@@ -174,14 +188,14 @@
   (-> title (str/replace #"(?i)^the\s+" "") str/lower-case))
 
 (defn lines-list
-  [_request]
-  (listing-response "Lines" (sort-by title-sort-key (store/by-type :line)) components/line-row "line-columns"))
+  [request]
+  (listing-response request "Lines" (sort-by title-sort-key (store/by-type :line)) components/line-row "line-columns"))
 
 (defn tag-index
-  [_request]
+  [request]
   (let [tags (store/all-tags)]
     (html-response 200
-      (page
+      (page request
         {:title "Tags"
          :body  [:section.listing
                  [:h1 "Tags"]
@@ -221,27 +235,42 @@
                                   (map #(assoc % :role (creator-role-on % slug)) (store/credited-on slug)))
     (= type :line)        (assoc :line-collections (mapv attach-review (store/under-line slug)))))
 
+(defn- post-meta
+  "A post's own description and preview image, where it has them: a
+   written `description:`, else its first paragraph; its featured image,
+   else its cover, else the cover of a volume it's about."
+  [{:keys [type title description html feature-image cover collections] :as post}]
+  (let [text  (or description (meta/excerpt html))
+        image (or (:src feature-image)
+                  cover
+                  (some #(:cover (store/by-slug %)) collections))]
+    (cond-> {:title (components/display-title post)
+             :type  (if (#{:news :review} type) "article" "website")}
+      text  (assoc :description text)
+      image (assoc :image image))))
+
 (defn- post-response
-  [post]
+  [request post]
   (let [enriched (enrich post)]
-    (html-response 200 (page {:title (components/display-title enriched)
-                              :body  (post-view/post-page enriched)}))))
+    (html-response 200 (page request {:title (components/display-title enriched)
+                                      :meta  (post-meta enriched)
+                                      :body  (post-view/post-page enriched)}))))
 
 (defn post-page
   [request]
   (let [slug (get-in request [:path-params :slug])]
     (if-let [post (store/by-slug slug)]
-      (post-response post)
-      (html-response 404 (page {:title "Not Found" :body [:p "Post not found."]})))))
+      (post-response request post)
+      (html-response 404 (page request {:title "Not Found" :body [:p "Post not found."]})))))
 
 (defn not-found
-  [_request]
-  (html-response 404 (page {:title "Not Found" :body [:p "Page not found."]})))
+  [request]
+  (html-response 404 (page request {:title "Not Found" :body [:p "Page not found."]})))
 
 (defn about
   "The about page: content/pages/about.md."
   [request]
   (let [post (store/by-slug "about")]
     (if (= :page (:type post))
-      (post-response post)
+      (post-response request post)
       (not-found request))))

@@ -119,6 +119,26 @@
 (deftest short-listings-have-no-pager
   (is (not (.contains ^String (:body (get-page "/" nil)) "class=\"pager\""))))
 
+(defn- meta-content [body attr-name]
+  (second (re-find (re-pattern (str "<meta content=\"([^\"]*)\"[^>]*(?:name|property)=\"" attr-name "\"")) body)))
+
+(deftest a-review-describes-itself-for-previews
+  (let [body (:body (get-page "/posts/second" nil))]
+    (is (= "Second body." (meta-content body "description")))
+    (is (= "Second Post" (meta-content body "og:title")))
+    (is (= "article" (meta-content body "og:type")))
+    (is (re-find #"^https?://[^/]+/posts/second$" (meta-content body "og:url")))
+    (is (re-find #"^https?://[^/]+/images/hero-cover\.jpg$" (meta-content body "og:image"))
+        "falls back to the reviewed volume's cover")))
+
+(deftest listings-use-the-tagline-and-banner
+  (let [body (:body (get-page "/" nil))]
+    (is (= finest.views.components/site-tagline (meta-content body "description")))
+    (is (= "website" (meta-content body "og:type")))
+    (is (re-find #"/images/banner\.png$" (meta-content body "og:image"))))
+  (with-redefs [finest.handler/page-size 1]
+    (is (re-find #"/\?page=2$" (meta-content (:body (get-page "/" "page=2")) "og:url")))))
+
 (deftest pages-advertise-the-feed
   (let [body (:body ((routes/app) {:request-method :get :uri "/"}))]
     (is (.contains ^String body "type=\"application/atom+xml\""))))

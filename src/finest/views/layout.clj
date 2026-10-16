@@ -2,8 +2,23 @@
   (:require [hiccup2.core :as h]
             [finest.views.components :as c]))
 
+(defn- meta-tags
+  "The description for search results, and the Open Graph and Twitter
+   tags apps read to build a link preview card. All URLs are absolute."
+  [{:keys [title description image url type]}]
+  (list
+    [:meta {:name "description" :content description}]
+    [:meta {:property "og:site_name" :content c/site-name}]
+    [:meta {:property "og:type" :content type}]
+    [:meta {:property "og:title" :content title}]
+    [:meta {:property "og:description" :content description}]
+    [:meta {:property "og:url" :content url}]
+    [:meta {:property "og:image" :content image}]
+    [:meta {:name "twitter:card" :content "summary_large_image"}]))
+
 (defn page
-  [{:keys [title body sidebar]}]
+  "`meta` is {:title :description :image :url :type} for meta-tags."
+  [{:keys [title body sidebar meta]}]
   (str
     (h/html
       (h/raw "<!DOCTYPE html>\n")
@@ -12,6 +27,7 @@
         [:meta {:charset "utf-8"}]
         [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
         [:title (if title (str title " — " c/site-name) c/site-name)]
+        (when meta (meta-tags meta))
         [:link {:rel "icon" :href "/favicon.ico" :sizes "16x16 32x32 48x48"}]
         [:link {:rel "icon" :type "image/png" :href "/icon-512.png" :sizes "512x512"}]
         [:link {:rel "apple-touch-icon" :href "/apple-touch-icon.png"}]

@@ -183,3 +183,10 @@
   (let [p (news-with-html (str "<img src=\"/a.jpg\" alt=\"A\" title=\"feature\" />"
                                "<img src=\"/b.jpg\" alt=\"B\" title=\"feature\" />"))]
     (is (= "/a.jpg" (get-in p [:feature-image :src])))))
+
+(deftest description-field-is-optional
+  (let [without (post/->post {:meta (base-meta) :html "" :source-file "x.md" :last-modified 0})
+        with    (post/->post {:meta (assoc (base-meta) :description "Hand-written.") :html ""
+                              :source-file "x.md" :last-modified 0})]
+    (is (not (contains? without :description)))
+    (is (= "Hand-written." (:description with)))))

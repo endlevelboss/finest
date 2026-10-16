@@ -5,6 +5,10 @@
 
 (def site-name "Transmissions")
 
+;; placeholder until there's a final one -- used as the description of
+;; the home page and listings, and as the feed's subtitle
+(def site-tagline "Reading the DC Finest line, one brick at a time.")
+
 (def ^:private first-year 2026)
 
 (defn copyright-years

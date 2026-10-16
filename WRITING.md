@@ -286,10 +286,7 @@ first one wins.
 
 ## Search results and link previews
 
-> **Planned, not built yet.** This describes how it's meant to work, so
-> you can write with it in mind. It's on the to-do list.
-
-Each page will carry a short **description** and a **preview image** in
+Each page carries a short **description** and a **preview image** in
 its hidden header. Visitors never see them on the page itself. They
 show up in two places:
 
@@ -312,6 +309,10 @@ Nothing extra to write by default. Each page takes:
 | Line, creator, About     | its first paragraph              | the site's fallback image |
 | Home page and listings   | the site's tagline               | the site's fallback image |
 
+The fallback image is the banner. The tagline lives next to the site's
+name in `src/finest/views/components.clj` (`site-tagline`), and is also
+the RSS feed's subtitle.
+
 The description is cut to about 150 characters, at a word boundary.
 
 **What this means when writing:**
@@ -320,7 +321,7 @@ The description is cut to about 150 characters, at a word boundary.
   results and shared links. A review that opens with a one-line verdict
   previews better than one that opens with a joke or an aside.
 - **Override when the opening doesn't fit.** An optional `description:`
-  line in the frontmatter will replace the first paragraph:
+  line in the frontmatter replaces the first paragraph:
 
   ```yaml
   description: "Hal Jordan gets a ring that can do anything, and the stories never recover."
