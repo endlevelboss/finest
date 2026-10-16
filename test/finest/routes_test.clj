@@ -69,6 +69,28 @@
     (is (.contains ^String body "User-agent: *"))
     (is (re-find #"(?m)^Sitemap: https?://\S+/sitemap\.xml$" body))))
 
+(deftest head-requests-are-answered-like-get
+  (doseq [uri ["/" "/posts/first" "/feed.xml" "/css/style.css"]]
+    (let [{:keys [status body]} ((routes/app) {:request-method :head :uri uri})]
+      (is (= 200 status) uri)
+      (is (nil? body) uri))))
+
+(deftest static-files-are-cached-only-when-asked
+  (let [css {:request-method :get :uri "/css/style.css"}]
+    (is (nil? (get-in ((routes/app) css) [:headers "Cache-Control"])))
+    (is (= "public, max-age=86400"
+           (get-in ((routes/app {:cache-static? true}) css) [:headers "Cache-Control"])))
+    (is (nil? (get-in ((routes/app {:cache-static? true}) {:request-method :get :uri "/"})
+                      [:headers "Cache-Control"]))
+        "pages themselves aren't cached")))
+
+(deftest unchanged-static-files-get-a-304
+  (let [app           (routes/app {:cache-static? true})
+        last-modified (get-in (app {:request-method :get :uri "/css/style.css"}) [:headers "Last-Modified"])]
+    (is (some? last-modified))
+    (is (= 304 (:status (app {:request-method :get :uri "/css/style.css"
+                              :headers {"if-modified-since" last-modified}}))))))
+
 (deftest pages-advertise-the-feed
   (let [body (:body ((routes/app) {:request-method :get :uri "/"}))]
     (is (.contains ^String body "type=\"application/atom+xml\""))))

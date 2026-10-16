@@ -9,4 +9,4 @@
   (let [port        (Integer/parseInt (or (System/getenv "PORT") "3000"))
         content-dir (or (System/getenv "CONTENT_DIR") "content")]
     (store/load-all! content-dir)
-    (server/start! {:handler (routes/app) :port port :join? true})))
+    (server/start! {:handler (routes/app {:cache-static? true}) :port port :join? true})))

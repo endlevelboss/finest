@@ -23,13 +23,10 @@ Things a blog like this should have, from a review of the site on
   crawler and points at `/sitemap.xml`, which lists every public page.
 - [x] **Drafts.** `draft: true` hides a page on the live server; the
   dev server shows it with a Draft badge.
-- [ ] **Answer HEAD requests.** The server answers them with
-  "405 Method Not Allowed". Link checkers, uptime monitors and
-  link-preview tools often send one first, and would think the site is
-  broken.
-- [ ] **Browser caching.** Images and the CSS file are sent with no
-  caching instructions, so returning visitors may download them again.
-  It matters most for the banner (285 KB) and `batman.jpg` (190 KB).
+- [x] **Answer HEAD requests.** Answered like GET, without the body.
+- [x] **Browser caching.** On the production server, CSS, images and
+  icons may be reused for a day, then re-checked (an unchanged file
+  gets a tiny "304 Not Modified"). Off in dev, so CSS edits show at once.
 - [ ] **Set `SITE_URL`** on the server once there's a public address,
   so the feed, sitemap and `robots.txt` stop pointing at
   `http://localhost:3000`. See the README's Deployment section.
