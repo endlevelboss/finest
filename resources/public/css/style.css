@@ -27,6 +27,7 @@
   --space-8: 32px;
   --radius-none: 0;
   --radius-sm: 2px;
+  --radius-md: 6px;
   --radius-pill: 999px;
   --shadow-panel: 4px 4px 0 var(--ink);
 
@@ -222,8 +223,8 @@ h2 {
   align-items: flex-start;
   padding: var(--space-4);
   margin-bottom: var(--space-4);
-  background: var(--paper-deep);
-  border-radius: var(--radius-none);
+  background: var(--backdrop);
+  border-radius: var(--radius-md);
 }
 .post-card h2 {
   font-family: var(--font-sans);
