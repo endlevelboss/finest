@@ -337,28 +337,6 @@ img.cover-thumb {
   margin-bottom: var(--space-1);
 }
 
-/* a line's volume list: tiny cover in front of each row */
-.volume-row.with-thumb {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-.volume-thumb {
-  flex: 0 0 64px;
-  display: block;
-}
-.volume-thumb img {
-  display: block;
-  width: 64px;
-  height: auto;
-  max-height: 96px;
-  object-fit: contain;
-  object-position: top;
-  border: 1px solid var(--ink);
-  border-radius: var(--radius-none);
-}
-.volume-row-body { flex: 1 1 auto; min-width: 0; }
-
 .line-row {
   padding: 6px 0;
   border-bottom: 1px solid var(--rule);

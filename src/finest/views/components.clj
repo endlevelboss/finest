@@ -166,16 +166,11 @@
   [post]
   (volume-row* post true))
 
-(defn volume-row-with-thumb
-  "volume-row with a tiny cover thumbnail in front, for a line's own
-   volume listing. Volumes without a cover keep an empty slot of the same
-   width, so every title in the list lines up. The title stays one link,
+(defn line-volume-row
+  "volume-row for a line's own volume listing. The title stays one link,
    since the line it would point to is this very page."
-  [{:keys [slug cover title] :as post}]
-  [:div.volume-row.with-thumb
-   [:a.volume-thumb {:href (str "/posts/" slug) :tabindex "-1" :aria-hidden "true"}
-    (when cover [:img {:src cover :alt title :loading "lazy"}])]
-   (into [:div.volume-row-body] (rest (volume-row* post false)))])
+  [post]
+  (volume-row* post false))
 
 (defn line-row
   "A compact single-line row for the Lines listing -- just the clickable

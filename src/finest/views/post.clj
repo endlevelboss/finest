@@ -126,4 +126,4 @@
    (double-dip-list double-dips)
    (listing-section "Reviews & News" related)
    (credited-collections-block credited-collections)
-   (listing-section "Volumes" line-collections c/volume-row-with-thumb)])
+   (listing-section "Volumes" line-collections c/line-volume-row)])
