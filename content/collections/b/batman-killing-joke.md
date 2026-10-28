@@ -3,7 +3,7 @@ title: "The Killing Joke & Other Stories"
 slug: batman-killing-joke
 date: "1987 - 1988"
 release-date: 2025-05-20
-tags: [80s, post-crisis]
+tags: [80s]
 line: batman
 creators:
   - slug: alan-moore
