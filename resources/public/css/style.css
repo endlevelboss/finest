@@ -415,6 +415,13 @@ img.cover-thumb {
 }
 .star { color: var(--rule); }
 .star.filled { color: var(--red); }
+/* left half red, right half the empty grey, painted through the glyph */
+.star.half {
+  background: linear-gradient(90deg, var(--red) 50%, var(--rule) 50%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .rating-value { color: var(--ink-muted); margin-left: var(--space-1); }
 
 .post-tags {

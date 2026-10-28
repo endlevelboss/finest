@@ -46,16 +46,24 @@
   (let [s (str rating)]
     (if (str/ends-with? s ".0") (subs s 0 (- (count s) 2)) s)))
 
+(defn- star-class
+  "Star `i` (1-based) is filled once the rating reaches it, half-filled
+   when the rating stops halfway into it (2.5 -> two filled, one half)."
+  [i rating]
+  (cond
+    (<= i rating)          "filled"
+    (<= (- i 0.5) rating)  "half"
+    :else                  "empty"))
+
 (defn rating-stars
-  "Renders a rating out of `max` (default 3) as filled/empty stars,
+  "Renders a rating out of `max` (default 3) as filled/half/empty stars,
    with a textual label for accessibility since partial stars aren't
    conveyed by the glyphs alone."
   ([rating] (rating-stars rating 3))
   ([rating max]
    [:span.rating {:aria-label (str rating " out of " max " stars")}
     (for [i (range 1 (inc max))]
-      (let [filled? (<= i (Math/round (double rating)))]
-        [:span.star {:class (if filled? "filled" "empty") :aria-hidden "true"} "★"]))
+      [:span.star {:class (star-class i (double rating)) :aria-hidden "true"} "★"])
     [:span.rating-value (str " " (format-rating rating) "/" max)]]))
 
 (def ^:private badge-labels
