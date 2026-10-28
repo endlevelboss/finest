@@ -164,7 +164,7 @@
       (is (not (re-find #"deep" (str err)))))
     (store/load-all! fixture-dir)))
 
-(deftest reviews-and-articles-carry-their-volumes-tags
+(deftest reviews-and-articles-show-their-volumes-tags
   (let [root  (.toFile (java.nio.file.Files/createTempDirectory "finest-tags" (make-array java.nio.file.attribute.FileAttribute 0)))
         write (fn [rel text]
                 (let [f (java.io.File. ^java.io.File root ^String rel)]
@@ -178,5 +178,8 @@
     (is (= #{"own" "post-crisis"} (:tags (store/by-slug "rev"))) "keeps its own tags too")
     (is (= #{"post-crisis"} (:tags (store/by-slug "news"))) "articles about a volume inherit as well")
     (is (= #{} (:tags (store/by-slug "other"))))
-    (is (= #{"vol" "rev" "news"} (set (map :slug (store/by-tag "post-crisis")))))
+    (is (= ["vol"] (map :slug (store/by-tag "post-crisis")))
+        "a tag page lists the volume, not the posts that inherit its tag")
+    (is (= ["rev"] (map :slug (store/by-tag "own"))) "a post's own tags still list it")
+    (is (contains? (store/all-tags) "post-crisis"))
     (store/load-all! fixture-dir)))

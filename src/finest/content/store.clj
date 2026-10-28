@@ -92,15 +92,19 @@
       post)))
 
 (defn- inherit-volume-tags
-  "Tags mostly live on volumes: a review or article carries the tags of
-   the volumes it's about (its `collections:`), on top of any of its own,
-   so it shows them and turns up on those tag pages too."
+  "Tags mostly live on volumes: a review or article shows the tags of
+   the volumes it's about (its `collections:`) on top of any of its own.
+   Its own are kept as :own-tags, since tag pages list a post only for
+   tags it was given itself -- otherwise every tag page would repeat each
+   volume's reviews and articles alongside it."
   [by-slug post]
   (if-let [inherited (seq (->> (:collections post)
                                (keep by-slug)
                                (filter #(= :collection (:type %)))
                                (mapcat :tags)))]
-    (update post :tags into inherited)
+    (-> post
+        (assoc :own-tags (:tags post))
+        (update :tags into inherited))
     post))
 
 (defn- creators-of
@@ -205,7 +209,7 @@
 
 (defn all-posts [] (:posts @state))
 (defn by-slug [slug] (get (:by-slug @state) slug))
-(defn by-tag [tag] (filterv #(contains? (:tags %) tag) (all-posts)))
+(defn by-tag [tag] (filterv #(contains? (:own-tags % (:tags %)) tag) (all-posts)))
 (defn by-type [type] (filterv #(= type (:type %)) (all-posts)))
 (defn all-tags [] (into (sorted-set) (mapcat :tags) (all-posts)))
 (defn articles [] (filterv #(#{:news :review} (:type %)) (all-posts)))
