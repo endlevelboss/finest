@@ -246,6 +246,28 @@ h2 {
 .post-card h2 a { color: var(--ink); }
 .post-card h2 a:hover { color: var(--blue); text-decoration: none; }
 
+/* the whole card opens the post: the title link is stretched over it,
+   and the card's other links (the volumes reviewed, tags) sit above
+   the stretched area so they still go where they say. A card is one
+   big link, so its text isn't selectable -- that only affects mouse
+   drags, not what crawlers, previews or screen readers read */
+.post-card {
+  position: relative;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.post-card h2 a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.post-card:hover h2 a { color: var(--blue); }
+.post-card .review-of a,
+.post-card .tag-pill {
+  position: relative;
+  z-index: 1;
+}
+
 .cover-thumb-link { flex: 0 0 auto; }
 
 img.cover-thumb {

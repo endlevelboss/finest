@@ -14,3 +14,9 @@
   (is (= ["filled" "filled" "filled"] (star-classes 3)))
   (is (= ["empty" "empty" "empty"] (star-classes 0)))
   (is (= ["filled" "filled" "empty"] (star-classes 2))))
+
+(deftest post-card-title-link-is-not-draggable
+  (let [title-link (->> (c/post-card {:slug "x" :title "X" :type :news :tags #{}})
+                        (tree-seq sequential? seq)
+                        (some #(when (and (vector? %) (= :h2 (first %))) (second %))))]
+    (is (= {:href "/posts/x" :draggable "false"} (second title-link)))))

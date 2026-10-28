@@ -208,7 +208,9 @@
   [:article.post-card
    [:div.post-card-body
     (review-of-kicker post)
-    [:h2 [:a {:href (str "/posts/" slug)} (display-title post)]]
+    ;; the title link is stretched over the whole card (see style.css), so
+    ;; without this any press-and-move inside the card drags the link
+    [:h2 [:a {:href (str "/posts/" slug) :draggable "false"} (display-title post)]]
     [:div.post-meta
      (when date-display [:span.post-date date-display])
      (release-date-note post)
