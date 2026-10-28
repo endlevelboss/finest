@@ -1,9 +1,9 @@
 ---
-title: "Even weirder Doom Patrol"
+title: "Weirdness"
 date: 2026-10-20    
 tags: [post-crisis]
 type: review
-rating: 0
+rating: 2.5
 collections: [doom-patrol-end-sacrifices-means]
 draft: true
 ---
