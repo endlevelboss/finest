@@ -13,7 +13,7 @@
   --yellow: #f5c400;
   --on-accent: #ffffff;
   --rule: #dcd9d2;
-  --backdrop: #4b4e59;
+  --backdrop: #e4e2dc;
 
   /* type */
   --font-display: Anton, "Arial Narrow", Impact, sans-serif;
@@ -48,8 +48,8 @@ body {
 }
 
 /* the whole site sits in one centered column; on wide screens the
-   slate backdrop shows either side, softer than black, with a light
-   shadow to keep the page's edge clear */
+   backdrop shows either side: a light warm grey, just a shade under
+   the paper, with a faint shadow to keep the page's edge clear */
 .frame {
   display: flex;
   flex-direction: column;
@@ -57,7 +57,7 @@ body {
   min-height: 100vh;
   margin: 0 auto;
   background: var(--paper);
-  box-shadow: 0 0 24px rgb(0 0 0 / 0.25);
+  box-shadow: 0 0 24px rgb(0 0 0 / 0.08);
 }
 .frame > .page { flex: 1 0 auto; width: 100%; }
 
