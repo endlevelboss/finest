@@ -163,3 +163,20 @@
       (is (re-find #"posts/2026/11/news\.md" (str err)))
       (is (not (re-find #"deep" (str err)))))
     (store/load-all! fixture-dir)))
+
+(deftest reviews-and-articles-carry-their-volumes-tags
+  (let [root  (.toFile (java.nio.file.Files/createTempDirectory "finest-tags" (make-array java.nio.file.attribute.FileAttribute 0)))
+        write (fn [rel text]
+                (let [f (java.io.File. ^java.io.File root ^String rel)]
+                  (.mkdirs (.getParentFile f))
+                  (spit f text)))]
+    (write "collections/vol.md" "---\ntitle: \"Vol\"\ndate: \"1990\"\ntags: [post-crisis]\n---\n\nCollects.\n")
+    (write "posts/2026-01-01-rev.md" "---\ntitle: \"Rev\"\ndate: 2026-01-01\ntype: review\nrating: 2\ntags: [own]\ncollections: [vol]\n---\n\nBody.\n")
+    (write "posts/2026-01-02-news.md" "---\ntitle: \"News\"\ndate: 2026-01-02\ntype: news\ncollections: [vol]\n---\n\nBody.\n")
+    (write "posts/2026-01-03-other.md" "---\ntitle: \"Other\"\ndate: 2026-01-03\ntype: news\n---\n\nBody.\n")
+    (store/load-all! (str root))
+    (is (= #{"own" "post-crisis"} (:tags (store/by-slug "rev"))) "keeps its own tags too")
+    (is (= #{"post-crisis"} (:tags (store/by-slug "news"))) "articles about a volume inherit as well")
+    (is (= #{} (:tags (store/by-slug "other"))))
+    (is (= #{"vol" "rev" "news"} (set (map :slug (store/by-tag "post-crisis")))))
+    (store/load-all! fixture-dir)))

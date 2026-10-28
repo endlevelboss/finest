@@ -99,7 +99,7 @@ The review itself, in Markdown.
 | `type`         | yes       | `review`. |
 | `rating`       | yes       | **Out of 3 stars.** Halves work (`2.5`); `0` is allowed. |
 | `collections`  | optional  | Slugs of the volume(s) reviewed. Adds the "A review of: …" line above the title, and lists this review on each volume's page and next to it on the Released and Upcoming pages. |
-| `tags`         | optional  | A list, e.g. `[silver-age, batman]`. Each tag gets its own page under `/tags`. |
+| `tags`         | optional  | A list, e.g. `[silver-age, batman]`. Each tag gets its own page under `/tags`. Usually not needed: a review or article gets the tags of the volumes in its `collections:` automatically. |
 | `cover`        | optional  | An image shown large at the top of the post. |
 
 ## An article
@@ -160,7 +160,7 @@ Collects The Man of Steel #1-6, Superman #1-3 and Action Comics #584.
 | `date`         | yes       | When the *original comics* came out, as free text: `"1986-1987"`, `"Jan 1990 - Aug 1990"`, shown exactly as written. Put it in quotes. Only the first year is used for sorting. |
 | `release-date` | optional  | The book's street date, `YYYY-MM-DD`, unquoted. Puts it on Released (by year) once it's out, Upcoming until then, and in the "Recently released" / "Next up" sidebar. Leave it out if nothing's announced; it stays on Upcoming. |
 | `cover`        | optional  | Cover image, shown beside the title and as a thumbnail on the line's page. |
-| `tags`         | optional  | As for posts. |
+| `tags`         | optional  | As for posts. **Tag volumes rather than reviews:** every review or article about this volume shows its tags too. |
 | `creators`     | optional  | Who made it. `role` is optional. A plain list of slugs works too: `creators: [john-byrne, dick-giordano]`. |
 | `double-dips`  | optional  | Issues this volume shares with another volume. See below. |
 

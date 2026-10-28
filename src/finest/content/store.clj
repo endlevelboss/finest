@@ -91,6 +91,18 @@
       (assoc post :review-of volumes)
       post)))
 
+(defn- inherit-volume-tags
+  "Tags mostly live on volumes: a review or article carries the tags of
+   the volumes it's about (its `collections:`), on top of any of its own,
+   so it shows them and turns up on those tag pages too."
+  [by-slug post]
+  (if-let [inherited (seq (->> (:collections post)
+                               (keep by-slug)
+                               (filter #(= :collection (:type %)))
+                               (mapcat :tags)))]
+    (update post :tags into inherited)
+    post))
+
 (defn- creators-of
   "A post's full creator credits: the cover creators: plus any credited on
    just one double-dipped issue -- they still count."
@@ -170,7 +182,9 @@
          by-slug-raw     (into {} (map (juxt :slug identity)) raw-posts)
          with-line-titles (mapv (partial attach-line-title by-slug-raw) raw-posts)
          line-titled      (into {} (map (juxt :slug identity)) with-line-titles)
-         with-review-of   (mapv (partial attach-review-of line-titled) with-line-titles)
+         with-review-of   (mapv (comp (partial inherit-volume-tags line-titled)
+                                      (partial attach-review-of line-titled))
+                                with-line-titles)
          fragments        (double-dip-fragments with-review-of)
          with-siblings    (mapv (partial attach-double-dip-siblings fragments) with-review-of)
          missing-creators (remove by-slug-raw (credited-creator-slugs with-siblings))
