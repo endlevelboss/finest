@@ -202,6 +202,8 @@
     (is (.contains ^String (:body (get-page "/upcoming")) "href=\"/posts/hero-collection\"")
         "undated volumes count as upcoming")
     (is (not (.contains ^String (:body (get-page "/released")) "href=\"/posts/hero-collection\"")))
+    (is (.contains ^String (:body (get-page "/upcoming")) "No release date</h2>")
+        "Upcoming is grouped by year too, undated volumes under their own heading")
     (is (= {:status 301 :location "/released"}
            (let [r (get-page "/collections")] {:status (:status r) :location (get-in r [:headers "Location"])})))
     (is (.contains ^String (:body (get-page "/")) "href=\"/upcoming\"") "both are in the menu")

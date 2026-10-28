@@ -149,19 +149,24 @@
   [side]
   (side (split-releases (mapv attach-review (store/by-type :collection)) (LocalDate/now))))
 
-(defn released-list
-  "Volumes already out, under their release years."
-  [request]
-  (html-response 200 (page request {:title "Released"
+(defn- year-grouped-volumes-response
+  [request heading side]
+  (html-response 200 (page request {:title heading
                                     :body  (index-view/grouped-listing-page
-                                             {:heading "Released"
-                                              :groups  (release-year-groups (volumes :released))
+                                             {:heading heading
+                                              :groups  (release-year-groups (volumes side))
                                               :card    components/volume-row})})))
 
-(defn upcoming-list
-  "Volumes still to come, next one first."
+(defn released-list
+  "Volumes already out, under their release years, newest first."
   [request]
-  (listing-response request "Upcoming" (volumes :upcoming) components/volume-row nil))
+  (year-grouped-volumes-response request "Released" :released))
+
+(defn upcoming-list
+  "Volumes still to come, under their release years, next one first --
+   undated ones last, under their own heading."
+  [request]
+  (year-grouped-volumes-response request "Upcoming" :upcoming))
 
 (defn collections-redirect
   "The old combined Volumes page, kept so links to it still land somewhere."
