@@ -3,7 +3,7 @@ title: "Blind Justice"
 slug: batman-blind-justice
 date: "Jan 1989 - Aug 1989"
 release-date: 2026-07-14
-tags: [bronze-age-post-crisis]
+tags: [80s, post-crisis]
 line: batman
 creators:
   - slug: sam-hamm

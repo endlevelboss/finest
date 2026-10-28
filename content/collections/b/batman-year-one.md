@@ -3,7 +3,7 @@ title: "Year One & Two"
 slug: batman-year-one
 date: "1986 - 1987"
 release-date: 2024-11-05
-tags: [80s-post-crisis]
+tags: [80s, post-crisis]
 line: batman
 cover: /images/batman-one-two.jpg
 creators:

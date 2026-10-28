@@ -1,7 +1,6 @@
 ---
 title: "Weirdness"
-date: 2026-10-20    
-tags: [post-crisis]
+date: 2026-10-20
 type: review
 rating: 2.5
 collections: [doom-patrol-end-sacrifices-means]

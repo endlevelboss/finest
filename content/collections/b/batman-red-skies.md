@@ -3,7 +3,7 @@ title: "Red Skies"
 slug: batman-red-skies
 date: "1985-1986"
 release-date: 2025-09-02
-tags: [bronze-age-pre-crisis]
+tags: [80s, pre-crisis]
 line: batman
 creators:
   - slug: doug-moench

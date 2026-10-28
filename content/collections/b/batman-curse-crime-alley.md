@@ -3,6 +3,7 @@ title: "The Curse of Crime Alley"
 slug: batman-curse-crime-alley
 date: "1979-1980"
 release-date: 2026-12-08
+tags: [70s]
 line: batman
 ---
 
