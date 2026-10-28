@@ -1,5 +1,5 @@
 ---
-title: "Doom Patrol post Morrisson"
+title: "Even weirder Doom Patrol"
 date: 2026-10-20    
 tags: [post-crisis]
 type: review
