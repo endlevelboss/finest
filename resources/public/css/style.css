@@ -39,6 +39,10 @@
 
 * { box-sizing: border-box; }
 
+/* keep the scrollbar's space even on pages too short to scroll, so the
+   centered page doesn't slide sideways between short and long pages */
+html { scrollbar-gutter: stable; }
+
 body {
   margin: 0;
   background: var(--backdrop);
