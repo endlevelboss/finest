@@ -45,10 +45,21 @@
         {:keys [meta body]} (frontmatter/parse raw)
         html                (markdown/render body)
         meta                (update meta :type #(or % (inferred-type f root)))]
-    (post/->post {:meta          meta
-                  :html          html
-                  :source-file   (.getName f)
-                  :last-modified (.lastModified f)})))
+    (-> (post/->post {:meta          meta
+                      :html          html
+                      :source-file   (.getName f)
+                      :last-modified (.lastModified f)})
+        (assoc :source-path (str (.relativize (.toPath root) (.toPath f)))))))
+
+(defn- warn-duplicate-slugs
+  "Subfolders are only for tidiness -- the slug comes from the file name
+   alone -- so the same file name in two folders (posts/2026/10/news.md
+   and posts/2026/11/news.md) claims one address, and whichever loads
+   last silently wins. Say so instead."
+  [posts]
+  (doseq [[slug dupes] (group-by :slug posts)
+          :when (next dupes)]
+    (warn "Duplicate slug, only one will be reachable" {:slug slug :files (mapv :source-path dupes)})))
 
 (defn- max-mtime
   [content-dir]
@@ -155,7 +166,8 @@
                                (sort-by :date)
                                reverse
                                vec)
-         by-slug-raw      (into {} (map (juxt :slug identity)) raw-posts)
+         _                (warn-duplicate-slugs raw-posts)
+         by-slug-raw     (into {} (map (juxt :slug identity)) raw-posts)
          with-line-titles (mapv (partial attach-line-title by-slug-raw) raw-posts)
          line-titled      (into {} (map (juxt :slug identity)) with-line-titles)
          with-review-of   (mapv (partial attach-review-of line-titled) with-line-titles)

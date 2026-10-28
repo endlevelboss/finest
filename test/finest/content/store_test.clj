@@ -142,3 +142,24 @@
   (is (:draft (store/by-slug "unfinished")))
   (is (= "unfinished" (:slug (store/review-for "hero-collection"))))
   (store/load-all! fixture-dir))
+
+(defn- write-post!
+  [root rel title date]
+  (let [f (java.io.File. ^java.io.File root ^String rel)]
+    (.mkdirs (.getParentFile f))
+    (spit f (str "---\ntitle: \"" title "\"\ndate: " date "\ntype: news\n---\n\nBody.\n"))))
+
+(deftest posts-load-from-year-and-month-subfolders
+  (let [root (.toFile (java.nio.file.Files/createTempDirectory "finest-store" (make-array java.nio.file.attribute.FileAttribute 0)))]
+    (write-post! root "posts/2026/09/2026-09-01-deep.md" "Deep" "2026-09-01")
+    (write-post! root "posts/2026/10/news.md" "October News" "2026-10-01")
+    (write-post! root "posts/2026/11/news.md" "November News" "2026-11-01")
+    (let [err (java.io.StringWriter.)]
+      (binding [*err* err] (store/load-all! (str root)))
+      (is (= :news (:type (store/by-slug "deep"))))
+      (is (= "posts/2026/09/2026-09-01-deep.md" (:source-path (store/by-slug "deep"))))
+      (is (re-find #"Duplicate slug.*:slug news" (str err)))
+      (is (re-find #"posts/2026/10/news\.md" (str err)))
+      (is (re-find #"posts/2026/11/news\.md" (str err)))
+      (is (not (re-find #"deep" (str err)))))
+    (store/load-all! fixture-dir)))

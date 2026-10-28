@@ -31,9 +31,12 @@ marked *optional* can simply be left out.
 | A line (Batman, Green Lantern…)     | `content/lines/`     | Lines                  |
 | The About page                      | `content/pages/about.md` | `/about`, footer link |
 
-Inside `collections/`, `creators/` and `lines/` you can make any
-subfolders you like (`content/collections/g/…`); they're only for
-your own tidiness.
+Inside `posts/`, `collections/`, `creators/` and `lines/` you can make
+any subfolders you like, as deep as you like (`content/collections/g/…`,
+`content/posts/2026/10/…`); they're only for your own tidiness. They
+don't change a page's address or its date, so two files with the same
+name in different folders would fight over one address. The site warns
+about that when it loads.
 
 ## File names and slugs
 
