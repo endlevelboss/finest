@@ -33,7 +33,8 @@
    [:a {:href "/reviews"} "Reviews"]
    [:a {:href "/articles"} "Articles"]
    [:a {:href "/lines"} "Lines"]
-   [:a {:href "/collections"} "Volumes"]])
+   [:a {:href "/released"} "Released"]
+   [:a {:href "/upcoming"} "Upcoming"]])
 
 (defn tag-pill
   [tag]

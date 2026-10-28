@@ -15,6 +15,8 @@
     (is (nil? (r/match-by-path router "/news")) "the front page lists everything")
     (is (some? (r/match-by-path router "/reviews")))
     (is (some? (r/match-by-path router "/articles")))
+    (is (some? (r/match-by-path router "/released")))
+    (is (some? (r/match-by-path router "/upcoming")))
     (is (some? (r/match-by-path router "/collections")))
     (is (some? (r/match-by-path router "/creators")))
     (is (some? (r/match-by-path router "/lines")))
@@ -180,9 +182,30 @@
                 [{:slug "a" :release-date (d "2025-11-04")} {:slug "b" :release-date (d "2026-01-13")}
                  {:slug "c" :release-date (d "2026-09-01")} {:slug "tba"}])]
     (is (= [["2025" ["a"]] ["2026" ["b" "c"]] ["No release date" ["tba"]]]
-           (map (fn [[heading vols]] [heading (map :slug vols)]) groups))))
-  (let [body (:body ((routes/app) {:request-method :get :uri "/collections"}))]
-    (is (.contains ^String body "listing-group-heading"))))
+           (map (fn [[heading vols]] [heading (map :slug vols)]) groups)))))
+
+(deftest volumes-split-into-upcoming-and-released
+  (let [d     #(java.time.LocalDate/parse %)
+        split (#'finest.handler/split-releases
+               [{:slug "old" :release-date (d "2025-11-04")} {:slug "tba"}
+                {:slug "today" :release-date (d "2026-10-28")} {:slug "far" :release-date (d "2027-03-01")}
+                {:slug "soon" :release-date (d "2026-11-10")}]
+               (d "2026-10-28"))]
+    (is (= ["soon" "far" "tba"] (map :slug (:upcoming split))) "soonest first, undated last")
+    (is (= ["today" "old"] (map :slug (:released split))) "today counts as out; newest first")))
+
+(deftest released-and-upcoming-are-separate-pages
+  (let [app      (routes/app)
+        get-page #(app {:request-method :get :uri %})]
+    (is (= 200 (:status (get-page "/released"))))
+    (is (= 200 (:status (get-page "/upcoming"))))
+    (is (.contains ^String (:body (get-page "/upcoming")) "href=\"/posts/hero-collection\"")
+        "undated volumes count as upcoming")
+    (is (not (.contains ^String (:body (get-page "/released")) "href=\"/posts/hero-collection\"")))
+    (is (= {:status 301 :location "/released"}
+           (let [r (get-page "/collections")] {:status (:status r) :location (get-in r [:headers "Location"])})))
+    (is (.contains ^String (:body (get-page "/")) "href=\"/upcoming\"") "both are in the menu")
+    (is (.contains ^String (:body (get-page "/")) "href=\"/released\""))))
 
 (deftest volumes-page-lists-newest-first
   (let [d    #(java.time.LocalDate/parse %)
@@ -192,7 +215,7 @@
     (is (= ["c" "b" "a" "tba"] (map :slug vols)))))
 
 (deftest volumes-listing-links-each-volume-to-its-line
-  (let [body (:body ((routes/app) {:request-method :get :uri "/collections"}))]
+  (let [body (:body ((routes/app) {:request-method :get :uri "/upcoming"}))]
     (is (.contains ^String body "href=\"/posts/hero-line\""))
     (is (.contains ^String body "href=\"/posts/hero-collection\"")))
   (let [body (:body ((routes/app) {:request-method :get :uri "/posts/hero-line"}))]

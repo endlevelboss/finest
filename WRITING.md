@@ -26,7 +26,7 @@ marked *optional* can simply be left out.
 | ----------------------------------- | -------------------- | ---------------------- |
 | A review of a volume                | `content/posts/`     | Latest, Reviews, feed  |
 | Any other article (news, opinion)   | `content/posts/`     | Latest, Articles, feed |
-| A volume (one DC Finest book)       | `content/collections/` | Volumes, its line    |
+| A volume (one DC Finest book)       | `content/collections/` | Released or Upcoming, its line |
 | A creator (writer, artist…)         | `content/creators/`  | Creators, their page   |
 | A line (Batman, Green Lantern…)     | `content/lines/`     | Lines                  |
 | The About page                      | `content/pages/about.md` | `/about`, footer link |
@@ -98,7 +98,7 @@ The review itself, in Markdown.
 | `date`         | yes       | Publication date, `YYYY-MM-DD`, unquoted. Orders the Latest list and the feed. |
 | `type`         | yes       | `review`. |
 | `rating`       | yes       | **Out of 3 stars.** Halves work (`2.5`); `0` is allowed. |
-| `collections`  | optional  | Slugs of the volume(s) reviewed. Adds the "A review of: …" line above the title, and lists this review on each volume's page and next to it on the Volumes page. |
+| `collections`  | optional  | Slugs of the volume(s) reviewed. Adds the "A review of: …" line above the title, and lists this review on each volume's page and next to it on the Released and Upcoming pages. |
 | `tags`         | optional  | A list, e.g. `[silver-age, batman]`. Each tag gets its own page under `/tags`. |
 | `cover`        | optional  | An image shown large at the top of the post. |
 
@@ -158,7 +158,7 @@ Collects The Man of Steel #1-6, Superman #1-3 and Action Comics #584.
 | `slug`         | recommended | Reviews and articles point at this. |
 | `line`         | optional  | The slug of a line page. Groups the volume under that line. |
 | `date`         | yes       | When the *original comics* came out, as free text: `"1986-1987"`, `"Jan 1990 - Aug 1990"`, shown exactly as written. Put it in quotes. Only the first year is used for sorting. |
-| `release-date` | optional  | The book's street date, `YYYY-MM-DD`, unquoted. Puts it on the Volumes page by year and in the "Recently released" / "Next up" sidebar. Leave it out if nothing's announced. |
+| `release-date` | optional  | The book's street date, `YYYY-MM-DD`, unquoted. Puts it on Released (by year) once it's out, Upcoming until then, and in the "Recently released" / "Next up" sidebar. Leave it out if nothing's announced; it stays on Upcoming. |
 | `cover`        | optional  | Cover image, shown beside the title and as a thumbnail on the line's page. |
 | `tags`         | optional  | As for posts. |
 | `creators`     | optional  | Who made it. `role` is optional. A plain list of slugs works too: `creators: [john-byrne, dick-giordano]`. |

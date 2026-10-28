@@ -1,5 +1,6 @@
 (ns finest.handler
   (:require [clojure.string :as str]
+            [finest.content.post :as post]
             [finest.content.store :as store]
             [finest.views.layout :as layout]
             [finest.views.index :as index-view]
@@ -100,17 +101,26 @@
   [request]
   (paged-listing-response request {:title "Articles" :heading "Articles" :posts (store/by-type :news)}))
 
-(defn- by-release-date-desc
-  "Descending by release date, newest first -- collections with no known
-   release date (nothing announced yet) sort after every dated one."
-  [a b]
-  (let [ra (:release-date a)
-        rb (:release-date b)]
-    (cond
-      (and ra rb) (compare rb ra)
-      ra          -1
-      rb          1
-      :else       0)))
+(defn- undated-last
+  "A release-date comparator from `cmp`, with volumes that have no known
+   release date (nothing announced yet) after every dated one."
+  [cmp]
+  (fn [a b]
+    (let [ra (:release-date a)
+          rb (:release-date b)]
+      (cond
+        (and ra rb) (cmp ra rb)
+        ra          -1
+        rb          1
+        :else       0))))
+
+(def ^:private by-release-date-desc
+  "Newest release first, undated last."
+  (undated-last #(compare %2 %1)))
+
+(def ^:private by-release-date-asc
+  "Soonest release first, undated last."
+  (undated-last compare))
 
 (defn- attach-review
   "The review (if any) of this collection, for volume-row's third column."
@@ -127,14 +137,36 @@
     [(if-let [d (:release-date (first group))] (str (.getYear ^LocalDate d)) "No release date")
      group]))
 
-(defn collections-list
+(defn- split-releases
+  "Volumes split around `today`, which counts as out: :upcoming soonest
+   first, with not-yet-dated volumes last, and :released newest first."
+  [volumes today]
+  (let [upcoming? #(or (nil? (:release-date %)) (post/upcoming? % today))]
+    {:upcoming (sort by-release-date-asc (filter upcoming? volumes))
+     :released (sort by-release-date-desc (remove upcoming? volumes))}))
+
+(defn- volumes
+  [side]
+  (side (split-releases (mapv attach-review (store/by-type :collection)) (LocalDate/now))))
+
+(defn released-list
+  "Volumes already out, under their release years."
   [request]
-  (let [volumes (mapv attach-review (sort by-release-date-desc (store/by-type :collection)))]
-    (html-response 200 (page request {:title "Volumes"
-                                      :body  (index-view/grouped-listing-page
-                                               {:heading "Volumes"
-                                                :groups  (release-year-groups volumes)
-                                                :card    components/volume-row})}))))
+  (html-response 200 (page request {:title "Released"
+                                    :body  (index-view/grouped-listing-page
+                                             {:heading "Released"
+                                              :groups  (release-year-groups (volumes :released))
+                                              :card    components/volume-row})})))
+
+(defn upcoming-list
+  "Volumes still to come, next one first."
+  [request]
+  (listing-response request "Upcoming" (volumes :upcoming) components/volume-row nil))
+
+(defn collections-redirect
+  "The old combined Volumes page, kept so links to it still land somewhere."
+  [_request]
+  {:status 301 :headers {"Location" "/released"} :body ""})
 
 (def ^:private feed-size 20)
 
@@ -149,7 +181,7 @@
                               (take feed-size (store/articles)))})})
 
 (def ^:private listing-paths
-  ["/" "/reviews" "/articles" "/collections" "/creators" "/lines" "/tags"])
+  ["/" "/reviews" "/articles" "/released" "/upcoming" "/creators" "/lines" "/tags"])
 
 (defn sitemap
   "Every public page: the listings, each post (pages have their own
