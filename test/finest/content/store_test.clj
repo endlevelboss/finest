@@ -171,7 +171,7 @@
                   (.mkdirs (.getParentFile f))
                   (spit f text)))]
     (write "collections/vol.md" "---\ntitle: \"Vol\"\ndate: \"1990\"\ntags: [post-crisis]\n---\n\nCollects.\n")
-    (write "posts/2026-01-01-rev.md" "---\ntitle: \"Rev\"\ndate: 2026-01-01\ntype: review\nrating: 2\ntags: [own]\ncollections: [vol]\n---\n\nBody.\n")
+    (write "posts/2026-01-01-rev.md" "---\ntitle: \"Rev\"\ndate: 2026-01-01\ntype: review\ntags: [own]\ncollections: [vol]\n---\n\nBody.\n")
     (write "posts/2026-01-02-news.md" "---\ntitle: \"News\"\ndate: 2026-01-02\ntype: news\ncollections: [vol]\n---\n\nBody.\n")
     (write "posts/2026-01-03-other.md" "---\ntitle: \"Other\"\ndate: 2026-01-03\ntype: news\n---\n\nBody.\n")
     (store/load-all! (str root))
@@ -182,4 +182,22 @@
         "a tag page lists the volume, not the posts that inherit its tag")
     (is (= ["rev"] (map :slug (store/by-tag "own"))) "a post's own tags still list it")
     (is (contains? (store/all-tags) "post-crisis"))
+    (store/load-all! fixture-dir)))
+
+(deftest unknown-collection-slugs-are-reported
+  (let [root  (.toFile (java.nio.file.Files/createTempDirectory "finest-unknown" (make-array java.nio.file.attribute.FileAttribute 0)))
+        write (fn [rel text]
+                (let [f (java.io.File. ^java.io.File root ^String rel)]
+                  (.mkdirs (.getParentFile f))
+                  (spit f text)))]
+    (write "collections/vol-a.md" "---\ntitle: \"A\"\ndate: \"1990\"\n---\n\nCollects.\n")
+    (write "collections/vol-b.md" "---\ntitle: \"B\"\ndate: \"1991\"\n---\n\nCollects.\n")
+    (write "posts/good.md" "---\ntitle: \"Good\"\ndate: 2026-01-01\ntype: review\ncollections: [vol-a, vol-b]\n---\n\nBody.\n")
+    (write "posts/no-commas.md" "---\ntitle: \"No commas\"\ndate: 2026-01-02\ntype: review\ncollections: [vol-a vol-b]\n---\n\nBody.\n")
+    (write "posts/typo.md" "---\ntitle: \"Typo\"\ndate: 2026-01-03\ntype: review\ncollections: [vol-c]\n---\n\nBody.\n")
+    (let [err (java.io.StringWriter.)]
+      (binding [*err* err] (store/load-all! (str root)))
+      (is (re-find #"missing commas.*posts/no-commas\.md" (str err)))
+      (is (re-find #"Unknown collection slug \{:slug vol-c, :file posts/typo\.md\}" (str err)))
+      (is (not (re-find #"good\.md" (str err)))))
     (store/load-all! fixture-dir)))

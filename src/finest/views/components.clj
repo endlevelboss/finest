@@ -40,32 +40,6 @@
   [tag]
   [:a.tag-pill {:href (str "/tags/" tag)} tag])
 
-(defn- format-rating
-  "4.0 -> \"4\", 4.5 -> \"4.5\" -- drop a trailing .0 for whole-number ratings."
-  [rating]
-  (let [s (str rating)]
-    (if (str/ends-with? s ".0") (subs s 0 (- (count s) 2)) s)))
-
-(defn- star-class
-  "Star `i` (1-based) is filled once the rating reaches it, half-filled
-   when the rating stops halfway into it (2.5 -> two filled, one half)."
-  [i rating]
-  (cond
-    (<= i rating)          "filled"
-    (<= (- i 0.5) rating)  "half"
-    :else                  "empty"))
-
-(defn rating-stars
-  "Renders a rating out of `max` (default 3) as filled/half/empty stars,
-   with a textual label for accessibility since partial stars aren't
-   conveyed by the glyphs alone."
-  ([rating] (rating-stars rating 3))
-  ([rating max]
-   [:span.rating {:aria-label (str rating " out of " max " stars")}
-    (for [i (range 1 (inc max))]
-      [:span.star {:class (star-class i (double rating)) :aria-hidden "true"} "★"])
-    [:span.rating-value (str " " (format-rating rating) "/" max)]]))
-
 (def ^:private badge-labels
   "The :news type covers more than breaking news -- any non-review writeup,
    op-eds included -- so its badge reads as the more generic \"Article\"."
@@ -98,14 +72,45 @@
           [:a {:href (str "/posts/" slug)} title])
     [:a {:href (str "/posts/" slug)} (display-title v)]))
 
+(defn- by-line
+  "The volumes a review covers, grouped by line so each line's name is
+   written once -- groups in order of first appearance, volumes in their
+   frontmatter order within each. A volume outside a line is a group of
+   its own."
+  [volumes]
+  (let [k      (fn [v] (or (:line-title v) [::own (:slug v)]))
+        groups (group-by k volumes)]
+    (map groups (distinct (map k volumes)))))
+
+(defn- line-group-links
+  "\"Batman: Year One, The Killing Joke\" -- the line linked once, then
+   each volume's own title."
+  [[{:keys [line line-title]} :as group]]
+  (if line-title
+    (list [:a {:href (str "/posts/" line)} line-title] [:span.title-sep ":"]
+          (interpose ", " (for [{:keys [slug title]} group]
+                            [:a {:href (str "/posts/" slug)} title])))
+    (split-title-links (first group))))
+
+(defn- line-group-text
+  [[{:keys [line-title]} :as group]]
+  (if line-title
+    (str line-title ": " (str/join ", " (map :title group)))
+    (display-title (first group))))
+
 (defn review-of-kicker
-  "\"A review of: Batman: Year One & Two\" above a review's own title,
-   linking each volume it covers (and its line). Nil for anything that
-   isn't one."
+  "\"A review of: Batman: Year One, The Killing Joke; Superman: The Man of
+   Steel\" above a review's own title, linking each volume it covers (and
+   its line, once per line). Nil for anything that isn't one."
   [{:keys [review-of]}]
   (when (seq review-of)
     [:p.review-of "A review of: "
-     (interpose ", " (map split-title-links review-of))]))
+     (interpose "; " (map line-group-links (by-line review-of)))]))
+
+(defn review-of-text
+  "The kicker as plain text, for places that are already one big link."
+  [{:keys [review-of]}]
+  (str/join "; " (map line-group-text (by-line review-of))))
 
 (defn release-date-note
   "\"Released Nov 5, 2024\" once it's out, \"Releases Jun 1, 2027\" while
@@ -138,13 +143,12 @@
    (release-list "Next up" upcoming true)])
 
 (defn- volume-review
-  "A dedicated review column: a link with the review's own title plus its
-   star rating -- blank (nil, no placeholder) when there isn't one yet."
+  "A dedicated review column: a link with the review's own title -- blank
+   (nil, no placeholder) when there isn't one yet."
   [review]
   (when review
     [:a.volume-review {:href (str "/posts/" (:slug review))}
-     [:span.volume-review-title (:title review)]
-     (rating-stars (:rating review))]))
+     [:span.volume-review-title (:title review)]]))
 
 (defn- volume-row*
   [{:keys [slug date-display review] :as post} link-line?]
@@ -175,7 +179,7 @@
 (defn line-row
   "A compact single-line row for the Lines listing -- just the clickable
    name, no meta line or tags, since a line carries none of the
-   date/rating/badge info a post-card is built to show."
+   date/badge info a post-card is built to show."
   [{:keys [slug] :as post}]
   [:div.line-row
    [:a.line-title {:href (str "/posts/" slug)} (display-title post)]])
@@ -184,13 +188,12 @@
   "A compact review box dropped into an article body with {{review slug}}.
    The whole box is one link, so the \"A review of:\" volumes are plain
    text here rather than the kicker's own nested links."
-  [{:keys [slug review-of rating feature-image cover title] :as review}]
+  [{:keys [slug review-of feature-image cover title] :as review}]
   [:a.review-embed {:href (str "/posts/" slug)}
    [:span.review-embed-body
     (when (seq review-of)
-      [:span.review-of (str "A review of: " (str/join ", " (map display-title review-of)))])
-    [:span.review-embed-title (display-title review)]
-    (rating-stars rating)]
+      [:span.review-of (str "A review of: " (review-of-text review))])
+    [:span.review-embed-title (display-title review)]]
    (cond
      feature-image [:span.post-card-feature
                     [:img {:src (:src feature-image) :alt (:alt feature-image) :loading "lazy"}]]
@@ -199,7 +202,7 @@
 (defn post-card
   "A listing card. A post with a featured image (marked in its body) shows
    it as a cropped thumbnail on the right, in place of the cover thumb."
-  [{:keys [slug title date-display type tags rating cover feature-image] :as post}]
+  [{:keys [slug title date-display type tags cover feature-image] :as post}]
   [:article.post-card
    [:div.post-card-body
     (review-of-kicker post)
@@ -210,8 +213,7 @@
      (when date-display [:span.post-date date-display])
      (release-date-note post)
      (draft-badge post)
-     (when (#{:news :review} type) (type-badge type))
-     (when (= type :review) (rating-stars rating))]
+     (when (#{:news :review} type) (type-badge type))]
     [:div.post-tags (map tag-pill tags)]]
    (when feature-image
      [:a.post-card-feature {:href (str "/posts/" slug) :tabindex "-1" :aria-hidden "true"}

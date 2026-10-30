@@ -3,7 +3,6 @@
    expanded at render time once every post is known:
 
      [[some-slug]]           an inline link titled with that post's title
-                             (plus its stars, for a review)
      {{review some-slug}}    on a line of its own, a compact review box
 
    A slug that doesn't resolve is left as written, so a typo stays visible
@@ -25,10 +24,9 @@
   (str (h/html hiccup)))
 
 (defn- post-link
-  [{:keys [slug type rating] :as post}]
+  [{:keys [slug] :as post}]
   [:span.post-link
-   [:a {:href (str "/posts/" slug)} (c/display-title post)]
-   (when (= type :review) (c/rating-stars rating))])
+   [:a {:href (str "/posts/" slug)} (c/display-title post)]])
 
 (defn expand
   "Expands review cards and inline post links in a rendered post body.

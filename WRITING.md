@@ -24,7 +24,7 @@ marked *optional* can simply be left out.
 
 | You're writing…                     | Put it in            | Shows up on            |
 | ----------------------------------- | -------------------- | ---------------------- |
-| A review of a volume                | `content/posts/`     | Latest, Reviews, feed  |
+| A review of one or more volumes     | `content/posts/`     | Latest, Reviews, feed  |
 | Any other article (news, opinion)   | `content/posts/`     | Latest, Articles, feed |
 | A volume (one DC Finest book)       | `content/collections/` | Released or Upcoming, its line |
 | A creator (writer, artist…)         | `content/creators/`  | Creators, their page   |
@@ -58,7 +58,6 @@ Add `draft: true` to any page's frontmatter to keep it unpublished:
 title: "Half-finished thoughts on Doom Patrol"
 date: 2026-10-20
 type: review
-rating: 2
 draft: true
 ---
 ```
@@ -81,7 +80,6 @@ publish.
 title: "Doom Patrol is gloriously weird"
 date: 2026-10-20
 type: review
-rating: 2.5
 collections: [doom-patrol-end-sacrifices-means]
 tags: [silver-age]
 cover: /images/doom-patrol.jpg
@@ -97,10 +95,26 @@ The review itself, in Markdown.
 | `title`        | yes       | The heading. |
 | `date`         | yes       | Publication date, `YYYY-MM-DD`, unquoted. Orders the Latest list and the feed. |
 | `type`         | yes       | `review`. |
-| `rating`       | yes       | **Out of 3 stars.** Halves work (`2.5`); `0` is allowed. |
-| `collections`  | optional  | Slugs of the volume(s) reviewed. Adds the "A review of: …" line above the title, and lists this review on each volume's page and next to it on the Released and Upcoming pages. |
+| `collections`  | optional  | Slugs of the volume(s) reviewed. Adds the "A review of: …" line above the title, and lists this review on each volume's page and next to it on the Released and Upcoming pages. See "Reviewing several volumes at once" below. |
 | `tags`         | optional  | A list, e.g. `[silver-age, batman]`. Each tag gets its own page under `/tags`. Usually not needed: a review or article shows the tags of the volumes in its `collections:` automatically. Tag pages list only what was tagged itself, so a tag on a volume lists the volume, not its reviews. |
 | `cover`        | optional  | An image shown large at the top of the post. |
+
+### Reviewing several volumes at once
+
+List every volume the review covers, in the order you want them named:
+
+```yaml
+collections:
+  - batman-year-one
+  - batman-killing-joke
+  - superman-man-steel
+```
+
+The review then shows up on each of those volumes' pages. The
+"A review of:" line names each line only once, so this reads
+"A review of: Batman: Year One & Two, The Killing Joke & Other Stories;
+Superman: The Man of Steel". Volumes from the same line are grouped
+together even when the list mixes them up.
 
 ## An article
 
@@ -119,7 +133,7 @@ cover: /images/solicits.jpg
 The article, in Markdown.
 ```
 
-Same fields as a review, except `type: news` and no `rating`. Articles
+Same fields as a review, except `type: news`. Articles
 are badged "Article" on the site.
 
 ## A volume
@@ -236,8 +250,7 @@ Everything under "Tricks inside the text" works here too.
 As I said in [[gl-defeat]], the ring can do anything.
 ```
 
-`[[slug]]` becomes a link with that page's title, and the stars if
-it's a review. Works for any page: review, article, volume, line or
+`[[slug]]` becomes a link with that page's title. Works for any page: review, article, volume, line or
 creator.
 
 ### A review box
@@ -247,7 +260,7 @@ creator.
 ```
 
 On a line of its own, this becomes a small box showing the review's
-volume, title, stars and featured image. Handy for round-up articles.
+volume(s), title and featured image. Handy for round-up articles.
 
 If a slug in `[[…]]` or `{{review …}}` doesn't match any page, it's
 left as written, so a typo stays visible on the page instead of
@@ -353,9 +366,11 @@ The description is cut to about 150 characters, at a word boundary.
   colons or other odd characters from confusing the frontmatter.
 - **Don't quote real dates.** `date: 2026-10-06` and
   `release-date: 2025-06-10` go unquoted.
-- **Ratings are out of 3**, not 5.
 - **Reviews and articles need `type:`** (`review` or `news`). Nothing
   else does: the folder already says what it is.
 - **Keep files in their folders.** A file loose in `content/` itself
   has no folder to say what it is, so it won't become a page.
 - **Use spaces, not tabs**, to indent the frontmatter lists.
+- **Put commas between list items.** `collections: [a, b, c]`, not
+  `[a b c]`, which reads as one slug with spaces in it. The terminal
+  warns about any `collections:` slug that matches no volume.

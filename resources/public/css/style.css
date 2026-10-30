@@ -420,23 +420,6 @@ img.cover-thumb {
 .release-date { color: var(--ink-muted); }
 .release-date.upcoming { color: var(--blue); font-style: italic; }
 
-.rating {
-  display: inline-flex;
-  align-items: center;
-  gap: 1px;
-  letter-spacing: 0;
-}
-.star { color: var(--rule); }
-.star.filled { color: var(--red); }
-/* left half red, right half the empty grey, painted through the glyph */
-.star.half {
-  background: linear-gradient(90deg, var(--red) 50%, var(--rule) 50%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.rating-value { color: var(--ink-muted); margin-left: var(--space-1); }
-
 .post-tags {
   display: flex;
   gap: var(--space-2);
@@ -501,9 +484,6 @@ img.cover-thumb {
   font-style: italic;
 }
 .post-body blockquote p:last-child { margin-bottom: 0; }
-
-/* [[slug]] -- an inline link to another post, a review's stars after it */
-.post-link .rating { margin-left: 4px; font-size: 0.85em; white-space: nowrap; }
 
 /* {{review slug}} -- a compact review box inside an article */
 .review-embed {

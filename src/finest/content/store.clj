@@ -61,6 +61,20 @@
           :when (next dupes)]
     (warn "Duplicate slug, only one will be reachable" {:slug slug :files (mapv :source-path dupes)})))
 
+(defn- warn-unknown-collections
+  "A `collections:` slug that matches no volume is otherwise dropped
+   without a trace -- the post just loses its \"A review of\" line. The
+   usual cause is a list missing its commas, `[a b c]`, which YAML reads
+   as the single slug \"a b c\"."
+  [by-slug posts]
+  (doseq [{:keys [collections source-path]} posts
+          slug collections
+          :when (not= :collection (:type (by-slug slug)))]
+    (warn (if (str/includes? (str slug) " ")
+            "Unknown collection slug -- missing commas between the slugs?"
+            "Unknown collection slug")
+          {:slug slug :file source-path})))
+
 (defn- max-mtime
   [content-dir]
   (reduce max 0 (map #(.lastModified ^java.io.File %) (filter md-file? (file-seq (io/file content-dir))))))
@@ -184,6 +198,7 @@
                                vec)
          _                (warn-duplicate-slugs raw-posts)
          by-slug-raw     (into {} (map (juxt :slug identity)) raw-posts)
+         _                (warn-unknown-collections by-slug-raw raw-posts)
          with-line-titles (mapv (partial attach-line-title by-slug-raw) raw-posts)
          line-titled      (into {} (map (juxt :slug identity)) with-line-titles)
          with-review-of   (mapv (comp (partial inherit-volume-tags line-titled)

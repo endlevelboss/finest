@@ -1,5 +1,5 @@
 (ns finest.content.post-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [clojure.test :refer [deftest is]]
             [finest.content.post :as post])
   (:import [java.time LocalDate]))
 
@@ -22,14 +22,12 @@
                          :source-file "2026-01-15-x.md" :last-modified 0})]
     (is (= "x" (:slug p)))
     (is (= :news (:type p)))
-    (is (= (LocalDate/parse "2026-01-15") (:date p)))
-    (is (not (contains? p :rating)))))
+    (is (= (LocalDate/parse "2026-01-15") (:date p)))))
 
-(deftest builds-valid-review-post-with-rating
-  (let [p (post/->post {:meta (assoc (base-meta) :type "review" :rating 4.5)
+(deftest builds-valid-review-post
+  (let [p (post/->post {:meta (assoc (base-meta) :type "review")
                          :html "<p>hi</p>" :source-file "2026-01-15-x.md" :last-modified 0})]
-    (is (= :review (:type p)))
-    (is (= 4.5 (:rating p)))))
+    (is (= :review (:type p)))))
 
 (deftest rejects-missing-title
   (is (thrown? clojure.lang.ExceptionInfo
@@ -41,22 +39,15 @@
                (post/->post {:meta (assoc (base-meta) :type "editorial") :html ""
                               :source-file "x.md" :last-modified 0}))))
 
-(deftest rejects-review-without-rating
-  (testing "reviews must include a rating"
-    (is (thrown? clojure.lang.ExceptionInfo
-                 (post/->post {:meta (assoc (base-meta) :type "review") :html ""
-                                :source-file "x.md" :last-modified 0})))))
-
 (deftest explicit-slug-overrides-filename
   (let [p (post/->post {:meta (assoc (base-meta) :slug "custom-slug") :html ""
                          :source-file "2026-01-15-x.md" :last-modified 0})]
     (is (= "custom-slug" (:slug p)))))
 
-(deftest builds-valid-collection-post-without-rating
+(deftest builds-valid-collection-post
   (let [p (post/->post {:meta (assoc (base-meta) :type "collection")
                          :html "<p>hi</p>" :source-file "2026-01-15-x.md" :last-modified 0})]
-    (is (= :collection (:type p)))
-    (is (not (contains? p :rating)))))
+    (is (= :collection (:type p)))))
 
 (deftest collections-field-parses-into-vector
   (let [without (post/->post {:meta (base-meta) :html ""
@@ -86,12 +77,11 @@
     (is (not (contains? without :line)))
     (is (= "batman" (:line with)))))
 
-(deftest builds-valid-line-post-without-date-or-rating
+(deftest builds-valid-line-post-without-date
   (let [p (post/->post {:meta {:title "Some Franchise" :type "line"} :html "<p>bio</p>"
                          :source-file "some-franchise.md" :last-modified 0})]
     (is (= :line (:type p)))
-    (is (not (contains? p :date)))
-    (is (not (contains? p :rating)))))
+    (is (not (contains? p :date)))))
 
 (deftest builds-valid-creator-post-without-date
   (let [p (post/->post {:meta {:title "Some Creator" :type "creator"} :html "<p>bio</p>"

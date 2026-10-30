@@ -131,7 +131,7 @@
   "Builds and validates a post map from parsed frontmatter, rendered HTML body,
    and file metadata. Throws ex-info on invalid/missing required fields."
   [{:keys [meta html source-file last-modified]}]
-  (let [{:keys [title date slug tags type rating cover collections creators line double-dips release-date draft description]} meta
+  (let [{:keys [title date slug tags type cover collections creators line double-dips release-date draft description]} meta
         post-type      (some-> type name keyword)
         freeform-date? (= post-type :collection)
         sort-d         (when date (sort-date freeform-date? date))
@@ -143,8 +143,6 @@
                        {:source-file source-file :type type})))
     (when (and (not (#{:creator :line :page} post-type)) (nil? date))
       (throw (ex-info "Post is missing :date" {:source-file source-file})))
-    (when (and (= post-type :review) (nil? rating))
-      (throw (ex-info "Reviews require a :rating" {:source-file source-file})))
     (cond-> {:slug          (or slug (slug-from-filename source-file))
              :title         title
              :tags          (set tags)
@@ -156,7 +154,6 @@
       sort-d                (assoc :date sort-d)
       release-date          (assoc :release-date (->local-date release-date)
                                     :release-date-display (display-release-date release-date))
-      (= post-type :review) (assoc :rating (double rating))
       cover                 (assoc :cover cover)
       feature-image         (assoc :feature-image feature-image)
       (seq collections)     (assoc :collections (vec collections))

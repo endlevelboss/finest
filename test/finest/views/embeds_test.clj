@@ -3,7 +3,7 @@
             [finest.views.embeds :as embeds]))
 
 (def ^:private posts
-  {"some-review"  {:slug "some-review" :type :review :title "Some Review" :rating 3.0
+  {"some-review"  {:slug "some-review" :type :review :title "Some Review"
                    :review-of [{:slug "vol" :title "Year One" :line-title "Batman"}]
                    :feature-image {:src "/images/x.jpg" :alt "X"}}
    "some-article" {:slug "some-article" :type :news :title "Some Article"}
@@ -11,16 +11,10 @@
 
 (defn- expand [html] (embeds/expand html posts))
 
-(deftest inline-review-link-gets-title-and-stars
+(deftest inline-link-gets-title
   (let [out (expand "<p>See [[some-review]] now.</p>")]
     (is (re-find #"<a href=\"/posts/some-review\">Some Review</a>" out))
-    (is (re-find #"class=\"rating\"" out))
     (is (not (re-find #"\[\[" out)))))
-
-(deftest inline-non-review-link-has-no-stars
-  (let [out (expand "<p>See [[some-article]].</p>")]
-    (is (re-find #"<a href=\"/posts/some-article\">Some Article</a>" out))
-    (is (not (re-find #"rating" out)))))
 
 (deftest unknown-slugs-are-left-alone
   (is (= "<p>[[nope]]</p><p>{{review nope}}</p>"

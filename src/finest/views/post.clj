@@ -98,15 +98,14 @@
   "Heading, meta line, credits and tags. A volume's cover sits beside all
    that, right-aligned and scaled down; other posts keep a full-width hero
    above it."
-  [{:keys [title date-display type tags rating cover
+  [{:keys [title date-display type tags cover
            referenced-collections creator-credits review-of] :as post}]
   (let [head [(post-heading post)
               [:div.post-meta
                (when date-display [:span.post-date date-display])
                (c/release-date-note post)
                (c/draft-badge post)
-               (when (#{:news :review} type) (c/type-badge type))
-               (when (= type :review) (c/rating-stars rating))]
+               (when (#{:news :review} type) (c/type-badge type))]
               ;; the review-of kicker already links the volumes a review covers
               (when (and (seq referenced-collections) (empty? review-of))
                 (collection-refs referenced-collections))
