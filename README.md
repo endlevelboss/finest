@@ -54,12 +54,37 @@ Run it directly:
 
 ```sh
 PORT=3000 CONTENT_DIR=/opt/finest/content SITE_URL=https://example.com \
+  VIEWS_FILE=/opt/finest/data/views.edn \
   java -jar /opt/finest/finest-standalone.jar
 ```
 
 `SITE_URL` is the site's public address. The Atom feed (`/feed.xml`),
 the sitemap (`/sitemap.xml`) and `robots.txt` need it for their
 absolute links; without it, they point at `http://localhost:3000`.
+
+### Page views
+
+The server counts views of every page under `/posts/` (reviews,
+articles, volumes, lines, creators) per day, and writes them to
+`VIEWS_FILE` (default `data/views.edn`, relative to the working
+directory) once a minute and when it stops:
+
+```clojure
+{"2026-11-03" {"silver-age-gl" 14, "green-lantern-defeat-green-lantern" 6}}
+```
+
+Only a count per page per day is kept: no IP addresses, no cookies.
+Bots that name themselves in their user agent, HEAD requests and
+"not found" pages aren't counted, and the dev server counts nothing.
+Keep the file outside `content/` so deploys don't touch it; restarts
+add to what's already there. For a quick top list, copy the file
+somewhere and at the REPL:
+
+```clojure
+(require '[finest.views-count :as vc] '[clojure.edn :as edn])
+(vc/top (edn/read-string (slurp "views.edn")) 20)               ; all time
+(vc/top (edn/read-string (slurp "views.edn")) 20 "2026-11-01")  ; since a date
+```
 
 ### systemd unit
 
@@ -75,6 +100,7 @@ WorkingDirectory=/opt/finest
 Environment=PORT=3000
 Environment=CONTENT_DIR=/opt/finest/content
 Environment=SITE_URL=https://example.com
+Environment=VIEWS_FILE=/opt/finest/data/views.edn
 ExecStart=/usr/bin/java -jar /opt/finest/finest-standalone.jar
 Restart=on-failure
 User=finest
